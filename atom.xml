@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[Tower of Power]]></title>
   <link href="http://dcousineau.github.com/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2012-07-03T15:31:06-05:00</updated>
+  <updated>2012-07-21T12:58:01-05:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
-    <name><![CDATA[Your Name]]></name>
+    <name><![CDATA[Daniel Cousineau]]></name>
     
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
