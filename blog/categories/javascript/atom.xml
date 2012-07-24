@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: javascript | Tower of Power]]></title>
+  <link href="http://dcousineau.github.com/blog/categories/javascript/atom.xml" rel="self"/>
+  <link href="http://dcousineau.github.com/"/>
+  <updated>2012-07-24T16:27:18-05:00</updated>
+  <id>http://dcousineau.github.com/</id>
+  <author>
+    <name><![CDATA[Daniel Cousineau]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Refactoring into Backbone]]></title>
+    <link href="http://dcousineau.github.com/blog/2012/07/24/migrating-from-old-jquery-to-backbone/"/>
+    <updated>2012-07-24T15:24:00-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2012/07/24/migrating-from-old-jquery-to-backbone</id>
+    <content type="html"><![CDATA[<h2>Part 1</h2>
+
+<p><a href="http://backbonejs.org/">Backbone.js</a> has exploded on to the scene over the past several months. Todo lists and Web3.0 full-JavaScript web applications have popped up like weeds but there's not much information on integrating Backbone into an existing site.</p>
+
+<p>In the typical style of progressive enhancement, most sites are still built to work statically with some jQuery magic layered on top to give it a slicker feel. Usually, the developers of these sites dismiss Backbone.js (and other similar frameworks) as being great for pure js front-ends, but not so useful for their work. "This page is just too simple" <del>they</del> I said.</p>
+
+<p>While I've been using Backbone.js for a few months now to some interesting moonlight work, only relatively recently have I been integrating Backbone.js into my main work.</p>
+
+<h2>A Brief Tour</h2>
+
+<p>For those unfamiliar, Backbone.js is a very lightweight, decoupled-ish MVC framework that provides 4 basic things:</p>
+
+<ol>
+<li>Models</li>
+<li>Collections</li>
+<li>Views</li>
+<li>Router</li>
+</ol>
+
+
+<p>Along with some bonuses like using <a href="http://underscorejs.org/">Underscore.js</a> and jQuery (Zepto compatible!) internally (which gives <em>yet another</em> bonus of forcing more JS devs to discover the wonder that is Underscore).</p>
+
+<p>While building in and making event firing and handling core to the system makes Backbone's Models and Collections incredibly invaluble to highly interactive application UIs, the Backbone.View is the single most understated powerhouse in Backbone.</p>
+
+<p>In a nutshell, all a Backbone.View really does is provide DOM element management with easy delegate event hooks. Yet even though it remains so simple and easy to replecate, the organization factor cannot be understated and thus becomes invaluable for refactoring existing code.</p>
+
+<h2>First Steps</h2>
+
+<p>Take, for instance, a simple list of items that can be appended to and items deleted from. This is a goss oversimplification of a refactor I recently did but the example will hold.</p>
+
+<p>Our HTML is structured such that we can interact with the application in the absence of JavaScript (or we at least preload templates/DOM to reduce page load times):</p>
+
+<p>``` html
+<html></p>
+
+<!-- ... -->
+
+
+<div id="widget">
+    <ul>
+        <li><span class="item" data-id="1">Item 1 <a href="http://dcousineau.github.com/url/del">Delete</a></span></li>
+        <!-- ... -->
+    </ul>
+</div>
+
+
+<!-- ... -->
+
+
+<script>
+    $('#widget .item a').click(function(e){
+        var $this = $(this)
+          , $parent = $this.parent()
+          , id = $parent.data('id');
+        
+        $.ajax(/* … */);
+    });
+    
+    //...
+</script>
+
+
+<p></body>
+</html>
+```</p>
+
+<p>Beginning our refactor process is actually not too difficult. We can assume either there is more code to this page (say, an AJAX call to fill in the list dynamically) but not really necessary.</p>
+
+<p>We can immediatley break out all of our jquery code into a new Backbone.View:</p>
+
+<p>``` javascript scripts/foo.js
+(function(namespace, $){</p>
+
+<pre><code>namespace.Bar = Backbone.View.extend({
+    events: {
+        'click #widget .item a': 'clickItemDelete'
+    }
+
+  , initialize: function() {
+
+    }
+  , render: function() {
+        //...
+        return this;
+    }
+  , clickItemDelete: function(e) {
+        var $this = $(e.currentTarget)
+          , $parent = $this.parent()
+          , id = $parent.data('id');
+
+        $.ajax(/* … */);
+    }
+});
+</code></pre>
+
+<p>})(window.Foo = window.Foo || {}, jQuery);
+```</p>
+
+<p>Notice our click handler immediately translated? Given that jQuery is used internally, <em>almost</em> everything remains the same execpt for it being broken into two pieces: the selector (and event) visit our events attribute while the body of the event goes to inhabit it's own method.</p>
+
+<p><strong>There is one caveat though.</strong> Backbone prefers to keep track of the View object so it binds every event listener to the Backbone.View instance. So, unlike jQuery, <code>this</code> will be bound to the view instead of the element being acted upon. Easily enough, however, but <code>event.currentTarget</code> is essentually going to be your drop in replacement (which you can see in the above example I've already done so).</p>
+
+<p>Knowing this any event listeners will be your easiest first target. For now we can dump the rest of our JavaScript code into the <code>render()</code> function.</p>
+
+<p>After you've moved all your code out, you include whatever file contains your new Backbone.View and get thing started:</p>
+
+<p>``` html
+<html></p>
+
+<!-- ... -->
+
+
+<div id="widget">
+    <ul>
+        <li><span class="item" data-id="1">Item 1 <a href="http://dcousineau.github.com/url/del">Delete</a></span></li>
+        <!-- ... -->
+    </ul>
+</div>
+
+
+<!-- ... -->
+
+
+<script>
+    $(function(){
+        var $widget = $('#widget');
+        
+        var view = new Foo.Bar({
+            el: $widget
+        }).render();
+    });
+</script>
+
+
+<p></body>
+</html>
+```</p>
+
+<p>By overriding the element to our nearest logical parent, we avoid the unnecessary task of having to re-render any interfaces and take advantage of hte pre-assembled DOM. As well this lowers the task load in converting the JavaScript code and possible rewrite event selectors.</p>
+
+<p>At this very moment what we have is all of our previous mixed and matched jQuery front-end code tucked away in a Backbone.View with our events actually split up and refactored properly. Some may wonder why bother if this is all it organizes, and while honestly your code organization should improve instantly (no more scattered event listeners) the … "most convincing" is yet to come.</p>
+
+<p>From here we begin the longer task of evaluating the purpose of each gropuing of JS code. What purpose it serves determines when you organize it for the first pass:</p>
+
+<ul>
+<li>Is it trying to rending something to the DOM? Probably belongs in the <code>render()</code> method.</li>
+<li>Is it declaring variables and setting up requried pre-conditions? Probably belongs in the <code>initialize()</code> method.</li>
+<li>Is it utility functions (like url detection methods, etc)? Each of these should be provided their own method on the view itself <em>unless</em> it is a globally utilized function (in which case should live on its own). But it should already be separate anyways :)</li>
+</ul>
+
+
+<p>Exactly how we approach this will be subject to my next post tomorrow.</p>
+]]></content>
+  </entry>
+  
+</feed>
