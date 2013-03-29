@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: CLI | Tower of Power]]></title>
+  <link href="http://dcousineau.github.com/blog/categories/cli/atom.xml" rel="self"/>
+  <link href="http://dcousineau.github.com/"/>
+  <updated>2013-03-28T23:51:17-05:00</updated>
+  <id>http://dcousineau.github.com/</id>
+  <author>
+    <name><![CDATA[Daniel Cousineau]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Using Symfony Console From Scratch]]></title>
+    <link href="http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch/"/>
+    <updated>2013-03-28T22:20:00-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch</id>
+    <content type="html"><![CDATA[<p>CLI applications are extremely useful for many, if not most web projects. The <a href="http://symfony.com/">Symfony framework</a> even goes so
+far as to include an extensible CLI console used for everything from running cache cleanup/warmup tasks, to user account management.</p>
+
+<p>Many CLI scripts for web projects consist of just a static <code>.php</code> file which works fine but grow unweildy over time. Thankfully, the
+aforementioned Symfony Console component is released as a decoupled standalone that can be installed and setup easily and provide us
+with structure and organization (and some powerful features).</p>
+
+<h1>Setup</h1>
+
+<p>The Symfony Console component can be found on GitHub at <a href="https://github.com/symfony/console">github.com/symfony/console</a>. While
+installing by hand is doable, I much prefer using <a href="http://getcomposer.org/">Composer</a> to handle my dependencies. If you haven't
+used Composer before, I suggest following the <a href="http://getcomposer.org/doc/00-intro.md#installation-nix">Getting Started</a> documentation.</p>
+
+<p>To start things off, we'll need to setup, or modify, our <code>composer.json</code> file:</p>
+
+<p>``` javascript composer.json
+{</p>
+
+<pre><code>"require": {
+    "symfony/console": "2.1.*"
+},
+"autoload": {
+    "psr-0": { "": "src/" }
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>And then update our dependencies:</p>
+
+<p><code>text
+$ php composer.phar update
+</code></p>
+
+<p>Now that we have Symfony Console and all it's dependencies downloaded and ready, we'll need to setup our actual console executable:</p>
+
+<p>``` php bin/console</p>
+
+<h1>!/usr/bin/env php</h1>
+
+<p>&lt;?php</p>
+
+<p>date_default_timezone_set('UTC');</p>
+
+<p>set_time_limit(0);</p>
+
+<p>(@include_once <strong>DIR</strong> . '/../vendor/autoload.php') || @include_once <strong>DIR</strong> . '/../../../autoload.php';</p>
+
+<p>use Symfony\Component\Console\Application;</p>
+
+<p>$app = new Application('My CLI Application', '0.1.0');
+$app->run();
+```</p>
+
+<p>Afterwards a simple <code>chmod +x bin/console</code> will make it executable and you'll be ready to begin. You'll notice we placed this in a
+file named simply <code>console</code> in the <code>bin</code> directory, this is purely a stylistic choice, name it whatever you want. Giving it a test
+whirl, you should see the output:</p>
+
+<p>``` text
+$ bin/console
+My CLI Application version 0.1.0</p>
+
+<p>Usage:
+  [options] command [arguments]</p>
+
+<p>Options:
+  --help           -h Display this help message.
+  --quiet          -q Do not output any message.
+  --verbose        -v Increase verbosity of messages.
+  --version        -V Display this application version.
+  --ansi              Force ANSI output.
+  --no-ansi           Disable ANSI output.
+  --no-interaction -n Do not ask any interactive question.</p>
+
+<p>Available commands:
+  help   Displays help for a command
+  list   Lists commands
+```</p>
+
+<h1>Commands</h1>
+
+<p>Syfmony Console commands are simply classes you override and inject into the application instance. The skeleton for any given command
+looks something like this:</p>
+
+<p>``` php src/MyApp/Console/Command/TestCommand.php
+&lt;?php
+namespace MyApp\Console\Command;</p>
+
+<p>use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;</p>
+
+<p>class TestCommand extends Command {</p>
+
+<pre><code>protected function configure() {
+    $this-&gt;setName("test")
+         -&gt;setDescription("Sample description for our command named test")
+         -&gt;setDefinition(array(
+         ))
+         -&gt;setHelp(&lt;&lt;&lt;EOT
+</code></pre>
+
+<p>The <info>test</info> command does things and stuff
+EOT</p>
+
+<pre><code>         );
+}
+
+protected function execute(InputInterface $input, OutputInterface $output) {
+    //...
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>While we have created the class, we haven't attached it to our console application. To do this we edit our <code>bin/console</code> file
+and add the follwoing code between the <code>new Application(...)</code> and the <code>$app-&gt;run()</code>:</p>
+
+<p>``` php bin/console
+&lt;?php
+//...
+$app = new Application('My CLI Application', '0.1.0');
+$app->addCommands(array(</p>
+
+<pre><code>new MyApp\Console\Command\TestCommand(),
+</code></pre>
+
+<p>));
+$app->run();
+//...
+```</p>
+
+<p>When we run our <code>bin/console</code> we'll notice the output is now midly different:</p>
+
+<p>``` text
+$ bin/console
+My CLI Application version 0.1.0</p>
+
+<p>Usage:
+  [options] command [arguments]</p>
+
+<p>Options:
+  --help           -h Display this help message.
+  --quiet          -q Do not output any message.
+  --verbose        -v Increase verbosity of messages.
+  --version        -V Display this application version.
+  --ansi              Force ANSI output.
+  --no-ansi           Disable ANSI output.
+  --no-interaction -n Do not ask any interactive question.</p>
+
+<p>Available commands:
+  help   Displays help for a command
+  list   Lists commands
+  test   Sample description for our command named test
+```</p>
+
+<p>And we can even use the help command to describe our newly created test command:
+``` text
+$ bin/console help test
+Usage:
+ test</p>
+
+<p>Help:
+ The test command does things and stuff
+```</p>
+
+<h2>Output</h2>
+
+<p>Syfmony Console applications direct all their output through the <code>$output</code> variable provided. What these output objects gives
+us is easy ANSI coloring utilizing XML-like tags. For example, a <code>$output-&gt;writeln("&lt;info&gt;This will be green&lt;/info&gt; This will be white");</code>
+will print the ecapsulated text in the "info" style which is green. You can add and override styles to your hearts content, just
+peruse the <a href="http://symfony.com/doc/2.0/components/console/introduction.html#coloring-the-output">official documentation</a>.</p>
+
+<h2>Input</h2>
+
+<p>CLI input comes in 2 flavors: <em>Arguments</em> and <em>Options</em>. In essence, Options are flags using the - or -- operators and Arguments are your
+classic space separated values. To put it visually:</p>
+
+<p><code>text
+$ bin/consle --option=value argument
+</code></p>
+
+<p>Symfony Console requires you to be strict and actively provide your definition in the <code>configure()</code> method. For example, we can
+setup an option and an argument:</p>
+
+<p>``` php src/MyApp/Console/Command/TestCommand.php
+&lt;?php
+//...</p>
+
+<pre><code>protected function configure() {
+    $this-&gt;setName("test")
+         -&gt;setDescription("Sample description for our command named test")
+         -&gt;setDefinition(array(
+            new InputOption('flag', 'f', InputOption::VALUE_NONE, 'Raise a flag'),
+            new InputArgument('activities', InputArgument::IS_ARRAY, 'Space-separated activities to perform', null),
+         ))
+         -&gt;setHelp(&lt;&lt;&lt;EOT
+</code></pre>
+
+<p>The <info>test</info> command does things and stuff
+EOT</p>
+
+<pre><code>         );
+}
+</code></pre>
+
+<p>//...
+```</p>
+
+<p>Here we have defined a <code>--flag</code> option which has no value expected (meaning --flag=value would be technically be illegal) and an
+array argument (which means an infinite series, e.g. <code>bin/console activities1 activities2</code>, etc). When we run our help command,
+you'll notice our output has changed to reflect our definition:</p>
+
+<p>``` text
+$ bin/console help test
+Usage:
+ test [-f|--flag] [activities1] ... [activitiesN]</p>
+
+<p>Arguments:
+ activities  Space-separated activities to perform</p>
+
+<p>Options:
+ --flag (-f) Raise a flag</p>
+
+<p>Help:
+ The test command does things and stuff
+```</p>
+
+<p>Now when our command is actually running we can check whether or not a flag was issued with a simple <code>$input-&gt;getOption('flag');</code>
+as well as we can get all of our activities with a <code>$input-&gt;getArgument('activities');</code>.</p>
+
+<p>There are many modifiers to be used with both Arguments and Options. For example, you can have required Arguments, Options that
+require a value to be set, so on and so forth. You can view the <a href="http://symfony.com/doc/2.0/components/console/introduction.html#using-command-arguments">official documentation</a>
+to get an idea of the power available to you.</p>
+
+<h1>Integrating With Your Application</h1>
+
+<p>The bulk of power you gain from writing CLI apps comes from the ability to share code and resources with your main application.</p>
+
+<p>Symfony Console does not provide an "out of the box" way to integrate with anything, however it is fairly trivial to roll in support
+on your own.</p>
+
+<p>For example, say you were building a CLI app to complement your Silex web application. You have configured services and database connections
+you would like to share via the Silex DI container/application object.</p>
+
+<p>A best practice would be to create a base command class that can accept your DI container and have your commands inherit from it:</p>
+
+<p>``` php src/MyApp/Console/Command/ContainerAwareCommand.php
+&lt;?php
+namespace MyApp\Console\Command;</p>
+
+<p>use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;</p>
+
+<p>use Silex\Application</p>
+
+<p>abstract class ContainerAwareCommand extends Command {</p>
+
+<pre><code>/**
+ * @var Silex\Application
+ */
+protected $app;
+
+public function __construct(Application $app, $name = null) {
+    parent::__construct($name);
+    $this-&gt;app = $app;
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>And update your <code>bin/console</code> file to include the PHP file responsible for creating and configuring the Application object and pass
+said Application object into the commands:</p>
+
+<p>``` php bin/console</p>
+
+<h1>!/usr/bin/env php</h1>
+
+<p>&lt;?php</p>
+
+<p>date_default_timezone_set('UTC');</p>
+
+<p>set_time_limit(0);</p>
+
+<p>(@include_once <strong>DIR</strong> . '/../vendor/autoload.php') || @include_once <strong>DIR</strong> . '/../../../autoload.php';
+require_once 'path/to/app/setup.php';</p>
+
+<p>use Symfony\Component\Console\Application;</p>
+
+<p>$app = new Application('My CLI Application', '0.1.0');</p>
+
+<p>$app->addCommands(array(</p>
+
+<pre><code>new MyApp\Console\Command\TestCommand($app),
+</code></pre>
+
+<p>));</p>
+
+<p>$app->run();
+```</p>
+
+<p>Another path is to contemplate overloading the actualy Symfony Console Application class. Doing this affords you the ability to
+override the help message as well as any global option definitions:</p>
+
+<p>``` php src/MyApp/Console/Application.php
+&lt;?php
+namespace MyApp\Console;</p>
+
+<p>use MyApp\Console\Command;
+use Symfony\Component\Console\Application as BaseApplication;</p>
+
+<p>class Application extends BaseApplication {</p>
+
+<pre><code>/**
+ * @var Silex\Application;
+ */
+protected $app;
+
+public function __construct(Application $app) {
+    $this-&gt;app = $app;
+    parent::__construct('My CLI Application', '0.1.0');
+}
+
+public function getDefaultCommands() {
+    $commands = parent::getDefaultCommands();
+
+    $commands[] = new Command\TestCommand($this-&gt;app);
+
+    return $commands;
+}
+</code></pre>
+
+<p>}
+```</p>
+
+<p>Which has another added benefit of keeping your <code>bin/console</code> file simple:</p>
+
+<p>``` php bin/console</p>
+
+<h1>!/usr/bin/env php</h1>
+
+<p>&lt;?php</p>
+
+<p>date_default_timezone_set('UTC');</p>
+
+<p>set_time_limit(0);</p>
+
+<p>(@include_once <strong>DIR</strong> . '/../vendor/autoload.php') || @include_once <strong>DIR</strong> . '/../../../autoload.php';
+require_once 'path/to/app/setup.php';</p>
+
+<p>use MyApp\Console\Application;</p>
+
+<p>$app = new Application($app);
+$app->run();
+```</p>
+
+<h1>Environment</h1>
+
+<p>One thing to be aware of, most web applications these days are aware of environments when it comes to what configurations to use.
+The Symfony Console Application object allows you to manually create your <code>$input</code> and <code>$output</code> options, which allows us to
+perform a neat little trick and gain early access to the option parsing.</p>
+
+<p>If you look at lines 19 and 20 below you can see us checking the <code>--env</code> option to see if it's set, if not using a default environment
+variable <code>MYAPP_ENV</code> from the shell or our fallback 'dev' environment designation. We then just go ahead and forward our newly
+created <code>$input</code> and <code>$output</code> objects through our <code>run()</code> method as shown on line 23.</p>
+
+<p>``` php bin/console</p>
+
+<h1>!/usr/bin/env php</h1>
+
+<p>&lt;?php</p>
+
+<p>date_default_timezone_set('UTC');</p>
+
+<p>set_time_limit(0);</p>
+
+<p>(@include_once <strong>DIR</strong> . '/../vendor/autoload.php') || @include_once <strong>DIR</strong> . '/../../../autoload.php';
+require_once 'path/to/app/setup.php';</p>
+
+<p>use MyApp\Console\Application;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;</p>
+
+<p>$input = new ArgvInput();
+$output = new ConsoleOutput();</p>
+
+<p>//Determine Environment
+$env = $input->getParameterOption(array('--env', '-e'), getenv('MYAPP_ENV') ?: 'prod');
+$app['environment'] = $env;</p>
+
+<p>$app = new Application('My CLI Application', '0.1.0');
+$app->run($input, $output);
+```</p>
+
+<p>As an added bonus, this same concept can be applied to creating your own Output class. The Composer project actively makes use
+of this to extend in the ability to do overwrites in the console (the technique used for it's fancy progress indication).</p>
+]]></content>
+  </entry>
+  
+</feed>

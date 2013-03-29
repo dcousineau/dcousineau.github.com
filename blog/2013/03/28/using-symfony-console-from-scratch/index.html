@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Tower of Power</title>
+  <title>Using Symfony Console From Scratch - Tower of Power</title>
   <meta name="author" content="Daniel Cousineau">
 
   
@@ -19,7 +19,7 @@ far as to include an extensible CLI &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dcousineau.github.com/">
+  <link rel="canonical" href="http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -63,15 +63,12 @@ far as to include an extensible CLI &hellip;">
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a></h1>
+      <h1 class="entry-title">Using Symfony Console From Scratch</h1>
     
     
       <p class="meta">
@@ -94,7 +91,7 @@ far as to include an extensible CLI &hellip;">
   </header>
 
 
-  <div class="entry-content"><p>CLI applications are extremely useful for many, if not most web projects. The <a href="http://symfony.com/">Symfony framework</a> even goes so
+<div class="entry-content"><p>CLI applications are extremely useful for many, if not most web projects. The <a href="http://symfony.com/">Symfony framework</a> even goes so
 far as to include an extensible CLI console used for everything from running cache cleanup/warmup tasks, to user account management.</p>
 
 <p>Many CLI scripts for web projects consist of just a static <code>.php</code> file which works fine but grow unweildy over time. Thankfully, the
@@ -692,18 +689,67 @@ created <code>$input</code> and <code>$output</code> objects through our <code>r
 <p>As an added bonus, this same concept can be applied to creating your own Output class. The Composer project actively makes use
 of this to extend in the ability to do overwrites in the console (the technique used for it&#8217;s fancy progress indication).</p>
 </div>
+
+
+  <footer>
+    <p class="meta">
+      
   
+
+<span class="byline author vcard">Posted by <span class="fn">Daniel Cousineau</span></span>
+
+      
+
+
+
+
+
+
+
+
   
 
 
-    </article>
+<time datetime="2013-03-28T22:20:00-05:00" pubdate data-updated="true">Mar 28<span>th</span>, 2013</time>
+      
+
+<span class="categories">
   
-  <div class="pagination">
+    <a class='category' href='/blog/categories/cli/'>CLI</a>, <a class='category' href='/blog/categories/console/'>Console</a>, <a class='category' href='/blog/categories/php/'>PHP</a>, <a class='category' href='/blog/categories/symfony/'>Symfony</a>
+  
+</span>
+
+
+    </p>
     
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch/" data-via="dcousineau" data-counturl="http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
 </div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
 <aside class="sidebar">
   
     <section>
@@ -720,7 +766,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
 <section>
   <h1>Latest Tweets</h1>
   <ul id="tweets">
-    <li class="loading">Status updating&#8230;</li>
+    <li class="loading">Status updating...</li>
   </ul>
   <script type="text/javascript">
     $.domReady(function(){
@@ -737,6 +783,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   
 </aside>
 
+
     </div>
   </div>
   <footer role="contentinfo"><p>
@@ -751,7 +798,10 @@ of this to extend in the ability to do overwrites in the console (the technique 
       var disqus_shortname = 'dcousineaublog';
       
         
-        var disqus_script = 'count.js';
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch/';
+        var disqus_url = 'http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch/';
+        var disqus_script = 'embed.js';
       
     (function () {
       var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
