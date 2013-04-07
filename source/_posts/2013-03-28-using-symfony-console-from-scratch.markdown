@@ -340,12 +340,14 @@ date_default_timezone_set('UTC');
 set_time_limit(0);
 
 (@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
+
+//Provides $app, which is an instance of Silex\Application
 require_once 'path/to/app/setup.php';
 
 use MyApp\Console\Application;
 
-$app = new Application($app);
-$app->run();
+$cli_app = new Application($app);
+$cli_app->run();
 ```
 
 Environment
