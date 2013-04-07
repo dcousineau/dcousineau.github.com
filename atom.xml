@@ -4,7 +4,7 @@
   <title><![CDATA[Tower of Power]]></title>
   <link href="http://dcousineau.github.com/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-03-28T23:51:17-05:00</updated>
+  <updated>2013-04-07T11:51:57-05:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -443,6 +443,8 @@ said Application object into the commands:</p>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
 <span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">#!/usr/bin/env php</span>
 </span><span class='line'><span class="cp">&lt;?php</span>
 </span><span class='line'>
@@ -451,17 +453,19 @@ said Application object into the commands:</p>
 </span><span class='line'><span class="nb">set_time_limit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'><span class="p">(</span><span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../../autoload.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//Provides $app, which is an instance of Silex\Application</span>
 </span><span class='line'><span class="k">require_once</span> <span class="s1">&#39;path/to/app/setup.php&#39;</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Application</span><span class="p">;</span>
 </span><span class='line'>
-</span><span class='line'><span class="nv">$app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$cli_app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
 </span><span class='line'>
-</span><span class='line'><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">addCommands</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'><span class="nv">$cli_app</span><span class="o">-&gt;</span><span class="na">addCommands</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
 </span><span class='line'>    <span class="k">new</span> <span class="nx">MyApp\Console\Command\TestCommand</span><span class="p">(</span><span class="nv">$app</span><span class="p">),</span>
 </span><span class='line'><span class="p">));</span>
 </span><span class='line'>
-</span><span class='line'><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$cli_app</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
@@ -587,6 +591,8 @@ created <code>$input</code> and <code>$output</code> objects through our <code>r
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
 <span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">#!/usr/bin/env php</span>
 </span><span class='line'><span class="cp">&lt;?php</span>
 </span><span class='line'>
@@ -595,6 +601,8 @@ created <code>$input</code> and <code>$output</code> objects through our <code>r
 </span><span class='line'><span class="nb">set_time_limit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 </span><span class='line'>
 </span><span class='line'><span class="p">(</span><span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../../autoload.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//Provides $app, which is an instance of Silex\Application</span>
 </span><span class='line'><span class="k">require_once</span> <span class="s1">&#39;path/to/app/setup.php&#39;</span><span class="p">;</span>
 </span><span class='line'>
 </span><span class='line'><span class="k">use</span> <span class="nx">MyApp\Console\Application</span><span class="p">;</span>
@@ -608,8 +616,8 @@ created <code>$input</code> and <code>$output</code> objects through our <code>r
 </span><span class='line'><span class="nv">$env</span> <span class="o">=</span> <span class="nv">$input</span><span class="o">-&gt;</span><span class="na">getParameterOption</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;--env&#39;</span><span class="p">,</span> <span class="s1">&#39;-e&#39;</span><span class="p">),</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">&#39;MYAPP_ENV&#39;</span><span class="p">)</span> <span class="o">?:</span> <span class="s1">&#39;prod&#39;</span><span class="p">);</span>
 </span><span class='line'><span class="nv">$app</span><span class="p">[</span><span class="s1">&#39;environment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$env</span><span class="p">;</span>
 </span><span class='line'>
-</span><span class='line'><span class="nv">$app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$cli_app_</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$cli_app_</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span><span class="p">);</span>
 </span></code></pre></td></tr></table></div></figure>
 
 

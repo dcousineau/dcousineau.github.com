@@ -4,7 +4,7 @@
   <title><![CDATA[Category: CLI | Tower of Power]]></title>
   <link href="http://dcousineau.github.com/blog/categories/cli/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-03-28T23:51:17-05:00</updated>
+  <updated>2013-04-07T11:51:57-05:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -308,21 +308,23 @@ said Application object into the commands:</p>
 
 <p>set_time_limit(0);</p>
 
-<p>(@include_once <strong>DIR</strong> . '/../vendor/autoload.php') || @include_once <strong>DIR</strong> . '/../../../autoload.php';
+<p>(@include_once <strong>DIR</strong> . '/../vendor/autoload.php') || @include_once <strong>DIR</strong> . '/../../../autoload.php';</p>
+
+<p>//Provides $app, which is an instance of Silex\Application
 require_once 'path/to/app/setup.php';</p>
 
 <p>use Symfony\Component\Console\Application;</p>
 
-<p>$app = new Application('My CLI Application', '0.1.0');</p>
+<p>$cli_app = new Application('My CLI Application', '0.1.0');</p>
 
-<p>$app->addCommands(array(</p>
+<p>$cli_app->addCommands(array(</p>
 
 <pre><code>new MyApp\Console\Command\TestCommand($app),
 </code></pre>
 
 <p>));</p>
 
-<p>$app->run();
+<p>$cli_app->run();
 ```</p>
 
 <p>Another path is to contemplate overloading the actualy Symfony Console Application class. Doing this affords you the ability to
@@ -400,7 +402,9 @@ created <code>$input</code> and <code>$output</code> objects through our <code>r
 
 <p>set_time_limit(0);</p>
 
-<p>(@include_once <strong>DIR</strong> . '/../vendor/autoload.php') || @include_once <strong>DIR</strong> . '/../../../autoload.php';
+<p>(@include_once <strong>DIR</strong> . '/../vendor/autoload.php') || @include_once <strong>DIR</strong> . '/../../../autoload.php';</p>
+
+<p>//Provides $app, which is an instance of Silex\Application
 require_once 'path/to/app/setup.php';</p>
 
 <p>use MyApp\Console\Application;
@@ -414,8 +418,8 @@ $output = new ConsoleOutput();</p>
 $env = $input->getParameterOption(array('--env', '-e'), getenv('MYAPP_ENV') ?: 'prod');
 $app['environment'] = $env;</p>
 
-<p>$app = new Application('My CLI Application', '0.1.0');
-$app->run($input, $output);
+<p>$cli_app<em> = new Application('My CLI Application', '0.1.0');
+$cli_app</em>->run($input, $output);
 ```</p>
 
 <p>As an added bonus, this same concept can be applied to creating your own Output class. The Composer project actively makes use
