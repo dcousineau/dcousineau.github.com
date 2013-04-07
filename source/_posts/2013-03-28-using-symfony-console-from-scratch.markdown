@@ -283,17 +283,19 @@ date_default_timezone_set('UTC');
 set_time_limit(0);
 
 (@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
+
+//Provides $app, which is an instance of Silex\Application
 require_once 'path/to/app/setup.php';
 
 use Symfony\Component\Console\Application;
 
-$app = new Application('My CLI Application', '0.1.0');
+$cli_app = new Application('My CLI Application', '0.1.0');
 
-$app->addCommands(array(
+$cli_app->addCommands(array(
     new MyApp\Console\Command\TestCommand($app),
 ));
 
-$app->run();
+$cli_app->run();
 ```
 
 Another path is to contemplate overloading the actualy Symfony Console Application class. Doing this affords you the ability to
@@ -366,6 +368,8 @@ date_default_timezone_set('UTC');
 set_time_limit(0);
 
 (@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
+
+//Provides $app, which is an instance of Silex\Application
 require_once 'path/to/app/setup.php';
 
 use MyApp\Console\Application;
@@ -379,8 +383,8 @@ $output = new ConsoleOutput();
 $env = $input->getParameterOption(array('--env', '-e'), getenv('MYAPP_ENV') ?: 'prod');
 $app['environment'] = $env;
 
-$app = new Application('My CLI Application', '0.1.0');
-$app->run($input, $output);
+$cli_app_ = new Application('My CLI Application', '0.1.0');
+$cli_app_->run($input, $output);
 ```
 
 As an added bonus, this same concept can be applied to creating your own Output class. The Composer project actively makes use
