@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Calculating Daylight Savings Time Boundary In PHP - Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="I had an issue recently where I needed to calculate the Unix timestamp for the daylight savings time boundaries. According to the United States Naval &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Calculating Daylight Savings Time Boundary in PHP</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-10T03:30:23-05:00" pubdate data-updated="true">Mar 10<span>th</span>, 2009</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I had an issue recently where I needed to calculate the Unix timestamp for the daylight savings time boundaries. According to the <a href="http://aa.usno.navy.mil/faq/docs/daylight_time.php">United States Naval Observatory</a>, daylight savings time begins the <strong>Second Sunday of March</strong> and ends on the <strong>First Sunday of November</strong>.</p>
+
+<p>Awkward date calculations if you don&#8217;t have the magical <a href="http://php.net/strtotime"><code>strtotime()</code></a> function in PHP. <code>strtotime()</code> is able to do relativistic time conversions from the common &#8220;+1 hours&#8221; to the more complex (and more relevant) &#8220;Second Sunday March 0&#8221;.</p>
+
+<p>Why do we do the &#8216;March 0&#8217; in the above string to calculate the start boundary? Doing some tests with <code>strtotime()</code> reveals some behavior you should be aware of.</p>
+
+<p><code>strtotime("March");</code> doesn&#8217;t actually give you the first of March, it gives you the current day in the month specified (<code>date('D, F j, Y, g:i a', strtotime("March"));</code> returns <code>Tue, March 10, 2009, 12:00 am</code> at the time of this post). Doing a similar test but substituting April for March results in the 10th of April (at 12 am).</p>
+
+<p>Now in most cases doing a <code>strtotime("March 1")</code> will suffice (<code>date('D, F j, Y, g:i a', strtotime("March 1"));</code> results in <code>Sun, March 1, 2009, 12:00 am</code>). However, as you can tell, this month is going to be awkward because the first day of the month is a Sunday. <code>strtotime()</code>, when calculating the fuzzy &#8220;Second Sunday,&#8221; doesn&#8217;t include the current day. So calculating <code>date('D, F j, Y, g:i a', strtotime("Second Sunday March 1"));</code> will actually return the 3rd Sunday (<code>Sun, March 15, 2009, 12:00 am</code>).</p>
+
+<p>So our solution is actually to take a step back and return the <strong>PREVIOUS</strong> day to the first day of March and then calculate the Second Sunday from there (since we know that starting from the next day will account for the first). Normally, dealing with the last day in February is a headache, BUT again thanks to PHP magic we don&#8217;t have to figure out if it&#8217;s February 28th or 29th, we merely do a &#8220;March 0&#8221; which steps us back a month (<code>date('D, F j, Y, g:i a', strtotime("March 0"));</code> returns <code>Sat, February 28, 2009, 12:00 am</code>). From there we can calculate the Second Sunday with ease and eventually determine that the second sunday is March 8th, which is confirmed by the above USNO website.</p>
+
+<p>Applying these lessons to calculating the first Sunday in November we come up with the following snippit:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="nv">$remove_hour</span> <span class="o">=</span> <span class="nb">strtotime</span><span class="p">(</span><span class="s2">&quot;Second Sunday March 0&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$add_hour</span> <span class="o">=</span> <span class="nb">strtotime</span><span class="p">(</span><span class="s2">&quot;First Sunday November 0&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$time</span>  <span class="o">=</span> <span class="nb">time</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span><span class="p">(</span> <span class="nv">$time</span> <span class="o">&gt;=</span> <span class="nv">$remove_hour</span> <span class="o">&amp;&amp;</span> <span class="nv">$time</span> <span class="o">&lt;</span> <span class="nv">$add_hour</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nb">var_dump</span><span class="p">(</span><span class="s2">&quot;Lost an hour&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nb">var_dump</span><span class="p">(</span><span class="s2">&quot;Gained an hour&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Cheers!</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">admin</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-03-10T03:30:23-05:00" pubdate data-updated="true">Mar 10<span>th</span>, 2009</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/development/'>Development</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php/" data-via="dcousineau" data-counturl="http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2009/02/26/php-file-uploads-and-background-conversion-oopsie/" title="Previous Post: PHP File Uploads And Background Conversion: Oopsie">&laquo; PHP File Uploads And Background Conversion: Oopsie</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2009/07/01/good-news-everyone/" title="Next Post: Good News Everyone!">Good News Everyone! &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php/';
+        var disqus_url = 'http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

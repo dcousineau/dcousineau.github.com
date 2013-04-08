@@ -1,0 +1,307 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Plesk open_basedir Workaround - Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="Unfortunately, Plesk does (and according to atomicturtle will continue to) hate on developers by enabling open_basedir by default and not give any &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/2008/02/01/plesk-open_basedir-workaround/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Plesk Open_basedir Workaround</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-01T19:47:41-06:00" pubdate data-updated="true">Feb 1<span>st</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Unfortunately, Plesk does (and according to atomicturtle will continue to) hate on developers by enabling open_basedir by default and not give any way to change such behavior.</p>
+
+<p>A work around is possible, overriding the setting in a vhost.conf file (httpd.include files are not so good because Plesk rewrites them every time a change is made to a domain&#8217;s settings, or whenever Plesk feels like it). However, adding the line <code>php_admin_value open_basedir none</code> is completely ineffective (as I would assume the vhost.conf is being included before offending open_basedir changes are made?).</p>
+
+<p>However I found that doing this (those familiar with Plesk&#8217;s httpd.include will recognize this block):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='apache'><span class='line'><span class="nt">&lt;Directory</span> <span class="s">/path/to/domain/httpdocs</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;IfModule</span> <span class="s">sapi_apache2.c</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nb">php_admin_value</span> open_basedir <span class="k">none</span>
+</span><span class='line'>    <span class="nt">&lt;/IfModule&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;IfModule</span> <span class="s">mod_php5.c</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nb">php_admin_value</span> open_basedir <span class="k">none</span>
+</span><span class='line'>    <span class="nt">&lt;/IfModule&gt;</span>
+</span><span class='line'><span class="nt">&lt;/Directory&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Guarantees that open_basedir will plague you no more.</p>
+
+<p>Some may ask why I want open_basedir enabled, it&#8217;s leaving me open to vulnerabilities! Some applications have a control panel on a separate sub domain and require the ability to write files to it&#8217;s parent domain, something Plesk beats down with an ugly stick, as well as some applications requiring access to the system wide PEAR libraries, something open_basedir ironicaly beats down as well (despite the system wide PEAR libraries being included in the include_path directive).</p>
+
+<p>Later I&#8217;ll be digging through Plesk&#8217;s ability to trigger commands on updates and domain creations to automate this vhost.conf setting (namely grabbing that path to the httpdocs folder that is so critical and time consuming).</p>
+
+<p><strong>EDIT:</strong> To apply the changes, follow markus&#8217; example:</p>
+
+<blockquote><p>I just have my setting in the vhost.conf, and it works just fine. Just remember to update Plesks settings manually afterwards, with <code>/usr/local/psa/admin/sbin/websrvmng -u –vhost-name=example.com</code> (it doesn’t read directly from the vhost.conf).</p></blockquote>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Daniel Cousineau</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-02-01T19:47:41-06:00" pubdate data-updated="true">Feb 1<span>st</span>, 2008</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/software/'>Software</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://dcousineau.github.com/blog/2008/02/01/plesk-open_basedir-workaround/" data-via="dcousineau" data-counturl="http://dcousineau.github.com/blog/2008/02/01/plesk-open_basedir-workaround/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2008/02/14/php-feeds-or-get-your-read-on/" title="Next Post: PHP Feeds, or, Get Your Read On!">PHP Feeds, or, Get Your Read On! &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dcousineau.github.com/blog/2008/02/01/plesk-open_basedir-workaround/';
+        var disqus_url = 'http://dcousineau.github.com/blog/2008/02/01/plesk-open_basedir-workaround/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

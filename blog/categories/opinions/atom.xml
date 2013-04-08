@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Opinions | Tower of Power]]></title>
+  <link href="http://dcousineau.github.com/blog/categories/opinions/atom.xml" rel="self"/>
+  <link href="http://dcousineau.github.com/"/>
+  <updated>2013-04-07T23:18:02-05:00</updated>
+  <id>http://dcousineau.github.com/</id>
+  <author>
+    <name><![CDATA[Daniel Cousineau]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[OSS Bugs Are Features]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/01/16/oss-bugs-are-features/"/>
+    <updated>2009-01-16T08:47:13-06:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/01/16/oss-bugs-are-features</id>
+    <content type="html"><![CDATA[<p>I've been thinking a lot lately about a presentation given by <a href="http://whurley.com/">whurley</a> at a <a href="http://refreshbcs.org/">refreshBCS</a> meeting a long time ago. He gave his presentation on Open Source Software, only SLIGHTLY an era of his expertise (just in case you can't tell, that was sarcasm) and raise an interesting point.</p>
+
+<p>He talked about how when <a href="http://www.bmc.com/BMC/Common/CDA/hou_Page_Detail/0,3464,9926222_10636326_76443375,00.html">BMC Software</a> picked him up to head up their open source efforts, he battled a little bit the developers. They wanted to make sure the code was perfected, polished, and at its best whenever they started dumping it on the public. Of course they'd want to do this, releasing code as OSS is almost equivalent to deciding to present yourself to the work naked and without makeup. They wanted their friends who could see the code to be in awe, and their code base to be a shining example of a project done right.</p>
+
+<p>Whurley wanted them just to release it. Not because he wanted it now, not because of impatience or deadlines or anything else. He wanted them to just release it because, and I'm paraphrasing him, releasing open source thats a little buggy will actually help grow and foster the project. Granted, you do not introduce bugs, you just open and display the code and start making releases even though there are still tickets in your bug tracking system.</p>
+
+<p>He gave the hypothetical example of the stereotypical arrogant OSS developer finding a bug in BMC's FooBar software, calling the BMC devs dumbasses, fixing it (because it was a small and easy bug), and now being invested in the software. You don't really lose much reputation, but you gain an invested and loyal following.</p>
+
+<p>While this sounds good and true, and it makes a lot of sense (if there's nothing to do, OSS developers will never get involved), it never really clicked for me until I associated another story with whurley's principle.</p>
+
+<p>I meet Elizabeth Marie Smith (aka auroraeosrose) at ZendCon08 and had good times talking with her and many of the other #phpc members. At one point in the conference, at an opening for one of her talks (a brief overview of PECL extensions), she told the audience how she got into programming PHP and PHP C extensions. She wasn't a computer science major, she only started in the early 2000's (prior to that not much computer science experience).</p>
+
+<p>What had happened was, to the best of my recollection and <a href="http://elizabethmariesmith.com/2009/01/seven-weird-things/">her seven things post</a>, in the early days of 2001-ish she was really big into Anime and wanted to start a fan site. Her dad helped her install a forum (written in PHP) on a server he was running out of his house on a cable connection.</p>
+
+<p>Well, as with many of the forum projects, there were bugs to be had in the software. Elizabeth was dedicated to the idea of her site and decided to break open the forum and dig around to fix the bugs. Fix them she did but everything kinda snowballed from there. In fact it was bugs in the PHP-GTK extension that caused her to learn C (not an easy feat) and become the maintainer of PHP-GTK as well as the Windows port of PHP maintainer.</p>
+
+<p>It was bugs and problems in the software that caused her to be where she is now, it was bugs in the OSS world that caused her to latch on to PHP-GTK and the Windows PHP port and get them to where they are today. Though she told this story a long time ago, and whurley's presentation was even further back yet, it only just now clicked that I had seen a real life example of whurley's principle of "just publish it, flaws and all."</p>
+
+<p>The lesson from all this can even be applied outside of OSS development. It's a lesson on perfectionism and can be applied towards my personal development practices. I know that agile teaches to publish early and publish often, fixing bugs and adding features on the way, but perfectionism still plagues me. I have maybe 10 drafts on this blog on small little PHP and Python topics I could publish that I never do because I feel it's not good enough, or too simple. I have had code at work that I could have released a week ago but instead I obsess over making sure its "perfect" when a simple staging deployment will keep everyone happy, keep my moral up, and show me where the REAL bugs are.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Are we still arguing the merits of code comments?]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/07/28/are-we-still-arguing-the-merits-of-code-comments/"/>
+    <updated>2008-07-28T04:52:18-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/07/28/are-we-still-arguing-the-merits-of-code-comments</id>
+    <content type="html"><![CDATA[<p>So I see a link on reddit today to an article entitled <a href="http://www.reddit.com/comments/6tqre/no_your_code_is_not_so_great_that_it_doesnt_need/">No, your code is not so great that it doesn’t need comments</a>. The article site was down so I started reading the comments and was very disheartened to see an actual debate over whether pro developers put comments in or left them out.</p>
+
+<p>For example, we have this from "ckwop":</p>
+
+<blockquote><p>I find that the number of comments a developer puts in to their code is inversely proportional to the amount of experience they have.</p></blockquote>
+
+<p>I believe the reason for this is two fold.</p>
+
+<p>Firstly, as you become more experienced you become fluent in reading code. You're not expending mental energy trying to grok the syntax and the flow of the program. It just comes naturally.</p>
+
+<p>Secondly, as you become more experienced, you learn how to layout you code in a more readable way. You name classes and variables such that the code is, for the most part, self-documenting.</p>
+
+<p>I don't quite know how to describe the absolute FAIL in this particular statement. While he does go on to say:</p>
+
+<blockquote><p>The only comments left in programs written by experienced programmers are comments which document decisions. Why one approach was taken over another, for example.</p></blockquote>
+
+<p>It still doesn't redeem himself. Comments like his betray a staggering amount of arrogance that poisons the mind of developers and turn otherwise good programmers into spaghetti-spewing monsters that take on government jobs so it'll take longer for them to get fired.</p>
+
+<p>This person (and sadly many others) assert that well written code is intuitive. These people are the same people that try and tell me Python is perfect for everything and I shouldn't work in any other language unless I'm working in the embedded space, in which case I should write myself a Python-To-Assembly script prefixed with the cute little "py".</p>
+
+<p>Comments are meant to provide a quick overview of code flow and reasoning behind particular decisions. Comments should be clear and concise and allow a developer to spend 5 minutes figuring out where in the code base they need to be to fix the rounding issue rather than spending 40 minutes tracing program flow.</p>
+
+<p>Comments are meant to help developers who either have limited experience in a language, who are new to a language, or who haven't used a particular language in quite some time. Your Haskell code may be clear and simple to you, but I can't read a single damned line of it: comment it!</p>
+
+<p>Comments are meant for the developer who puts down a project to focus on something else for a few months only to pick the original code back up. The sign of a mature developer is one who accepts the fact that when he puts down code for a few days, he forgets the "why". No developer is immune to this, and anyone that tries to tell you they are different is not worth the time you wasted listening to them.</p>
+
+<p>So, to "ckwop" and all the other developers out there that think code should speak for itself I have a few things to say:</p>
+
+<ul>
+<li>If code could speak for itself, it wouldn't be called code</li>
+<li>You will not remember your design decisions, and in some cases even code flow, after a month</li>
+<li>Comments make it much easier for me to debug when your company hires me to fix your failures both as a programmer and as a human being.</li>
+</ul>
+
+
+<p>In closing: The debate has long been over, comment your fucking code.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Laziness Makes A Great Developer]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/06/08/laziness-makes-a-great-developer/"/>
+    <updated>2008-06-08T19:26:54-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/06/08/laziness-makes-a-great-developer</id>
+    <content type="html"><![CDATA[<p>One of the guiding principles I have lived by the came from my middle school swimming coach. He told us:</p>
+
+<blockquote><p>Don't do more work than you have to.</p></blockquote>
+
+<p>On first glance, it doesn't seem to be very good advice. However when you realize that what he was getting at was we shouldn't waste energy on a poor stroke, the quote takes on a much deeper and more profound meaning. It is this principle that takes a good developer and makes him great.</p>
+
+<h3>Profile of a Good Developer</h3>
+
+<p>Good developers are almost a dime a dozen. Walk in to any computer science course or <a href="http://www.net-perspective.com/">web development</a> shop and you'll find that the majority, if not all, are good developers.</p>
+
+<p>These "good" developers can sit down and work through an object oriented architecture, they can construct their SQL queries, and can write an application that just works.</p>
+
+<p>A "good" developer checks in his source code at the proper times, he comments his code as well as could be expected, and you can usually be guaranteed his code will compile and execute with very little fuss.</p>
+
+<h3>Profile of a GREAT Developer</h3>
+
+<p>What separates the great developers from the good developers is LAZINESS! You will find that the good developers, while producing clean, working code, operate much slower than great developers, and for the reason that separates the good from the great.</p>
+
+<p>Good developers are set in their ways of just manually working with everything. A good developer handles deployment with FTP, and updates database structure by hand. In the end, the good developer ends up wasting time doing menial tasks. FTP alone can kill up to 30 minutes of your day. Good developers are very set in their ways and do not like new things introduced.</p>
+
+<p>Meanwhile GREAT developers <strong>HATE</strong> menial tasks. They abhor having to drop into the console every time they wish to test or deploy, and loath dropping into the database to manually update structure. So these GREAT developers begin to write scripts and integrate all their tools to reduce their menial overhead as much as possible.</p>
+
+<p>The GREAT developer is lazy because they do not want to do things themselves, so they spend 20 minutes automating their tasks so they'll never deal with it again. And when you think about it, when you could spend 20 minutes once writing automated deploy scripts but instead spend 20 minutes every deploy in FTP, you are <em>doing more work than you have to</em>.</p>
+
+<h3>What Does This Mean For Me?</h3>
+
+<p>All of us developers should strive to be as lazy as possible. Do you have a task you have to do more than 3 times total? Write a script or a <a href="http://www.phing.info/">build task</a> for it. Do you spend a lot of time testing features? <a href="http://www.phpunit.de/">Automate your testing</a>. And if possible, <a href="http://www.xinc.eu/">integrate the systems</a> so you never even have to run those scripts manually, reducing user intervention to one step.</p>
+
+<p>I know I try to be as lazy as possible, do you?</p>
+
+<p><strong>Edit 6/10/2008:</strong></p>
+
+<p>I feel I should make sure everyone knows that I am to an extent being facetious with the word "laziness" but I'm being completely serious on the "don't do more work than you have to." While a good developer can handle long, arduous tasks that are prone to human error, a great developer avoids them in the first place.</p>
+]]></content>
+  </entry>
+  
+</feed>

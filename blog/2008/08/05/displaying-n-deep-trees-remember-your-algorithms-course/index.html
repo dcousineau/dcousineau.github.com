@@ -1,0 +1,520 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Displaying N-Deep Trees (Remember Your Algorithms Course?) - Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="Often times when doing web development one has the need to categorize things. And not only basic categorization, n-deep hierarchical categorization. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/2008/08/05/displaying-n-deep-trees-remember-your-algorithms-course/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Displaying N-Deep Trees (Remember Your Algorithms Course?)</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-05T05:45:04-05:00" pubdate data-updated="true">Aug 5<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Often times when doing web development one has the need to categorize things. And not only basic categorization, n-deep hierarchical categorization. I&#8217;ve already discussed <a href="http://www.toosweettobesour.com/2008/06/02/hierarchical-data-with-php-and-mysql/">storage and retrieval</a> of such data, but there comes a time when one needs to display this information.</p>
+
+<p>Sometimes people build systems to only account for their current requirements. If the software calls for only 2 levels of categorization (Parent and Child only), a simple nested for loop will suffice. However, software requirements change and you&#8217;ll soon find yourself up shit creek without a paddle if you need to support 3 or 4 levels of nesting.</p>
+
+<p>For those of us who have formal computer science training, the answer comes rather quickly. To those who&#8217;s training is less formal (most web developers I meet have practical training, not formal), I&#8217;ll help you out: <a href="http://en.wikipedia.org/wiki/Tree_traversal">Tree Traversals</a> (or if you are completely lost, <a href="http://en.wikipedia.org/wiki/Recursion">Recursion</a>). If you know absolutely nothing about recursion, I would suggest you familiarize yourself now. A recent, easy to read example can be found <a href="http://www.phpwomen.org/forum/index.php?t=msg&amp;th=477">here</a>.</p>
+
+<!-- more -->
+
+
+<p>To begin, lets outline the structure of our data. In my case, I am building a store. My designer requested our URLs to follow the convention /shop/PARENT_CATEGORY/[&#8230;/]CURRENT_CATEGORY/, where as the full path to our current category is in the URL and moving up the tree is as simple as popping a &#8216;folder&#8217; off the URL. For instance, Bats are a child of Sports Equipment, so our URL would looks something like: /shop/sports-equipment/bats/. To view sports equipment, we just do /shop/sports-equipment/. What this means to me is I will always have the full path to the current leaf, which comes into play later.</p>
+
+<p>Now my categories are returned to me in a nested associative array that contain the keys &#8216;title&#8217;, &#8216;url&#8217;, and &#8216;children&#8217;:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>**array**
+</span><span class='line'>  0 =&gt;
+</span><span class='line'>    **array**
+</span><span class='line'>      &#39;id&#39; =&gt; string &#39;1&#39; _(length=1)_
+</span><span class='line'>      &#39;title&#39; =&gt; string &#39;Sports Equipment&#39; _(length=14)_
+</span><span class='line'>      &#39;url&#39; =&gt; string &#39;sports-equipment&#39; _(length=14)_
+</span><span class='line'>      &#39;children&#39; =&gt;
+</span><span class='line'>        **array**
+</span><span class='line'>          0 =&gt;
+</span><span class='line'>            **array**
+</span><span class='line'>              ...
+</span><span class='line'>          1 =&gt;
+</span><span class='line'>            **array**
+</span><span class='line'>              ...
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Obviously our ellipses continue the same pattern.</p>
+
+<p>Since we want to print out our tree so that the root node is the first thing we see, the algorithm we desire is the <strong>preorder tree traversal</strong>. To put it simply, we work with the current node before running the recursive function call (A postorder tree traversal would run the recursive function call before working with the current node).</p>
+
+<p>Now, with every recursive function you design your parameters around information that changes between each recursion, or information that needs to be passed along. In our case we&#8217;ll obviously need to make our first parameter the categories array, we&#8217;ll probably need to pass the path along, keep track of how deep we are, and because of our URL structure we need to keep track of what the path is at our current level in the tree.</p>
+
+<p>So to begin, we have our shell function and call:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">function</span> <span class="nf">categories_display_recursive</span><span class="p">(</span><span class="nv">$categories</span><span class="p">,</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$url_path</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">foreach</span><span class="p">(</span><span class="nv">$categories</span> <span class="k">as</span> <span class="nv">$category</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="c1">//...</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="s1">&#39;&lt;ul&gt;&#39;</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+</span><span class='line'><span class="nx">categories_display_recursive</span><span class="p">(</span><span class="nv">$categories</span><span class="p">,</span> <span class="nv">$path</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s1">&#39;&lt;/ul&gt;&#39;</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now some more requirements come into play. My designer has the menu set to default to a collapsed state and desires the currently viewed category and its parent(s) be opened. Since he also wants all the data on the page so the JavaScript does not have to waste time running AJAX requests, we&#8217;ll just be adding an &#8216;open&#8217; class to the nested ul and a &#8216;selected&#8217; class to the li. Since I&#8217;m nice I decided to throw in a nice snippet to indent the code to make it easier for my designer to read: <code>implode('',array_fill(0, $level+1, "t"))</code>. Simply put, that line creates an array of size <code>$level+1</code> filled with tab characters, then implodes it down into a string.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">function</span> <span class="nf">categories_display_recursive</span><span class="p">(</span><span class="nv">$categories</span><span class="p">,</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$url_path</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">foreach</span><span class="p">(</span><span class="nv">$categories</span> <span class="k">as</span> <span class="nv">$category</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">echo</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="nb">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">));</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$path</span><span class="p">[</span><span class="nv">$level</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$path</span><span class="p">[</span><span class="nv">$level</span><span class="p">]</span> <span class="o">==</span> <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="k">echo</span> <span class="s1">&#39;&lt;li class=&quot;selected&quot;&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="k">echo</span> <span class="s1">&#39;&lt;li&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">echo</span> <span class="s1">&#39;&lt;a href=&quot;/shop/&#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="nb">array_merge</span><span class="p">(</span><span class="nv">$url_path</span><span class="p">,(</span><span class="k">array</span><span class="p">)</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]))</span> <span class="o">.</span> <span class="s1">&#39;/&quot;&gt;&#39;</span> <span class="o">.</span> <span class="nb">htmlentities</span><span class="p">(</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span> <span class="o">.</span> <span class="s1">&#39;&lt;/a&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="c1">//...</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">echo</span> <span class="s1">&#39;&lt;/li&gt;&#39;</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And finally we need to descide what information the script needs to move forward. <code>$category['children']</code> is formatted exactly the same as <code>$categories</code> so we can pass that in and our recursive function won&#8217;t know the difference. <code>$path</code> should be passed in unchanged, however ot make sure nothing is selected we should probably just pass in an empty array when printing children of an item that wasn&#8217;t in our selected path. <code>$level</code> needs to be incremented and we need to add our current url (<code>$category['url']</code>) to the current iterations path (<code>array_merge()</code> works nicely here).</p>
+
+<p>So, in the end we have:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">function</span> <span class="nf">categories_display_recursive</span><span class="p">(</span><span class="nv">$categories</span><span class="p">,</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$level</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">$url_path</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">foreach</span><span class="p">(</span><span class="nv">$categories</span> <span class="k">as</span> <span class="nv">$category</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">echo</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="nb">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">));</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$path</span><span class="p">[</span><span class="nv">$level</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$path</span><span class="p">[</span><span class="nv">$level</span><span class="p">]</span> <span class="o">==</span> <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="k">echo</span> <span class="s1">&#39;&lt;li class=&quot;selected&quot;&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="k">echo</span> <span class="s1">&#39;&lt;li&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">echo</span> <span class="s1">&#39;&lt;a href=&quot;/shop/&#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span><span class="nb">array_merge</span><span class="p">(</span><span class="nv">$url_path</span><span class="p">,(</span><span class="k">array</span><span class="p">)</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]))</span> <span class="o">.</span> <span class="s1">&#39;/&quot;&gt;&#39;</span> <span class="o">.</span> <span class="nb">htmlentities</span><span class="p">(</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">])</span> <span class="o">.</span> <span class="s1">&#39;&lt;/a&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="k">if</span><span class="p">(</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$path</span><span class="p">[</span><span class="nv">$level</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nv">$path</span><span class="p">[</span><span class="nv">$level</span><span class="p">]</span> <span class="o">==</span> <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]</span> <span class="p">)</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>              <span class="k">echo</span> <span class="nx">PHP_EOL</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="nb">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">));</span>
+</span><span class='line'>              <span class="k">echo</span> <span class="s1">&#39;&lt;ul class=&quot;open&quot;&gt;&#39;</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+</span><span class='line'>              
+</span><span class='line'>              <span class="nx">categories_display_recursive</span><span class="p">(</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">],</span> <span class="nv">$path</span><span class="p">,</span> <span class="nv">$level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$url_path</span><span class="p">,</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]));</span>
+</span><span class='line'>              
+</span><span class='line'>              <span class="k">echo</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="nb">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">));</span>
+</span><span class='line'>              <span class="k">echo</span> <span class="s1">&#39;&lt;/ul&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>          <span class="k">else</span>
+</span><span class='line'>          <span class="p">{</span>
+</span><span class='line'>              <span class="k">echo</span> <span class="nx">PHP_EOL</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="nb">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">));</span>
+</span><span class='line'>              <span class="k">echo</span> <span class="s1">&#39;&lt;ul&gt;&#39;</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+</span><span class='line'>              
+</span><span class='line'>              <span class="nx">categories_display_recursive</span><span class="p">(</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">],</span> <span class="k">array</span><span class="p">(),</span><span class="nv">$level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$url_path</span><span class="p">,</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;url&#39;</span><span class="p">]));</span>
+</span><span class='line'>              
+</span><span class='line'>              <span class="k">echo</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="nb">array_fill</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nv">$level</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;t&quot;</span><span class="p">));</span>
+</span><span class='line'>              <span class="k">echo</span> <span class="s1">&#39;&lt;/ul&gt;&#39;</span><span class="p">;</span>
+</span><span class='line'>          <span class="p">}</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">echo</span> <span class="s1">&#39;&lt;/li&gt;&#39;</span> <span class="o">.</span> <span class="nx">PHP_EOL</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Our final code should look exactly like this when Sports Equipment is the only element in the <code>$path</code> array:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;ul</span> <span class="na">id=</span><span class="s">&quot;nav&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;li</span> <span class="na">class=</span><span class="s">&quot;selected&quot;</span><span class="nt">&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;/shop/sports-equipment/&quot;</span><span class="nt">&gt;</span>Sports Equipment<span class="nt">&lt;/a&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">&quot;open&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;li&gt;&lt;a</span> <span class="na">href=</span><span class="s">&quot;/shop/sports-equipment/bats/&quot;</span><span class="nt">&gt;</span>Bats<span class="nt">&lt;/a&gt;&lt;/li&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/ul&gt;&lt;/li&gt;</span>
+</span><span class='line'><span class="nt">&lt;/ul&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Daniel Cousineau</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-08-05T05:45:04-05:00" pubdate data-updated="true">Aug 5<span>th</span>, 2008</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/development/'>Development</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://dcousineau.github.com/blog/2008/08/05/displaying-n-deep-trees-remember-your-algorithms-course/" data-via="dcousineau" data-counturl="http://dcousineau.github.com/blog/2008/08/05/displaying-n-deep-trees-remember-your-algorithms-course/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2008/07/30/elephpant/" title="Previous Post: ElePHPant!!">&laquo; ElePHPant!!</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2008/08/08/end-of-an-era-goodbye-to-php-4/" title="Next Post: End Of An Era (Goodbye to PHP 4)">End Of An Era (Goodbye to PHP 4) &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dcousineau.github.com/blog/2008/08/05/displaying-n-deep-trees-remember-your-algorithms-course/';
+        var disqus_url = 'http://dcousineau.github.com/blog/2008/08/05/displaying-n-deep-trees-remember-your-algorithms-course/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

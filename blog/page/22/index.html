@@ -1,0 +1,707 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="At Net Perspective we created an image editor in flash that we just released for sale called ImagePlane. While ImagePlane has already been creatively &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/page/22/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2008/09/13/imageplane-and-some-simple-oop-designs/">ImagePlane and Some Simple OOP Designs</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-09-13T15:35:32-05:00" pubdate data-updated="true">Sep 13<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>At <a href="http://www.net-perspective.com/">Net Perspective</a> we created an image editor in flash that we just released for sale called <a href="http://kitchen.net-perspective.com/commercial/image-plane">ImagePlane</a>.</p>
+
+<p>While ImagePlane has already been <a href="http://blog.net-perspective.com/2008/09/10/image-plane-as-easy-as/">creatively introduced</a> and <a href="http://kitchen.net-perspective.com/docs/image-plane/developer/">documented quite thoroughly</a>, I wanted to go over some decisions concerning the PHP demo.</p>
+
+<p>Currently ImagePlane posts saved data to URL via the HTTP POST method. Currently ImagePlane posts the entire Base64 encoded image (after transformations), but when designing the example class I had to account for the fact that I might have to someday support just a list of transformations (for the server to duplicate rather than receiving the entire image again). I also would have to support more than 1 output engine (despite the fact that I myself would just be using GD).</p>
+
+<p>In designing my interface I like to make a quick list of operations and objects I will be expected to perform (no, this isn&#8217;t a waterfall document, the list can be broad but I need a general idea of where I&#8217;m going):</p>
+
+<ol>
+<li>Set a filename (and by proximity, output directory and type)</li>
+<li>Select an output engine (either for performance reasons or simply support)</li>
+<li>Constrain image sizes</li>
+<li>Set certain image options (JPEG quality, possibly PNG transparency)</li>
+</ol>
+
+
+<p>Now since I know I needed to support multiple output engines, I&#8217;m guaranteed to use the <a href="http://en.wikipedia.org/wiki/Adapter_pattern">Adapter pattern</a>. So now we have to split up our tasks among two classes.</p>
+
+<p>Since our Adapter classes will each be very different internally (since they have to emulate and mimic features with different libraries) we&#8217;ll want to keep them as small and clean as possible. Stepping through the list above we can see that 3 and 4 are obviously a best fit for our Adapter class since they deal directly with the actual image processing. All 2 really happens to be is a <code>setOutputEngine(Adapter_Interface $engine)</code> type method, however you can make it fancier by accepting a string for the engine and finding and instantiating the engine manually, but that&#8217;s implementation side. Item 1 could be construed as belonging with the image processing but in reality it does not. Setting the output location and type is universal to all libraries, infact it really has nothing to do with image processing.</p>
+
+<p>So we have a nice delegation of tasks to our objects we can start building. First things first, after creating our main shell class we create an interface (since things are so wildly different amongst image processing engines there&#8217;s not much we can replicate so an interface will work better here as opposed to inheriting an abstract class) for our Adapter class.</p>
+
+<p>The adapter class is going to need to do a few things. Specifically its going to need to load from a string (base64 encoded), set a few options (preserveTransparency and setOutQuality, for jpegs), and save the image data.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">interface</span> <span class="nx">ImagePlane_Output_Interface</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * @param string $data base64 encoded image</span>
+</span><span class='line'><span class="sd">  * @return ImagePlane_Output_GD fluent interface</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">loadFromString</span><span class="p">(</span><span class="nv">$image</span><span class="p">);</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * @param bool $bool</span>
+</span><span class='line'><span class="sd">  * @return ImagePlane_Output_GD fluent interface</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">preserveTransparency</span><span class="p">(</span><span class="nv">$bool</span> <span class="o">=</span> <span class="k">true</span><span class="p">);</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Only really used for JPEG</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @param int $quality</span>
+</span><span class='line'><span class="sd">  * @return ImagePlane_Output_GD fluent interface</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">setOutQuality</span><span class="p">(</span><span class="nv">$quality</span><span class="p">);</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * @param string $outFile output location</span>
+</span><span class='line'><span class="sd">  * @param string $type Image type</span>
+</span><span class='line'><span class="sd">  * @return bool</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">save</span><span class="p">(</span><span class="nv">$outFile</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">ImagePlane</span><span class="o">::</span><span class="na">TYPE_JPEG</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In our primary class we are probably best splitting up the outfile into 3 separate segments. We should force good filenames by making the user put in the output directory, output name, THEN output type. This way we can easily fix our filenames, check directory problems, and enforce output type (and proper extensions) without having to hack through <code>pathinfo</code> results only to find the user specified some weird extension for a type that we didn&#8217;t account for. Plus this leaves us open to in the future specifying multiple output files without having to include directories on all them, or specifying multiple output types again without having to retype the entire filename.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">ImagePlane</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * ImagePlane is passing in final transformed image via base64 POST</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">const</span> <span class="no">INPUT_POST</span> <span class="o">=</span> <span class="s1">&#39;post&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * CURRENTLY NOT IMPLEMENTED BY IMAGEPLANE</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">const</span> <span class="no">INPUT_TRANSFORMATIONS</span> <span class="o">=</span> <span class="s1">&#39;transformations&#39;</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="c1">//Image Types</span>
+</span><span class='line'>  <span class="k">const</span> <span class="no">TYPE_JPEG</span> <span class="o">=</span> <span class="s1">&#39;jpg&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">const</span> <span class="no">TYPE_PNG</span> <span class="o">=</span> <span class="s1">&#39;png&#39;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">const</span> <span class="no">TYPE_GIF</span> <span class="o">=</span> <span class="s1">&#39;gif&#39;</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Output engine</span>
+</span><span class='line'><span class="sd">  *</span>
+</span><span class='line'><span class="sd">  * @var ImagePlane_Output_Interface</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="nv">$outputEngine</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Output directory</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @var string</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="nv">$outDirectory</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Output name (without extension)</span>
+</span><span class='line'><span class="sd">  *</span>
+</span><span class='line'><span class="sd">  * @var string</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="nv">$outName</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Output type</span>
+</span><span class='line'><span class="sd">  *</span>
+</span><span class='line'><span class="sd">  * @var string</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="nv">$outType</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Create new ImagePlane instance using a certain output engine</span>
+</span><span class='line'><span class="sd">  *</span>
+</span><span class='line'><span class="sd">  * @param ImagePlane_Output_Interface $outputEngine</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">ImagePlane_Output_Interface</span> <span class="nv">$outputEngine</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setOutputEngine</span><span class="p">(</span><span class="nv">$outputEngine</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Set the image output directory</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @param string $directory</span>
+</span><span class='line'><span class="sd">  * @return ImagePlane fluent interface</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">setOutDirectory</span><span class="p">(</span><span class="nv">$directory</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nb">is_writable</span><span class="p">(</span><span class="nv">$directory</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;Output directory is not writeable&quot;</span><span class="p">);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">outDirectory</span> <span class="o">=</span> <span class="nv">$directory</span><span class="p">;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Get the image output directory</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @return string</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">getOutDirectory</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">outDirectory</span><span class="p">,</span> <span class="s1">&#39;\/&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Output filename (without extension)</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * The filename is automatically stripped of any characters other than &#39;A-Z&#39;,</span>
+</span><span class='line'><span class="sd">  * &#39;0-9&#39;, &#39;_&#39;, and &#39;-&#39;, and are replaced with a dash.</span>
+</span><span class='line'><span class="sd">  *</span>
+</span><span class='line'><span class="sd">  * @param string $name</span>
+</span><span class='line'><span class="sd">  * @return ImagePlane fluent interface</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">setOutName</span><span class="p">(</span><span class="nv">$name</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">outName</span> <span class="o">=</span> <span class="nb">preg_replace</span><span class="p">(</span><span class="s2">&quot;/[^[:alnum:]_-]+/&quot;</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="nv">$name</span><span class="p">);</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Get the output filename (without extension)</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @return string</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">getOutName</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">outName</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Set output type.</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * Valid options are:</span>
+</span><span class='line'><span class="sd">  *  - ImagePlane::TYPE_JPEG</span>
+</span><span class='line'><span class="sd">  *  - ImagePlane::TYPE_PNG</span>
+</span><span class='line'><span class="sd">  *  - ImagePlane::TYPE_GIF</span>
+</span><span class='line'><span class="sd">  *</span>
+</span><span class='line'><span class="sd">  * @param string $type</span>
+</span><span class='line'><span class="sd">  * @return ImagePlane fluent interface</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">setOutType</span><span class="p">(</span><span class="nv">$type</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nb">in_array</span><span class="p">(</span><span class="nv">$type</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span><span class="nx">self</span><span class="o">::</span><span class="na">TYPE_PNG</span><span class="p">,</span> <span class="nx">self</span><span class="o">::</span><span class="na">TYPE_JPEG</span><span class="p">,</span> <span class="nx">self</span><span class="o">::</span><span class="na">TYPE_GIF</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>          <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid Type&quot;</span><span class="p">);</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">outType</span> <span class="o">=</span> <span class="nv">$type</span><span class="p">;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="k">return</span> <span class="nv">$this</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Get the output type</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * Valid returned types will be:</span>
+</span><span class='line'><span class="sd">  *  - ImagePlane::TYPE_JPEG</span>
+</span><span class='line'><span class="sd">  *  - ImagePlane::TYPE_PNG</span>
+</span><span class='line'><span class="sd">  *  - ImagePlane::TYPE_GIF</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @return string</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">getOutType</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">outType</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Process ImagePlane input</span>
+</span><span class='line'><span class="sd">  *</span>
+</span><span class='line'><span class="sd">  * @param array $data</span>
+</span><span class='line'><span class="sd">  * @param string $type ImagePlane::INPUT_POST (default) or ImagePlane::INPUT_TRANSFORMATIONS</span>
+</span><span class='line'><span class="sd">  * @return bool</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">process</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="nx">self</span><span class="o">::</span><span class="na">INPUT_POST</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Set output engine</span>
+</span><span class='line'><span class="sd">  *</span>
+</span><span class='line'><span class="sd">  * @param ImagePlane_Output_Interface $outputEngine</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">setOutputEngine</span><span class="p">(</span><span class="nx">ImagePlane_Output_Interface</span> <span class="nv">$outputEngine</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">outputEngine</span> <span class="o">=</span> <span class="nv">$outputEngine</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Get the output engine object</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @return ImagePlane_Output_Interface</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">getOutputEngine</span><span class="p">()</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">outputEngine</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You can see that on my set* functions I return the <code>$this</code> variable. This is called the fluent interface, and it allows you to make calls like <code>$object-&gt;method()-&gt;method()-&gt;method();</code> which makes for compact, and in some cases, semantic code.</p>
+
+<p>You can see that spending just a little bit of time we now have an easily alterable utility class to process uploads from ImagePlane with a very low footprint for the actual end user:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">require_once</span> <span class="s1">&#39;../php/imageplane.php&#39;</span><span class="p">;</span>
+</span><span class='line'><span class="nb">spl_autoload_register</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;ImagePlane&#39;</span><span class="p">,</span><span class="s1">&#39;autoload&#39;</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$imagePlane</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ImagePlane</span><span class="p">(</span><span class="k">new</span> <span class="nx">ImagePlane_Output_GD</span><span class="p">());</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$imagePlane</span><span class="o">-&gt;</span><span class="na">setOutDirectory</span><span class="p">(</span><span class="nb">dirname</span><span class="p">(</span><span class="k">__FILE__</span><span class="p">))</span>
+</span><span class='line'>           <span class="o">-&gt;</span><span class="na">setOutName</span><span class="p">(</span><span class="s2">&quot;IPOutput&quot;</span><span class="p">)</span>
+</span><span class='line'>           <span class="o">-&gt;</span><span class="na">setOutType</span><span class="p">(</span><span class="nx">ImagePlane</span><span class="o">::</span><span class="na">TYPE_JPEG</span><span class="p">)</span>
+</span><span class='line'>           <span class="o">-&gt;</span><span class="na">process</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now obviously this literal code snippet presents security issues but they can be tackled. Firstly the above code snippet can easily be moved inside an if block checking for authentication credentials (like an <code>$acl-&gt;isLoggedIn()</code> or similar), as well as checking for tokens via the <code>otherData</code> input variable as described in the <a href="http://kitchen.net-perspective.com/docs/image-plane/developer/input#inputVariablesHeader">documentation</a>.</p>
+
+<p>Stay tuned, hopefully I&#8217;ll be posting more in the future on OO design and provide more complex design topics in the future.</p>
+
+<p>In the mean time if you want an excellent, classic book, I suggest you grab a copy of <a href="http://www.amazon.com/Design-Patterns-Object-Oriented-Addison-Wesley-Professional/dp/0201633612">Design Patterns: Elements of Reusable Object-Oriented Software</a> by The Gang of Four.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/23/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/21/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

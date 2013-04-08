@@ -1,0 +1,610 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Automating the Development Workflow - Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="I just rolled out some new automation tools for a few projects here at work and so far I&#8217;ve been extremely happy. Much to my embarrassment, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/2008/05/15/automating-the-development-workflow/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Automating the Development Workflow</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-05-15T09:08:21-05:00" pubdate data-updated="true">May 15<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I just rolled out some new automation tools for a few projects here at work and so far I&#8217;ve been extremely happy.</p>
+
+<p>Much to my embarrassment, development has previously been outside of source control due to the fact that we develop sites, we don&#8217;t deploy packaged applications, and we don&#8217;t have a cohesive IT setup (everyone sets up their desktop to their liking so maintaining consistent development environments across all computers is difficult).</p>
+
+<p>However, thanks to SVN, <a href="http://code.google.com/p/xinc/">Xinc</a> and <a href="http://phing.info/">Phing</a> (and <a href="http://dbdeploy.com/">DBDeploy</a>), this has changed! Now everything is in source control and automatically deployed to our dev server upon commit. I am currently talking with Arno about perfecting svn tag monitoring to automate staging and (possibly) live deployments, so I&#8217;ll post about what I did when that&#8217;s finished.</p>
+
+<p>The great thing about this setup is all pieces are technically interchangeable. If you don&#8217;t like Xinc you can use <a href="http://cruisecontrol.sourceforge.net/">CruiseControl</a>. If you don&#8217;t like Phing you can use <a href="http://www.pake-project.com/">Pake</a>, or a shell script even. If you don&#8217;t like DBDeploy you can roll your own setup or swap it out for your database versioning system of your choice!</p>
+
+<p>However this post will cover Xinc, Phing, and DBDeploy as (a) I have experience with them and none of the others, and (b) they integrate extremely well (Xinc and Phing&#8217;s primary distribution method of choice are <a href="http://pear.php.net/">PEAR</a> channels).</p>
+
+<!-- more -->
+
+
+<p>To get started, we&#8217;ll of course need to install Phing and Xinc. <strong>NOTE:</strong> DBDeploy is ported to PHP and included with Phing, don&#8217;t get your panties in a bunch trying to get the .jar files from DBDeploy&#8217;s website to run because you don&#8217;t need them!</p>
+
+<p>First get Phing installed. As a forewarning, I like to use the &#8211;alldeps flag, however even if you don&#8217;t I would suggest using &#8211;alldeps on Phing as most of the dependencies are good packages like PHPUnit, PHPdoc, and in particular the VersionControl_SVN, which is used by Xinc as well.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'># pear channel-discover pear.phing.info
+</span><span class='line'># pear config-set preferred_state beta
+</span><span class='line'># pear install --alldeps phing/Phing
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>During the install you will get a message about VersionControl_SVN being in alpha and will give you channel://&#8230; address. You can either copy that and run <code>pear install --alldeps channel://...</code> or download the tgz manually from <a href="http://pear.php.net/package/VersionControl_SVN/download">its PEAR page</a>.</p>
+
+<p>Now we&#8217;ll install Xinc. Xinc 2.0.1 recently has made use of the Graph component from <a href="http://ezcomponents.org/">eZ components</a> so we&#8217;ll need to add both Xinc and eZ Component&#8217;s channel to PEAR before we install:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'># pear channel-discover pear.xinc.eu
+</span><span class='line'># pear channel-discover components.ez.no
+</span><span class='line'># pear install --alldeps xinc/Xinc
+</span><span class='line'># pear run-scripts xinc/Xinc
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The last line runs Xinc&#8217;s install scripts (as Xinc installers a daemon into /etc/init.d/ as well as sets up a few folders outside of the usual PEAR directory). I would suggest sticking with the defaults, installing the sample project is not really necessary but I would suggest for newbies it as it is a full featured example you can use as a template.</p>
+
+<p>Next you&#8217;ll need to setup the Xinc display page. If you installed to the default locations you&#8217;ll need to go to <code>/etc/xinc/</code>. In there is a <code>www.conf</code> file. You can just <code>ln -s</code> it to your conf.d folder in apache (in Ubuntu/Debian: <code>/etc/apache2/sites-available/</code>, in Fedora/Redhat: <code>/etc/httpd/conf.d/</code>). You will probably need to alter the VirtualHost tag to fit your server setup if you want external access, but it should work just fine out of the box.</p>
+
+<p>If you used the default setup you can visit localhost:8080 to test and ensure it is up and running. You can visit <a href="http://www.xinc.eu/">xinc.eu</a> to view a working demo (obviously well past the &#8220;Self Hosting&#8221; milestone).</p>
+
+<p>From there we can begin to add our projects. I <code>chmod 777</code>&#8216;d and symlinked the <code>/etc/xinc/conf.d/</code> folder into the public share to provide access to the project xml files to the other developers in the office. For now lets leave it alone, don&#8217;t worry about starting up the Xinc daemon as we need to setup our project first.</p>
+
+<blockquote><p>The rest of the post will involve configuration of Phing and Xinc. This post will not go into detail on the configurations, for more information check the user documentation on their respective websites.</p></blockquote>
+
+<p>Now it&#8217;s time to setup our Phing buildfile and project. Obviously you should adjust this setup to suit your project. We initially start with this directory/file layout:</p>
+
+<ul>
+<li><code>db/</code>
+
+<ul>
+<li><code>deltas/</code></li>
+</ul>
+</li>
+<li><code>lib/</code></li>
+<li><code>reports/</code></li>
+<li><code>build.properties</code></li>
+<li><code>build.xml</code></li>
+</ul>
+
+
+<p>Lets start with build.xml. When you run <code>phing</code> in the command line without specifying the build file, it looks for a file named build.xml by default. Lets see an example build.xml file:</p>
+
+<blockquote><p>The DBDeploy code comes with much thanks to Dave Marshall&#8217;s <a href="http://www.davedevelopment.co.uk/2008/04/14/how-to-simple-database-migrations-with-phing-and-dbdeploy/">post</a></p></blockquote>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="c">&lt;!--?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?--&gt;</span>
+</span><span class='line'><span class="nt">&lt;project</span> <span class="na">name=</span><span class="s">&quot;Brazos Valley API&quot;</span> <span class="na">default=</span><span class="s">&quot;dist&quot;</span> <span class="na">basedir=</span><span class="s">&quot;.&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nt">&lt;tstamp&gt;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nt">&lt;property</span> <span class="na">file=</span><span class="s">&quot;./build.properties&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nt">&lt;fileset</span> <span class="na">dir=</span><span class="s">&quot;${project.basedir}/lib&quot;</span> <span class="na">id=</span><span class="s">&quot;codefiles&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;include</span> <span class="na">name=</span><span class="s">&quot;**&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;exclude</span> <span class="na">name=</span><span class="s">&quot;**/.svn/**&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/exclude&gt;&lt;/include&gt;&lt;/fileset&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">&quot;migrate&quot;</span> <span class="na">description=</span><span class="s">&quot;Database Migrations&quot;</span> <span class="na">depends=</span><span class="s">&quot;doc&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="c">&lt;!-- delete leftover SQL scripts --&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;delete&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;fileset</span> <span class="na">dir=</span><span class="s">&quot;${project.basedir}/db&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>              <span class="nt">&lt;include</span> <span class="na">name=</span><span class="s">&quot;*.sql&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;/include&gt;&lt;/fileset&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/delete&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c">&lt;!-- load the dbdeploy task --&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;taskdef</span> <span class="na">name=</span><span class="s">&quot;dbdeploy&quot;</span> <span class="na">classname=</span><span class="s">&quot;phing.tasks.ext.dbdeploy.DbDeployTask&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c">&lt;!-- these two filenames will contain the generated SQL to do the deploy and roll it back--&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;build.dbdeploy.deployfile&quot;</span> <span class="na">value=</span><span class="s">&quot;db/deploy-${DSTAMP}${TSTAMP}.sql&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;build.dbdeploy.undofile&quot;</span> <span class="na">value=</span><span class="s">&quot;db/undo-${DSTAMP}${TSTAMP}.sql&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c">&lt;!-- generate the deployment scripts --&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;dbdeploy</span> <span class="na">url=</span><span class="s">&quot;mysql:host=${db.local.host};dbname=${db.local.name}&quot;</span> <span class="na">userid=</span><span class="s">&quot;${db.local.user}&quot;</span> <span class="na">password=</span><span class="s">&quot;${db.local.pass}&quot;</span> <span class="na">dir=</span><span class="s">&quot;${project.basedir}/db/deltas&quot;</span> <span class="na">outputfile=</span><span class="s">&quot;${project.basedir}/${build.dbdeploy.deployfile}&quot;</span> <span class="na">undooutputfile=</span><span class="s">&quot;${project.basedir}/${build.dbdeploy.undofile}&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c">&lt;!-- execute the SQL - Use mysql command line to avoid trouble with large files or many statements and PDO --&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;exec</span> <span class="na">command=</span><span class="s">&quot;${progs.mysql} -h${db.local.host} -u${db.local.user} -p${db.local.pass} ${db.local.name} &lt; ${build.dbdeploy.deployfile}&quot;</span> <span class="na">dir=</span><span class="s">&quot;${project.basedir}&quot;</span> <span class="na">checkreturn=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c">&lt;!-- prepare SQL file for artifact publishing --&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;move</span> <span class="na">file=</span><span class="s">&quot;${project.basedir}/${build.dbdeploy.deployfile}&quot;</span> <span class="na">tofile=</span><span class="s">&quot;${project.basedir}/db/deploy.sql&quot;</span> <span class="na">overwrite=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;move</span> <span class="na">file=</span><span class="s">&quot;${project.basedir}/${build.dbdeploy.undofile}&quot;</span> <span class="na">tofile=</span><span class="s">&quot;${project.basedir}/db/undo.sql&quot;</span> <span class="na">overwrite=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>  <span class="nt">&lt;/move&gt;&lt;/move&gt;&lt;/exec&gt;&lt;/dbdeploy&gt;&lt;/property&gt;&lt;/property&gt;&lt;/taskdef&gt;&lt;/target&gt;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">&quot;copy&quot;</span> <span class="na">description=</span><span class="s">&quot;Copy Files To httpdocs&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;exec</span> <span class="na">command=</span><span class="s">&quot;rsync -Crd ${project.basedir}/lib/ ${copy.dir}&quot;</span> <span class="na">escape=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;exec</span> <span class="na">command=</span><span class="s">&quot;chown -R apache:apache ${copy.dir}&quot;</span> <span class="na">escape=</span><span class="s">&quot;false&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/exec&gt;&lt;/exec&gt;&lt;/target&gt;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nt">&lt;target</span> <span class="na">name=</span><span class="s">&quot;dist&quot;</span> <span class="na">depends=</span><span class="s">&quot;copy, migrate&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      
+</span><span class='line'>  <span class="nt">&lt;/target&gt;</span>
+</span><span class='line'><span class="nt">&lt;/project&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The contents of build.properties:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="c"># Property files contain key/value pairs</span>
+</span><span class='line'><span class="c">#key=value</span>
+</span><span class='line'>
+</span><span class='line'><span class="na">copy.dir</span><span class="o">=</span><span class="s">/var/www/</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Credentials for the database migrations</span>
+</span><span class='line'><span class="na">db.local.host</span><span class="o">=</span>
+</span><span class='line'><span class="na">db.local.user</span><span class="o">=</span>
+</span><span class='line'><span class="na">db.local.pass</span><span class="o">=</span>
+</span><span class='line'><span class="na">db.local.name</span><span class="o">=</span>
+</span><span class='line'>
+</span><span class='line'><span class="c"># Location of the MySQL program. DO NOT ALTER</span>
+</span><span class='line'><span class="na">progs.mysql</span><span class="o">=</span><span class="s">/usr/bin/mysql</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The last portion of the file, the db.* and progs.mysql key-value pairs are used by db deply and should connect to the same database as your application.</p>
+
+<p>You will need to run a simple query to add a table into your database before you can run the migrate task, however, since DBDeploy tracks its versioning information via a table in the database in question (in MYSQL dialect):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">changelog</span> <span class="p">(</span>
+</span><span class='line'>  <span class="n">change_number</span> <span class="nb">BIGINT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">delta_set</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">start_dt</span> <span class="k">TIMESTAMP</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">complete_dt</span> <span class="k">TIMESTAMP</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">applied_by</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">description</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span>
+</span><span class='line'><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">changelog</span> <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">Pkchangelog</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">change_number</span><span class="p">,</span> <span class="n">delta_set</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Once you run the query above and supplied your database credentials we need to create our initial DB delta. DBDeploy deltas take on the naming convention [VERSION_NUMBER]-[COMMENT].sql. Comments are largely ignored and all the system looks for is the version number. So our first DBDeploy delta will be called something like <code>db/deltas/1-create_initial_schema.sql</code>.</p>
+
+<p>The delta file will contain 2 SQL Query sets. The first is to perform whatever actions are necessary to bring the database up to revision n and the second set is the inverse: the queries necessary to remove revision n and restore the database to the previous state.</p>
+
+<p>An example delta file that starts a users table:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="c1">--//</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="o">`</span><span class="n">users</span><span class="o">`</span> <span class="p">(</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">unsigned</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">auto_increment</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">handle</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">default</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="k">PRIMARY</span> <span class="k">KEY</span>  <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span>
+</span><span class='line'>  <span class="k">UNIQUE</span> <span class="k">KEY</span> <span class="o">`</span><span class="n">users_handle_index</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">handle</span><span class="o">`</span><span class="p">)</span>
+</span><span class='line'><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span>  <span class="k">DEFAULT</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">--//@UNDO</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">-- You will obviously want to ALTER TABLE ... DROP KEY to remove</span>
+</span><span class='line'><span class="c1">-- any FK constraints at the very beginning if you are dropping tables</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="o">`</span><span class="n">users</span><span class="o">`</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">--//</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>DBDeploy works by determining the most recent revision of the database (if changelog is empty then DBDeploy will use all available revisions in deltas), then marges every script between the current revision and the latest in deltas in order and saves the sql files. The <code>&lt;tstamp/&gt;</code> tag sets the timestamp variables (<code>${DSTAMP}${TSTAMP}</code> used to name the SQL files to ensure, even though we clear out old SQL files, the output will never overwrite an existing file. We late move them into generic undo.sql and deploy.sql files for later use.</p>
+
+<p>Once you are done, make sure you commit the project to your SVN repository.</p>
+
+<p>Now we need to setup Xinc. First things first, create your PROJECTNAME.xml file in <code>/etc/xinc/conf.d/</code>.</p>
+
+<p>Lets start with this basic configuration:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='xml'><span class='line'><span class="c">&lt;!--?xml version=&quot;1.0&quot;?--&gt;</span>
+</span><span class='line'><span class="nt">&lt;xinc</span> <span class="na">engine=</span><span class="s">&quot;Sunrise&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;project</span> <span class="na">name=</span><span class="s">&quot;PROJECTNAME&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nt">&lt;schedule</span> <span class="na">interval=</span><span class="s">&quot;15&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;dir&quot;</span> <span class="na">value=</span><span class="s">&quot;/var/xinc/projects/PROJECTNAME&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nt">&lt;modificationset&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;svn</span> <span class="na">directory=</span><span class="s">&quot;${dir}&quot;</span> <span class="na">update=</span><span class="s">&quot;true&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/svn&gt;&lt;/modificationset&gt;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nt">&lt;builders&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;phingbuilder</span> <span class="na">buildfile=</span><span class="s">&quot;${dir}/build.xml&quot;</span> <span class="na">workingdir=</span><span class="s">&quot;${dir}&quot;</span> <span class="na">target=</span><span class="s">&quot;dist&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/phingbuilder&gt;&lt;/builders&gt;</span>
+</span><span class='line'>
+</span><span class='line'>      <span class="nt">&lt;publishers&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;artifactspublisher</span> <span class="na">file=</span><span class="s">&quot;${dir}/db/deploy.sql&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>          <span class="nt">&lt;artifactspublisher</span> <span class="na">file=</span><span class="s">&quot;${dir}/db/undo.sql&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>      <span class="nt">&lt;/artifactspublisher&gt;&lt;/artifactspublisher&gt;&lt;/publishers&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;/project&gt;</span>
+</span><span class='line'><span class="nt">&lt;/xinc&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Whenever Xinc runs a build, it stores all log output and any selected artifacts for each attempted build (even the failures, <strong>especially</strong> the failed builds). So if there are any files you would take a particular interest in the contents of during a build, it is advisable to publish it as an artifact! If you read through the Xinc documentation there are special publishers for documentation and unit test reports. Obviously, in our case we are publishing the deploy.sql and undo.sql files.</p>
+
+<p>Once you have saved the PROJECTNAME.xml file we need to do one last setup before we can run the daemon. We need to navigate to <code>/var/xinc/projects/</code> and create a directory with the same exact name as the <code>name=""</code> property in the <code>project</code> tag of our PROJECTNAME.xml file (in this case, PROJECTNAME). In this directory you need to check out a copy of your project, <code>svn co http://REPO/LOCATION/trunk</code>.</p>
+
+<p>Now that we&#8217;ve done all this we can do a <code>sudo /etc/init.d/xinc start</code> and Xinc should start right up!</p>
+
+<p>If you find that the project does not appear on the web interface, this usually means it&#8217;s corresponding folder in <code>/var/xinc/status/</code> has not been created and an easy fix is to commit some change and force Xinc into a build (Xinc usually isn&#8217;t building because obviously at this point in time the checked out copy and the remote repository are perfectly in sync).</p>
+
+<p>From here on out it should be easy to setup new projects if you keep around both an Xinc project.xml and SVN project template.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Daniel Cousineau</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-05-15T09:08:21-05:00" pubdate data-updated="true">May 15<span>th</span>, 2008</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/development/'>Development</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://dcousineau.github.com/blog/2008/05/15/automating-the-development-workflow/" data-via="dcousineau" data-counturl="http://dcousineau.github.com/blog/2008/05/15/automating-the-development-workflow/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2008/05/10/indy/" title="Previous Post: Indy!!">&laquo; Indy!!</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2008/05/20/amp-and-runaway-scripts/" title="Next Post: *AMP and Runaway Scripts">*AMP and Runaway Scripts &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dcousineau.github.com/blog/2008/05/15/automating-the-development-workflow/';
+        var disqus_url = 'http://dcousineau.github.com/blog/2008/05/15/automating-the-development-workflow/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

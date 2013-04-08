@@ -1,0 +1,717 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Hierarchical Data With PHP and MySQL - Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="I recently had fun with an all-to-common issue with SQL driven websites: hierarchical data. For those who don&#8217;t like big words, think trees. &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/2008/06/01/hierarchical-data-with-php-and-mysql/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Hierarchical Data With PHP and MySQL</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-06-01T20:28:38-05:00" pubdate data-updated="true">Jun 1<span>st</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I recently had fun with an all-to-common issue with SQL driven websites: hierarchical data. For those who don&#8217;t like big words, think trees. <a href="http://dev.mysql.com/tech-resources/articles/hierarchical-data.html">Other people</a> have already discussed storage methods, and I would actually highly suggest you read the writeup if you haven&#8217;t already.</p>
+
+<p>While it is fairly straightforward to deal with, in our case we use <a href="http://pear.php.net/package/HTML_QuickForm">HTML_QuickForm</a> to handle our forms and are using QuickForm&#8217;s <a href="http://pear.php.net/manual/en/package.html.html-quickform.html-quickform-hierselect.setoptions.php">hierselect</a> to select a category.</p>
+
+<p>The issue starts showing its face in 2 distinct areas: (1) the client is not yet sure how deep they need their categories to go, and (2) the hierselect requires a very specific format of data to be passed in.</p>
+
+<!-- more -->
+
+
+<p>To start off we have our categories table:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">CREATE</span> <span class="k">TABLE</span>  <span class="o">`</span><span class="n">categories</span><span class="o">`</span> <span class="p">(</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">unsigned</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="n">auto_increment</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">parent_id</span><span class="o">`</span> <span class="nb">int</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="n">unsigned</span> <span class="k">default</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">title</span><span class="o">`</span> <span class="nb">varchar</span><span class="p">(</span><span class="mi">255</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">active</span><span class="o">`</span> <span class="n">tinyint</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">default</span> <span class="s1">&#39;1&#39;</span><span class="p">,</span>
+</span><span class='line'>  <span class="k">PRIMARY</span> <span class="k">KEY</span>  <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">),</span>
+</span><span class='line'>  <span class="k">KEY</span> <span class="o">`</span><span class="n">fk_categories_categories</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">parent_id</span><span class="o">`</span><span class="p">),</span>
+</span><span class='line'>  <span class="k">CONSTRAINT</span> <span class="o">`</span><span class="n">fk_categories_categories</span><span class="o">`</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="o">`</span><span class="n">parent_id</span><span class="o">`</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="o">`</span><span class="n">categories</span><span class="o">`</span> <span class="p">(</span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="p">)</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">NO</span> <span class="n">ACTION</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">NO</span> <span class="n">ACTION</span>
+</span><span class='line'><span class="p">)</span> <span class="n">ENGINE</span><span class="o">=</span><span class="n">InnoDB</span> <span class="k">DEFAULT</span> <span class="n">CHARSET</span><span class="o">=</span><span class="n">latin1</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>To make life easier for myself I have my model auto generating the SQL statement to go n levels deep in printing all categories:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">if</span><span class="p">(</span> <span class="nb">intval</span><span class="p">(</span><span class="nv">$depth</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="p">)</span>
+</span><span class='line'>  <span class="nv">$depth</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$select</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$from</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$where</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$order</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">for</span><span class="p">(</span> <span class="nv">$i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;=</span> <span class="nv">$depth</span><span class="p">;</span> <span class="nv">$i</span><span class="o">++</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$select</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;level&quot;</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s2">&quot;.id AS level&quot;</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s2">&quot;_id&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$from</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;`categories` AS level&quot;</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$where</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;( level&quot;</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s2">&quot;.active = 1 OR level&quot;</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s2">&quot;.active IS NULL )&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="nv">$order</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;level&quot;</span> <span class="o">.</span> <span class="nv">$i</span> <span class="o">.</span> <span class="s2">&quot;_id&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//SELECT</span>
+</span><span class='line'><span class="nv">$sql</span> <span class="o">=</span> <span class="s2">&quot;SELECT &quot;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="nv">$select</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot;, level&quot;</span> <span class="o">.</span> <span class="nv">$depth</span> <span class="o">.</span> <span class="s2">&quot;.title AS title &quot;</span> <span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//FROM</span>
+</span><span class='line'><span class="nv">$sql</span> <span class="o">.=</span> <span class="s2">&quot;FROM &quot;</span> <span class="o">.</span> <span class="nv">$from</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">.</span> <span class="s2">&quot; &quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">unset</span><span class="p">(</span><span class="nv">$from</span><span class="p">[</span><span class="mi">0</span><span class="p">]);</span>
+</span><span class='line'><span class="k">if</span><span class="p">(</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$select</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">foreach</span><span class="p">(</span> <span class="nv">$from</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$from</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span> <span class="o">.</span> <span class="s2">&quot; ON level&quot;</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot;.id = level&quot;</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$key</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot;.parent_id&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nv">$sql</span> <span class="o">.=</span> <span class="s2">&quot; RIGHT JOIN &quot;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s2">&quot; RIGHT JOIN &quot;</span><span class="p">,</span> <span class="nv">$from</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot; &quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//WHERE</span>
+</span><span class='line'><span class="nv">$sql</span> <span class="o">.=</span> <span class="s2">&quot;WHERE level1.parent_id IS NULL AND &quot;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s2">&quot; AND &quot;</span><span class="p">,</span> <span class="nv">$where</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot; &quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//ORDER</span>
+</span><span class='line'><span class="nv">$sql</span> <span class="o">.=</span> <span class="s2">&quot;ORDER BY &quot;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="p">,</span> <span class="nv">$order</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$rs</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">query</span><span class="p">(</span><span class="nv">$sql</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>At a depth of 5 our SQL query generated becomes:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span>
+</span><span class='line'>  <span class="n">level1</span><span class="p">.</span><span class="n">id</span> <span class="k">AS</span> <span class="n">level1_id</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">level2</span><span class="p">.</span><span class="n">id</span> <span class="k">AS</span> <span class="n">level2_id</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">level3</span><span class="p">.</span><span class="n">id</span> <span class="k">AS</span> <span class="n">level3_id</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">level4</span><span class="p">.</span><span class="n">id</span> <span class="k">AS</span> <span class="n">level4_id</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">level5</span><span class="p">.</span><span class="n">id</span> <span class="k">AS</span> <span class="n">level5_id</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">level5</span><span class="p">.</span><span class="n">title</span> <span class="k">AS</span> <span class="n">title</span>
+</span><span class='line'><span class="k">FROM</span>
+</span><span class='line'>  <span class="o">`</span><span class="n">categories</span><span class="o">`</span> <span class="k">AS</span> <span class="n">level1</span>
+</span><span class='line'>  <span class="k">RIGHT</span> <span class="k">JOIN</span> <span class="o">`</span><span class="n">categories</span><span class="o">`</span> <span class="k">AS</span> <span class="n">level2</span> <span class="k">ON</span> <span class="n">level1</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">level2</span><span class="p">.</span><span class="n">parent_id</span>
+</span><span class='line'>  <span class="k">RIGHT</span> <span class="k">JOIN</span> <span class="o">`</span><span class="n">categories</span><span class="o">`</span> <span class="k">AS</span> <span class="n">level3</span> <span class="k">ON</span> <span class="n">level2</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">level3</span><span class="p">.</span><span class="n">parent_id</span>
+</span><span class='line'>  <span class="k">RIGHT</span> <span class="k">JOIN</span> <span class="o">`</span><span class="n">categories</span><span class="o">`</span> <span class="k">AS</span> <span class="n">level4</span> <span class="k">ON</span> <span class="n">level3</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">level4</span><span class="p">.</span><span class="n">parent_id</span>
+</span><span class='line'>  <span class="k">RIGHT</span> <span class="k">JOIN</span> <span class="o">`</span><span class="n">categories</span><span class="o">`</span> <span class="k">AS</span> <span class="n">level5</span> <span class="k">ON</span> <span class="n">level4</span><span class="p">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">level5</span><span class="p">.</span><span class="n">parent_id</span>
+</span><span class='line'><span class="k">WHERE</span>
+</span><span class='line'>  <span class="n">level1</span><span class="p">.</span><span class="n">parent_id</span> <span class="k">IS</span> <span class="k">NULL</span>
+</span><span class='line'>  <span class="k">AND</span> <span class="p">(</span> <span class="n">level1</span><span class="p">.</span><span class="n">active</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">OR</span> <span class="n">level1</span><span class="p">.</span><span class="n">active</span> <span class="k">IS</span> <span class="k">NULL</span> <span class="p">)</span>
+</span><span class='line'>  <span class="k">AND</span> <span class="p">(</span> <span class="n">level2</span><span class="p">.</span><span class="n">active</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">OR</span> <span class="n">level2</span><span class="p">.</span><span class="n">active</span> <span class="k">IS</span> <span class="k">NULL</span> <span class="p">)</span>
+</span><span class='line'>  <span class="k">AND</span> <span class="p">(</span> <span class="n">level3</span><span class="p">.</span><span class="n">active</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">OR</span> <span class="n">level3</span><span class="p">.</span><span class="n">active</span> <span class="k">IS</span> <span class="k">NULL</span> <span class="p">)</span>
+</span><span class='line'>  <span class="k">AND</span> <span class="p">(</span> <span class="n">level4</span><span class="p">.</span><span class="n">active</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">OR</span> <span class="n">level4</span><span class="p">.</span><span class="n">active</span> <span class="k">IS</span> <span class="k">NULL</span> <span class="p">)</span>
+</span><span class='line'>  <span class="k">AND</span> <span class="p">(</span> <span class="n">level5</span><span class="p">.</span><span class="n">active</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">OR</span> <span class="n">level5</span><span class="p">.</span><span class="n">active</span> <span class="k">IS</span> <span class="k">NULL</span> <span class="p">)</span>
+</span><span class='line'><span class="k">ORDER</span> <span class="k">BY</span>
+</span><span class='line'>  <span class="n">level1_id</span><span class="p">,</span> <span class="n">level2_id</span><span class="p">,</span> <span class="n">level3_id</span><span class="p">,</span> <span class="n">level4_id</span><span class="p">,</span> <span class="n">level5_id</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>The series of <code>( levelN.active = 1 OR levelN.active IS NULL )</code> guarantees that only entries with the active field turned on and that children of deactivated categories are not displayed. Fancy piece of SQL-fu if I do say so myself. The data is returned looking something like this:</p>
+
+<p>level1_id level2_id level3_id level4_id level5_id title</p>
+
+<p>1 Parent
+2 Parent 2
+1 7 Child 2
+2 4 Child
+2 5 Child 2
+1 6 8 Grandchild
+1 6 9 Grandchild 2
+1 6 8 10 Grandchild
+1 6 8 11 Grandchild 2
+1 6 8 10 12 Great Grandchild
+1 6 8 10 13 Great Grandchild 2</p>
+
+<p>Now by cleaning up the null values from the $category array we have our path:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="nv">$data</span> <span class="o">=</span> <span class="nv">$rs</span><span class="o">-&gt;</span><span class="na">getRows</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$categories</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="nv">$data</span> <span class="k">as</span> <span class="nv">$category</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$title</span> <span class="o">=</span> <span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">];</span>
+</span><span class='line'>  <span class="nb">unset</span><span class="p">(</span><span class="nv">$category</span><span class="p">[</span><span class="s1">&#39;title&#39;</span><span class="p">]);</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">foreach</span><span class="p">(</span> <span class="nb">array_reverse</span><span class="p">(</span><span class="nv">$category</span><span class="p">,</span><span class="k">true</span><span class="p">)</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nv">$value</span> <span class="o">===</span> <span class="k">null</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="nb">unset</span><span class="p">(</span><span class="nv">$category</span><span class="p">[</span><span class="nv">$key</span><span class="p">]);</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nx">array_set</span><span class="p">(</span><span class="nv">$categories</span><span class="p">,</span> <span class="nb">array_merge</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$category</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="nb">array_values</span><span class="p">(</span><span class="nv">$category</span><span class="p">)),</span> <span class="nv">$title</span><span class="p">,</span> <span class="s2">&quot;-- SELECT CATEGORY --&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">return</span> <span class="nv">$categories</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You&#8217;ll notice that we also insert into our <code>$categories</code> array according to the hierselect format linked above. That in and of itself is an interesting function as, for example, our entry for Great Great Grandchild would look like <code>$categories[4][1][6][8][10][12] = 'Great Great Grandchild';</code> and we need empty entries for each level.</p>
+
+<p><code>array_set()</code> has this code:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">array_set</span><span class="p">(</span><span class="k">array</span> <span class="o">&amp;</span><span class="nv">$array</span><span class="p">,</span> <span class="k">array</span> <span class="nv">$keys</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$emptyText</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nv">$tmp</span> <span class="o">=&amp;</span> <span class="nv">$array</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nv">$lastKey</span> <span class="o">=</span> <span class="nb">array_pop</span><span class="p">(</span><span class="nv">$keys</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">foreach</span><span class="p">(</span> <span class="nv">$keys</span> <span class="k">as</span> <span class="nv">$key</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$tmp</span><span class="p">[</span><span class="nv">$key</span><span class="p">])</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="nv">$tmp</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nv">$tmp</span> <span class="o">=&amp;</span> <span class="nv">$tmp</span><span class="p">[</span><span class="nv">$key</span><span class="p">];</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$tmp</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">])</span> <span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$tmp</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$emptyText</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="nv">$tmp</span><span class="p">[</span><span class="nv">$lastKey</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And our final array output will look something like this:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>Array
+</span><span class='line'>(
+</span><span class='line'>    [0] =&gt; Array
+</span><span class='line'>        (
+</span><span class='line'>            [] =&gt; -- SELECT CATEGORY --
+</span><span class='line'>            [1] =&gt; Parent
+</span><span class='line'>            [2] =&gt; Parent 2
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    [1] =&gt; Array
+</span><span class='line'>        (
+</span><span class='line'>            [1] =&gt; Array
+</span><span class='line'>                (
+</span><span class='line'>                    [] =&gt; -- SELECT CATEGORY --
+</span><span class='line'>                    [6] =&gt; Child
+</span><span class='line'>                    [7] =&gt; Child 2
+</span><span class='line'>                )
+</span><span class='line'>
+</span><span class='line'>            [2] =&gt; Array
+</span><span class='line'>                (
+</span><span class='line'>                    [] =&gt; -- SELECT CATEGORY --
+</span><span class='line'>                    [4] =&gt; Child
+</span><span class='line'>                    [5] =&gt; Child 2
+</span><span class='line'>                )
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    [2] =&gt; Array
+</span><span class='line'>        (
+</span><span class='line'>            [1] =&gt; Array
+</span><span class='line'>                (
+</span><span class='line'>                    [6] =&gt; Array
+</span><span class='line'>                        (
+</span><span class='line'>                            [] =&gt; -- SELECT CATEGORY --
+</span><span class='line'>                            [8] =&gt; Grandchild
+</span><span class='line'>                            [9] =&gt; Grandchild 2
+</span><span class='line'>                        )
+</span><span class='line'>                )
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    [3] =&gt; Array
+</span><span class='line'>        (
+</span><span class='line'>            [1] =&gt; Array
+</span><span class='line'>                (
+</span><span class='line'>                    [6] =&gt; Array
+</span><span class='line'>                        (
+</span><span class='line'>                            [8] =&gt; Array
+</span><span class='line'>                                (
+</span><span class='line'>                                    [] =&gt; -- SELECT CATEGORY --
+</span><span class='line'>                                    [10] =&gt; Grandchild
+</span><span class='line'>                                    [11] =&gt; Grandchild 2
+</span><span class='line'>                                )
+</span><span class='line'>                        )
+</span><span class='line'>                )
+</span><span class='line'>        )
+</span><span class='line'>
+</span><span class='line'>    [4] =&gt; Array
+</span><span class='line'>        (
+</span><span class='line'>            [1] =&gt; Array
+</span><span class='line'>                (
+</span><span class='line'>                    [6] =&gt; Array
+</span><span class='line'>                        (
+</span><span class='line'>                            [8] =&gt; Array
+</span><span class='line'>                                (
+</span><span class='line'>                                    [10] =&gt; Array
+</span><span class='line'>                                        (
+</span><span class='line'>                                            [] =&gt; -- SELECT CATEGORY --
+</span><span class='line'>                                            [12] =&gt; Great Grandchild
+</span><span class='line'>                                            [13] =&gt; Great Grandchild 2
+</span><span class='line'>                                        )
+</span><span class='line'>                                )
+</span><span class='line'>                        )
+</span><span class='line'>                )
+</span><span class='line'>        )
+</span><span class='line'>)
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Good thing is all that needs to be changed to dig deeper into the hierarchy is the <code>$depth</code> variable from above.</p>
+
+<p>This solution is very good for write intensive applications, so anyone building a forum-like system will find use out of this system.</p>
+
+<p>However I&#8217;m thinking about moving to the Nested Set model as the application for this code will not be write-intensive&#8230;</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Daniel Cousineau</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-06-01T20:28:38-05:00" pubdate data-updated="true">Jun 1<span>st</span>, 2008</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/development/'>Development</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://dcousineau.github.com/blog/2008/06/01/hierarchical-data-with-php-and-mysql/" data-via="dcousineau" data-counturl="http://dcousineau.github.com/blog/2008/06/01/hierarchical-data-with-php-and-mysql/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2008/05/20/amp-and-runaway-scripts/" title="Previous Post: *AMP and Runaway Scripts">&laquo; *AMP and Runaway Scripts</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2008/06/08/laziness-makes-a-great-developer/" title="Next Post: Laziness Makes A Great Developer">Laziness Makes A Great Developer &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dcousineau.github.com/blog/2008/06/01/hierarchical-data-with-php-and-mysql/';
+        var disqus_url = 'http://dcousineau.github.com/blog/2008/06/01/hierarchical-data-with-php-and-mysql/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,858 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="At work I had been having all sorts of issues with Doctrine_Connection_Mssql&#8217;s LIMIT alteration, based on Zend_Db&#8217;s code. The code used &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/page/4/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-09-16T11:11:47-05:00" pubdate data-updated="true">Sep 16<span>th</span>, 2010</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>At work I had been having all sorts of issues with <code>Doctrine_Connection_Mssql</code>&#8217;s <code>LIMIT</code> alteration, based on <code>Zend_Db</code>&#8217;s code.</p>
+
+<p>The code used the more-compatible-with-SQL-Server-2000 technique of modifying the query to <code>SELECT TOP (offset + limit)</code>, reverse the <code>ORDER BY</code> clause and <code>SELECT TOP (limit)</code>, then finally reversing the returned dataset.</p>
+
+<p>As ugly as this technique is, it works. The problem is it requires an extreme amount of intelligence or an extreme amount of simplicity in the query in order for an automated system like Doctrine to be usable. The biggest caveat with this technique is good goddamned luck paging your query if it doesn&#8217;t have an <code>ORDER BY</code>. And sometimes queries that are complex enough break the modified <code>Zend_Db</code> code.</p>
+
+<p>There exists an <a href="http://varjabedian.net/archive/2008/04/09/paging-made-easy-in-ms-sql-server-2005.aspx">easier MSSQL paging technique</a>. Using features first available in SQL Server 2005, with only 1 subquery you can mimic MySQL&#8217;s <code>LIMIT</code> clause with ease.</p>
+
+<p>Basically, Microsoft provided the following special feature to determine the row number in your final resultset:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="n">Row_Number</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="k">column</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RowIndex</span> <span class="k">FROM</span> <span class="k">table</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice the <code>OVER (ORDER BY column)</code> segment? This is provided as this query will most often be used in a subquery. Given that MSSQL does not allow <code>ORDER BY</code> statements in subqueries, just move them into the <code>OVER (...)</code> section.</p>
+
+<p>To borrow Ralph Varjabedian&#8217;s example, the following MySQL query:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">LIMIT</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Becomes functionally equivalent to the following MSSQL query:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span>
+</span><span class='line'>    <span class="o">*</span>
+</span><span class='line'><span class="k">FROM</span>
+</span><span class='line'>    <span class="p">(</span>
+</span><span class='line'>    <span class="k">SELECT</span>
+</span><span class='line'>        <span class="n">Row_Number</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">userID</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RowIndex</span><span class="p">,</span>
+</span><span class='line'>        <span class="o">*</span>
+</span><span class='line'>    <span class="k">FROM</span>
+</span><span class='line'>        <span class="n">users</span>
+</span><span class='line'>    <span class="p">)</span> <span class="k">AS</span> <span class="n">sub</span>
+</span><span class='line'><span class="k">WHERE</span>
+</span><span class='line'>    <span class="n">sub</span><span class="p">.</span><span class="n">RowIndex</span> <span class="o">&gt;</span> <span class="mi">15</span>
+</span><span class='line'>    <span class="k">AND</span> <span class="n">sub</span><span class="p">.</span><span class="n">RowIndex</span> <span class="o">&lt;=</span> <span class="mi">30</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now all I needed to do was add the ability for Doctrine to parse a generated MSSQL query and reform it like the one above!</p>
+
+<p>I&#8217;ve provided a copy of the Doctrine connection adapter I wrote. Simply add the following line to wherever you setup Doctrine:</p>
+
+<p><strong>Please note: This was the result of about 6 hours of hacking today. There are certainly places in the code where it can be more robust or improved, especially in my little parser. Use at your own risk (though I have yet to encounter any errors in my application).</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+<span class='line-number'>180</span>
+<span class='line-number'>181</span>
+<span class='line-number'>182</span>
+<span class='line-number'>183</span>
+<span class='line-number'>184</span>
+<span class='line-number'>185</span>
+<span class='line-number'>186</span>
+<span class='line-number'>187</span>
+<span class='line-number'>188</span>
+<span class='line-number'>189</span>
+<span class='line-number'>190</span>
+<span class='line-number'>191</span>
+<span class='line-number'>192</span>
+<span class='line-number'>193</span>
+<span class='line-number'>194</span>
+<span class='line-number'>195</span>
+<span class='line-number'>196</span>
+<span class='line-number'>197</span>
+<span class='line-number'>198</span>
+<span class='line-number'>199</span>
+<span class='line-number'>200</span>
+<span class='line-number'>201</span>
+<span class='line-number'>202</span>
+<span class='line-number'>203</span>
+<span class='line-number'>204</span>
+<span class='line-number'>205</span>
+<span class='line-number'>206</span>
+<span class='line-number'>207</span>
+<span class='line-number'>208</span>
+<span class='line-number'>209</span>
+<span class='line-number'>210</span>
+<span class='line-number'>211</span>
+<span class='line-number'>212</span>
+<span class='line-number'>213</span>
+<span class='line-number'>214</span>
+<span class='line-number'>215</span>
+<span class='line-number'>216</span>
+<span class='line-number'>217</span>
+<span class='line-number'>218</span>
+<span class='line-number'>219</span>
+<span class='line-number'>220</span>
+<span class='line-number'>221</span>
+<span class='line-number'>222</span>
+<span class='line-number'>223</span>
+<span class='line-number'>224</span>
+<span class='line-number'>225</span>
+<span class='line-number'>226</span>
+<span class='line-number'>227</span>
+<span class='line-number'>228</span>
+<span class='line-number'>229</span>
+<span class='line-number'>230</span>
+<span class='line-number'>231</span>
+<span class='line-number'>232</span>
+<span class='line-number'>233</span>
+<span class='line-number'>234</span>
+<span class='line-number'>235</span>
+<span class='line-number'>236</span>
+<span class='line-number'>237</span>
+<span class='line-number'>238</span>
+<span class='line-number'>239</span>
+<span class='line-number'>240</span>
+<span class='line-number'>241</span>
+<span class='line-number'>242</span>
+<span class='line-number'>243</span>
+<span class='line-number'>244</span>
+<span class='line-number'>245</span>
+<span class='line-number'>246</span>
+<span class='line-number'>247</span>
+<span class='line-number'>248</span>
+<span class='line-number'>249</span>
+<span class='line-number'>250</span>
+<span class='line-number'>251</span>
+<span class='line-number'>252</span>
+<span class='line-number'>253</span>
+<span class='line-number'>254</span>
+<span class='line-number'>255</span>
+<span class='line-number'>256</span>
+<span class='line-number'>257</span>
+<span class='line-number'>258</span>
+<span class='line-number'>259</span>
+<span class='line-number'>260</span>
+<span class='line-number'>261</span>
+<span class='line-number'>262</span>
+<span class='line-number'>263</span>
+<span class='line-number'>264</span>
+<span class='line-number'>265</span>
+<span class='line-number'>266</span>
+<span class='line-number'>267</span>
+<span class='line-number'>268</span>
+<span class='line-number'>269</span>
+<span class='line-number'>270</span>
+<span class='line-number'>271</span>
+<span class='line-number'>272</span>
+<span class='line-number'>273</span>
+<span class='line-number'>274</span>
+<span class='line-number'>275</span>
+<span class='line-number'>276</span>
+<span class='line-number'>277</span>
+<span class='line-number'>278</span>
+<span class='line-number'>279</span>
+<span class='line-number'>280</span>
+<span class='line-number'>281</span>
+<span class='line-number'>282</span>
+<span class='line-number'>283</span>
+<span class='line-number'>284</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CaseMan_Doctrine_Connection_Mssql</span> <span class="k">extends</span> <span class="nx">Doctrine_Connection_Mssql</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * @var string $driverName                  the name of this connection driver</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="nv">$driverName</span> <span class="o">=</span> <span class="s1">&#39;Mssql&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     *</span>
+</span><span class='line'><span class="sd">     * @var boolean $is2005OrBetter             cached result determining if server is SQL Server 2005 or better</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="nv">$is2005OrBetter</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * the constructor</span>
+</span><span class='line'><span class="sd">     *</span>
+</span><span class='line'><span class="sd">     * @param Doctrine_Manager $manager</span>
+</span><span class='line'><span class="sd">     * @param PDO $pdo                          database handle</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">Doctrine_Manager</span> <span class="nv">$manager</span><span class="p">,</span> <span class="nv">$adapter</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="nv">$manager</span><span class="p">,</span> <span class="nv">$adapter</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * Adds an adapter-specific LIMIT clause to the SELECT statement.</span>
+</span><span class='line'><span class="sd">     *</span>
+</span><span class='line'><span class="sd">     * @param string $query</span>
+</span><span class='line'><span class="sd">     * @param mixed $limit</span>
+</span><span class='line'><span class="sd">     * @param mixed $offset</span>
+</span><span class='line'><span class="sd">     * @return string</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">modifyLimitQuery</span><span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$limit</span> <span class="o">=</span> <span class="k">false</span><span class="p">,</span> <span class="nv">$offset</span> <span class="o">=</span> <span class="k">false</span><span class="p">,</span> <span class="nv">$isManip</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$limit</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nv">$offset</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nv">$query</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span><span class="p">()</span> <span class="p">)</span> <span class="c1">//Not at least 2005</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">parent</span><span class="o">::</span><span class="na">modifyLimitQuery</span> <span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$limit</span><span class="p">,</span> <span class="nv">$offset</span><span class="p">,</span> <span class="nv">$isManip</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//SETUP FIELD ALIASES</span>
+</span><span class='line'>        <span class="nv">$inner_query_name</span> <span class="o">=</span> <span class="s1">&#39;_inner_query_&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$row_count_name</span> <span class="o">=</span> <span class="s1">&#39;_inner_query_row_count_&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//PREPARE TOKENIZER REGEXES</span>
+</span><span class='line'>        <span class="nv">$escaped</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">\.&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$sections</span> <span class="o">=</span> <span class="s2">&quot;SELECT|FROM|WHERE|GROUP[ ]+BY|HAVING|ORDER[ ]+BY&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$open_delimiters</span> <span class="o">=</span> <span class="s2">&quot;[\[\(]&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$close_delimiters</span> <span class="o">=</span> <span class="s2">&quot;[\]\)]&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$string_delimiters</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="se">\&quot;</span><span class="s2">\&#39;]&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//TOKENIZE QUERY</span>
+</span><span class='line'>        <span class="nv">$_split_query</span> <span class="o">=</span> <span class="nb">preg_split</span><span class="p">(</span>
+</span><span class='line'>            <span class="s2">&quot;#(</span><span class="si">{</span><span class="nv">$escaped</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="nv">$sections</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="nv">$open_delimiters</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="nv">$close_delimiters</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="nv">$string_delimiters</span><span class="si">}</span><span class="s2">)#i&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">trim</span><span class="p">(</span><span class="nv">$query</span><span class="p">),</span>
+</span><span class='line'>            <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">PREG_SPLIT_DELIM_CAPTURE</span> <span class="o">|</span> <span class="nx">PREG_SPLIT_NO_EMPTY</span>
+</span><span class='line'>        <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$query_parts</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>        <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;BEGIN&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$_current_part</span> <span class="o">=</span> <span class="s1">&#39;SELECT&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$_stack</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">while</span><span class="p">(</span> <span class="nv">$_token</span> <span class="o">=</span> <span class="nb">array_shift</span><span class="p">(</span><span class="nv">$_split_query</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="k">switch</span><span class="p">(</span> <span class="nv">$_state</span> <span class="p">)</span>
+</span><span class='line'>            <span class="p">{</span>
+</span><span class='line'>                <span class="k">case</span> <span class="s1">&#39;BEGIN&#39;</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span> <span class="nx">trim</span><span class="p">(</span><span class="nx">strtoupper</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;SELECT&#39;</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$_current_part</span> <span class="o">=</span> <span class="s1">&#39;SELECT&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">else</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="k">throw</span> <span class="k">new</span> <span class="nx">Doctrine_Exception</span><span class="p">(</span><span class="s2">&quot;Invalid query passed to modifyLimitQuery, must begin with SELECT&quot;</span><span class="p">);</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">case</span> <span class="s1">&#39;SECTION&#39;</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$sections</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$_section</span> <span class="o">=</span> <span class="nx">strtoupper</span><span class="p">(</span><span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="nv">$query_parts</span><span class="p">[</span><span class="nv">$_section</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$_current_part</span> <span class="o">=</span> <span class="nv">$_section</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">else</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$query_parts</span><span class="p">[</span><span class="nv">$_current_part</span><span class="p">]</span> <span class="o">.=</span> <span class="nv">$_token</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$string_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                            <span class="nb">array_push</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">));</span>
+</span><span class='line'>                            <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;STRING&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$open_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                            <span class="nb">array_push</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">));</span>
+</span><span class='line'>                            <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;DELIMITED&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">case</span> <span class="s1">&#39;DELIMITED&#39;</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="nv">$query_parts</span><span class="p">[</span><span class="nv">$_current_part</span><span class="p">]</span> <span class="o">.=</span> <span class="nv">$_token</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$close_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$_prev_delimiter</span> <span class="o">=</span> <span class="nb">array_pop</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">);</span>
+</span><span class='line'>                        <span class="k">switch</span><span class="p">(</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                            <span class="k">case</span> <span class="s1">&#39;]&#39;</span><span class="o">:</span>
+</span><span class='line'>                                <span class="k">if</span><span class="p">(</span> <span class="nv">$_prev_delimiter</span> <span class="o">!=</span> <span class="s1">&#39;[&#39;</span> <span class="p">)</span>
+</span><span class='line'>                                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Doctrine_Exception</span><span class="p">(</span><span class="s2">&quot;Mismatched ]&quot;</span><span class="p">);</span>
+</span><span class='line'>                                <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">case</span> <span class="s1">&#39;)&#39;</span><span class="o">:</span>
+</span><span class='line'>                                <span class="k">if</span><span class="p">(</span> <span class="nv">$_prev_delimiter</span> <span class="o">!=</span> <span class="s1">&#39;(&#39;</span> <span class="p">)</span>
+</span><span class='line'>                                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Doctrine_Excpetion</span><span class="p">(</span><span class="s2">&quot;Mismatched )&quot;</span><span class="p">);</span>
+</span><span class='line'>                                <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">default</span><span class="o">:</span>
+</span><span class='line'>                                <span class="nb">trigger_error</span><span class="p">(</span><span class="s2">&quot;FATAL ERROR: UNRECOGNIZED CLOSE DELIMITER TOKEN &#39;</span><span class="si">{</span><span class="nv">$_token</span><span class="si">}</span><span class="s2">&#39; IN &quot;</span> <span class="o">.</span> <span class="nx">__CLASS__</span> <span class="o">.</span> <span class="s1">&#39;::&#39;</span> <span class="o">.</span> <span class="nx">__METHOD__</span><span class="p">,</span> <span class="nx">E_USER_ERROR</span><span class="p">);</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">)</span>
+</span><span class='line'>                            <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">elseif</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$open_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nb">array_push</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">));</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">case</span> <span class="s1">&#39;STRING&#39;</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="nv">$query_parts</span><span class="p">[</span><span class="nv">$_current_part</span><span class="p">]</span> <span class="o">.=</span> <span class="nv">$_token</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$string_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">)</span> <span class="o">==</span> <span class="nb">end</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                            <span class="nb">array_pop</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">);</span>
+</span><span class='line'>                            <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nb">unset</span><span class="p">(</span><span class="nv">$item</span><span class="p">,</span> <span class="nv">$_current_part</span><span class="p">,</span> <span class="nv">$_token</span><span class="p">,</span> <span class="nv">$_stack</span><span class="p">,</span> <span class="nv">$_state</span><span class="p">,</span> <span class="nv">$_section</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//DIVIDE UP THE SELECT STATEMENT TO PREPARE TO INSERT THE ROW_NUMBER() SELECT FIELD</span>
+</span><span class='line'>        <span class="nv">$_select_split</span> <span class="o">=</span> <span class="nb">array_map</span><span class="p">(</span><span class="s1">&#39;trim&#39;</span><span class="p">,</span> <span class="nb">preg_split</span><span class="p">(</span>
+</span><span class='line'>            <span class="s2">&quot;#^(DISTINCT|)[ ]*(TOP[ ]+[0-9]+|)#i&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">trim</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">]),</span>
+</span><span class='line'>            <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">PREG_SPLIT_DELIM_CAPTURE</span> <span class="o">|</span> <span class="nx">PREG_SPLIT_NO_EMPTY</span>
+</span><span class='line'>        <span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$_select_details</span> <span class="o">=</span> <span class="nb">array_pop</span><span class="p">(</span><span class="nv">$_select_split</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">((</span><span class="k">array</span><span class="p">)</span><span class="nb">implode</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="nv">$_select_split</span><span class="p">),</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span><span class="nv">$_select_details</span><span class="p">);</span>
+</span><span class='line'>        <span class="nb">unset</span><span class="p">(</span><span class="nv">$_select_split</span><span class="p">,</span> <span class="nv">$_select_details</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//SETUP OUTER QUERY SELECT STATEMENT</span>
+</span><span class='line'>        <span class="nv">$outer_select</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">foreach</span><span class="p">(</span> <span class="nb">array_map</span><span class="p">(</span><span class="s1">&#39;trim&#39;</span><span class="p">,</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nb">end</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">])))</span> <span class="k">as</span> <span class="nv">$_select</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$matches</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;#AS[ ]+(?&lt;alias&gt;.*)$#i&#39;</span><span class="p">,</span> <span class="nv">$_select</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>            <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$outer_select</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">].&quot;</span> <span class="o">.</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$matches</span><span class="p">[</span><span class="s1">&#39;alias&#39;</span><span class="p">]);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;#^(?&lt;table&gt;(\[[^\]]+\]|[^\.]+)\.|)(?&lt;field&gt;.*)#i&#39;</span><span class="p">,</span> <span class="nv">$_select</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>            <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$outer_select</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">].&quot;</span> <span class="o">.</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$matches</span><span class="p">[</span><span class="s1">&#39;field&#39;</span><span class="p">]);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//SETUP ROW_COUNT OVER() SEGMENT</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;ORDER BY&#39;</span><span class="p">])</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$row_count_select</span> <span class="o">=</span> <span class="s2">&quot;Row_Number() OVER (ORDER BY &quot;</span> <span class="o">.</span> <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;ORDER BY&#39;</span><span class="p">]</span> <span class="o">.</span> <span class="s2">&quot;) AS [</span><span class="si">{</span><span class="nv">$row_count_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">;</span>
+</span><span class='line'>            <span class="nb">unset</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;ORDER BY&#39;</span><span class="p">]);</span> <span class="c1">//ORDER BY NOT ALLOWED IN SUBQUERY, OVER(...) TAKES ITS PLACE</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$row_count_select</span> <span class="o">=</span> <span class="s2">&quot;Row_Number() OVER (ORDER BY (SELECT 0)) AS [</span><span class="si">{</span><span class="nv">$row_count_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$query</span> <span class="o">=</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>            <span class="s1">&#39;SELECT&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nb">count</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">?</span>
+</span><span class='line'>                <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                    <span class="nv">$row_count_select</span><span class="p">,</span>
+</span><span class='line'>                    <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>                <span class="p">))</span> <span class="o">:</span>
+</span><span class='line'>                <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                    <span class="nv">$row_count_select</span><span class="p">,</span>
+</span><span class='line'>                    <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>                <span class="p">)),</span>
+</span><span class='line'>        <span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nb">unset</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">]);</span>
+</span><span class='line'>        <span class="k">foreach</span><span class="p">(</span> <span class="nv">$query_parts</span> <span class="k">as</span> <span class="nv">$section</span> <span class="o">=&gt;</span> <span class="nv">$parameters</span> <span class="p">)</span>
+</span><span class='line'>            <span class="nv">$query</span> <span class="o">.=</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nv">$section</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nv">$parameters</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$outer_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT &quot;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="nv">$outer_select</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot; FROM (&quot;</span> <span class="o">.</span> <span class="nv">$query</span> <span class="o">.</span> <span class="s2">&quot;) AS [</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span> <span class="nv">$limit</span> <span class="o">||</span> <span class="nv">$offset</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$outer_where</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="nv">$limit</span> <span class="p">)</span>
+</span><span class='line'>                <span class="nv">$outer_where</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">].[</span><span class="si">{</span><span class="nv">$row_count_name</span><span class="si">}</span><span class="s2">] &lt;= &quot;</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$limit</span> <span class="o">+</span> <span class="nv">$offset</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="nv">$offset</span> <span class="p">)</span>
+</span><span class='line'>                <span class="nv">$outer_where</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">].[</span><span class="si">{</span><span class="nv">$row_count_name</span><span class="si">}</span><span class="s2">] &gt; &quot;</span> <span class="o">.</span> <span class="nv">$offset</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nv">$outer_query</span> <span class="o">.=</span> <span class="s1">&#39; WHERE &#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39; AND &#39;</span><span class="p">,</span> <span class="nv">$outer_where</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$outer_query</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">is2005OrBetter</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$version</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getServerVersion</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="nv">$version</span><span class="p">[</span><span class="s1">&#39;major&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">9</span> <span class="p">)</span>
+</span><span class='line'>                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">else</span>
+</span><span class='line'>                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * return version information about the server</span>
+</span><span class='line'><span class="sd">     *</span>
+</span><span class='line'><span class="sd">     * @param bool   $native  determines if the raw version string should be returned</span>
+</span><span class='line'><span class="sd">     * @return array    version information</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getServerVersion</span><span class="p">(</span><span class="nv">$native</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">serverInfo</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$serverInfo</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">serverInfo</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$query</span>      <span class="o">=</span> <span class="s1">&#39;SELECT @@VERSION&#39;</span><span class="p">;</span>
+</span><span class='line'>            <span class="nv">$serverInfo</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fetchOne</span><span class="p">(</span><span class="nv">$query</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="c1">// cache server_info</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">serverInfo</span> <span class="o">=</span> <span class="nv">$serverInfo</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$native</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/([0-9]+)\.([0-9]+)\.([0-9]+)/&#39;</span><span class="p">,</span> <span class="nv">$serverInfo</span><span class="p">,</span> <span class="nv">$tmp</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$serverInfo</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                    <span class="s1">&#39;major&#39;</span> <span class="o">=&gt;</span> <span class="nv">$tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+</span><span class='line'>                    <span class="s1">&#39;minor&#39;</span> <span class="o">=&gt;</span> <span class="nv">$tmp</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+</span><span class='line'>                    <span class="s1">&#39;patch&#39;</span> <span class="o">=&gt;</span> <span class="nv">$tmp</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+</span><span class='line'>                    <span class="s1">&#39;extra&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;native&#39;</span> <span class="o">=&gt;</span> <span class="nv">$serverInfo</span><span class="p">,</span>
+</span><span class='line'>                <span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$serverInfo</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                    <span class="s1">&#39;major&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;minor&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;patch&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;extra&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;native&#39;</span> <span class="o">=&gt;</span> <span class="nv">$serverInfo</span><span class="p">,</span>
+</span><span class='line'>                <span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$serverInfo</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/5/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/3/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

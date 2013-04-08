@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Offbeat | Tower of Power]]></title>
+  <link href="http://dcousineau.github.com/blog/categories/offbeat/atom.xml" rel="self"/>
+  <link href="http://dcousineau.github.com/"/>
+  <updated>2013-04-07T23:18:02-05:00</updated>
+  <id>http://dcousineau.github.com/</id>
+  <author>
+    <name><![CDATA[Daniel Cousineau]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Indy!!]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/05/10/indy/"/>
+    <updated>2008-05-10T14:47:35-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/05/10/indy</id>
+    <content type="html"><![CDATA[<p>```python
+from indiana import jones
+import whip
+import ruins</p>
+
+<p>cave = new Ruins()</p>
+
+<p>trap = indiana.steal( cave.treasure )
+indiana.escape( trap )
+```</p>
+
+<p><code>text
+ImportError: Snakes? I hate snakes!
+</code></p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Database Normalization And Design: A Primer - Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="I am by no means a database expert, such titles are best left to people like Peter Zaitsev and Vadim Tkachenko, however one of my co workers has been &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/2008/04/01/database-normalization-and-design-a-primer/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Database Normalization and Design: A Primer</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-04-01T08:34:36-05:00" pubdate data-updated="true">Apr 1<span>st</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I am by no means a database expert, such titles are best left to people like <a href="http://www.mysqlperformanceblog.com/">Peter Zaitsev and Vadim Tkachenko</a>, however one of my co workers has been asking me for some help on how I come about my database designs, particularly issues concerning <a href="http://en.wikipedia.org/wiki/Database_normalization">normal form</a>.</p>
+
+<p>Whlie I could spend several posts going over the intricacies of 1st, 2nd, 3rd, and 4th normal form as well as &#8220;The key, the whole key, and nothing but the key so help me Codd&#8221; Boyce-Codd normal form, however reality dictates that time spent strictly to these academic levels is either time wasted (projects with due dates unfortunately cannot spend forever on the database design) or pointless as being reasonably intelligent will bring you very close, if not within 3rd normal form.</p>
+
+<p>If you&#8217;re really interested, Wikipedia provides a great resource to get started learning the more academic aspects.</p>
+
+<p>I&#8217;m going to assume that you have done a bit of database work and at least understand the concept of a <a href="http://en.wikipedia.org/wiki/Join_(sql">join</a>).</p>
+
+<p>The one of the goals of database normalization is to reduce the repetition of information and thereby reduce the complexity of an update of said information. If the same string is in the database N times, we should abstract it so that if we need to update said string due to a typo or anything else, we need to only change but one location.</p>
+
+<!-- more -->
+
+
+<p>Since I like to ground myself in reality and practicality, lets work with some real world examples. Lets assume our requirements or mission statement is this:</p>
+
+<blockquote><p>The application shall keep inventory on a library of technical reference books. Users shall be able to log in and request books for checkout. Administrators shall be able to update the inventory and approve checkouts as well as confirm returned books.</p></blockquote>
+
+<p>Fairly simple, almost e-commerce, but more related to a simple project I have to do for class (oh how convenient). Before we continue, we need to examine these project requirements for the information we&#8217;ll need for the database:</p>
+
+<blockquote><p>The application shall keep inventory on a library of technical reference <strong>books</strong>. <strong>Users</strong> shall be able to log in and request books for checkout. <em>Administrators</em> shall be able to update the inventory and <em>approve</em> checkouts as well as confirm returned books.</p></blockquote>
+
+<p>From the outset we can identify 2 major data concepts, Books and Users, as well as mark states (in <em>italics</em>) for future reference.</p>
+
+<p>Now, further contact with the client would be required to specify the exact information required for all of our tables, however for the sake of this post lets just go with the bare minimum (design gets weird when you start debating on how to store, say, ISBN numbers which have 2 major and a few minor formats, one 10 character and another 13). We all know that books have ISBN numbers, Titles, Authors, and Publishers, all of which are information we should definitely keep on hand. One not well versed in relational design would throw all of these attributes into their own columns, however we come across some issues.</p>
+
+<p>One of the first steps is identifying your primary key of the database. For the uninformed, a primary key is a column (or columns) that uniquely identifies a single role. Meaning, if I have a value for the primary key, it will return 1 and only 1 row each and every single time. There can be NO ambiguity (e.g. a primary key of (1) returning 2 rows, how do we know what row we really wanted?). Upon first glance the obvious choice would be to set our ISBN number as our primary key as we all know that ISBN numbers are distributed to books on a 1:1 basis. However there&#8217;s a potential pitfall. If we&#8217;ve joined all of our tables on the ISBN, what happens when you need to alter a book&#8217;s ISBN (possibly due to a typo discovered late)? In this, and most other cases, our best bet is to use a field unrelated to the ISBN, such as an auto-numbered INT field.</p>
+
+<p>Lets assume we have 12 books on programming languages, all written by 2 different authors (some books have one other, some the other, and some have both), but all published by a single publisher. If we were to look at a database dump there would be a large amount of repeated data.</p>
+
+<p>Since each book can only have 1 publisher, we can move any information pertaining to the publisher (name, address), into it&#8217;s own table and link the two via a unique auto-numbered INT field. Now books will contain a field called publishers_id that will contain the ID number of the publisher who published the book.</p>
+
+<p>Since each book can have multiple authors, we cannot just use the 1:1 relationship that the &#8220;Books Have Publishers&#8221; relationship above is. We need an intermediary (n:m) table, call it say &#8220;BooksHaveAuthors&#8221;. The primary key for this table is not a single column however, its two columns: a column linking to a book and a column linking to an author. Now when we perform our queries in our applications, we can pull all the authors of a book via a query selecting all rows where books_id is X, or we can select all the books an author has via the opposite.</p>
+
+<p>Now, if you&#8217;re smart you are using a visual designer such as <a href="http://dev.mysql.com/workbench/">MySQL Workbench</a>, you&#8217;ll have a visual such as this (this example is using MSSQL&#8217;s database diagramming utility):</p>
+
+<p><img src="/images/posts/2008/04/books_dia.png" title="'Books Diagram'" ></p>
+
+<p>Make a lot of sense when you look at it visually?</p>
+
+<p>(<a href="/blog/2008/04/03/database-normalization-and-design-part-ii/">Part II</a>)</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Daniel Cousineau</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-04-01T08:34:36-05:00" pubdate data-updated="true">Apr 1<span>st</span>, 2008</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/development/'>Development</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://dcousineau.github.com/blog/2008/04/01/database-normalization-and-design-a-primer/" data-via="dcousineau" data-counturl="http://dcousineau.github.com/blog/2008/04/01/database-normalization-and-design-a-primer/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2008/03/28/updates-and-s/" title="Previous Post: Updates and ::'s">&laquo; Updates and ::'s</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2008/04/03/database-normalization-and-design-part-ii/" title="Next Post: Database Normalization and Design: Part II">Database Normalization and Design: Part II &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating...</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://dcousineau.github.com/blog/2008/04/01/database-normalization-and-design-a-primer/';
+        var disqus_url = 'http://dcousineau.github.com/blog/2008/04/01/database-normalization-and-design-a-primer/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

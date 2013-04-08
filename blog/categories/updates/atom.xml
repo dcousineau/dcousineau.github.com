@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Updates | Tower of Power]]></title>
+  <link href="http://dcousineau.github.com/blog/categories/updates/atom.xml" rel="self"/>
+  <link href="http://dcousineau.github.com/"/>
+  <updated>2013-04-07T23:18:02-05:00</updated>
+  <id>http://dcousineau.github.com/</id>
+  <author>
+    <name><![CDATA[Daniel Cousineau]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Good News Everyone!]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/07/01/good-news-everyone/"/>
+    <updated>2009-07-01T08:14:54-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/07/01/good-news-everyone</id>
+    <content type="html"><![CDATA[<p>Naturally it's been over a month since I've updated and rather than posting something techincal I feel I should be a little selfish and announce that:</p>
+
+<h3>I'M GOING TO BE SPEAKING AT <a href="http://zendcon.com/">ZENDCON 09</a>!</h3>
+
+<p>I will be giving my talk on automated deployment techniques with Phing.</p>
+
+<p>To say that I'm excited is quite an understatement. Nervous now probably tops excitement as now I have to make sure I give a damned good talk and not make <a href="http://eliw.com/">Eli White</a> look like a fool for having picked me for a slot.</p>
+
+<p>Time to go bury my nose in Power Point and research!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[End Of An Era (Goodbye to PHP 4)]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/08/08/end-of-an-era-goodbye-to-php-4/"/>
+    <updated>2008-08-08T10:28:27-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/08/08/end-of-an-era-goodbye-to-php-4</id>
+    <content type="html"><![CDATA[<p>PHP 4's end-of-life is <a href="http://shiflett.org/blog/2008/aug/end-of-life-for-php-4">today</a>.</p>
+
+<p>With that I bid adieu to the half-assed OOP support and general primitive nature of the platform.</p>
+
+<p>However I cannot be so callous as my first forays into PHP were with 4.0 releases...</p>
+
+<p>Now the question is how much faster will the dumping of PHP 4 (and 5.0/5.1) be and the adoption of PHP 5.2? Granted most major services are already at the latest/later versions of PHP 5.2 (5.2.5 seems to be most common, but quite a few have 5.2.6 installed), I hope the prevalence extends even further as I'm writing an app that requires 5.2.3+ (damn you Doctrine and your shiny ways!)...</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Updates and ::'s]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/03/28/updates-and-s/"/>
+    <updated>2008-03-28T08:46:34-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/03/28/updates-and-s</id>
+    <content type="html"><![CDATA[<p>In my previous article (<a href="http://www.toosweettobesour.com/2008/03/24/microsoft-access-and-php/">Microsoft Access and PHP</a>), I discussed getting mdbtools setup and dynamically interacting with a instance of mdb-sql. Well it turns out somewhere in the pipeline (probably mdb-tools), we're either not getting an EOF or reading an EOF right and as such I can read lines from the program's STDOUT stream, but as soon as I hit the end of the output my script hangs indefinitely waiting for something and all my attempts at detecting an EOF failed. Sorry to disappoint.</p>
+
+<p>On lighter news, my coworker got the greatest error ever:</p>
+
+<blockquote><p>Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM</p></blockquote>
+
+<p>Turns out according to <a href="http://www.webmasterworld.com/forum88/5127.htm">these guys</a> it's Hebrew and refers to the double colon (::) operator.</p>
+
+<p>Right...</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Development | Tower of Power]]></title>
+  <link href="http://dcousineau.github.com/blog/categories/development/atom.xml" rel="self"/>
+  <link href="http://dcousineau.github.com/"/>
+  <updated>2013-04-07T23:18:02-05:00</updated>
+  <id>http://dcousineau.github.com/</id>
+  <author>
+    <name><![CDATA[Daniel Cousineau]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Flex Box: Prevent Children From Stretching]]></title>
+    <link href="http://dcousineau.github.com/blog/2011/07/14/flex-box-prevent-children-from-stretching/"/>
+    <updated>2011-07-14T10:47:57-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2011/07/14/flex-box-prevent-children-from-stretching</id>
+    <content type="html"><![CDATA[<p>So, <a href="http://www.the-haystack.com/2010/01/23/css3-flexbox-part-1/">flex boxes</a> are a glorious addition to CSS3 to make advanced layouts rapidly. No more crazy floats and nested divs and weird percentage values for columns! Just setup your orientation to horizontal and toss a <code>box-flex: 1</code> in for kicks.</p>
+
+<p>However, just a tip: In the course of working with flex boxes, you will find that if you given a parent container a flex value, the children can still stretch it out. For example, a long paragraph will push its parent wider and wider to accommodate unless you give it a static width (which kinda defeats the purpose of using flex boxes really).</p>
+
+<p>A nifty trick, however, is if you give an element with a defined <code>box-flex</code> a <code>width: 0px;</code>, the sizing algorithm will ignore said element's children when sizing the element.</p>
+
+<p>Here's an example of automatic vertical columns:</p>
+
+<p>```html</p>
+
+<div id="wall">
+    <div id="col1" class="column top">
+        
+        <div class="entry">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget tristique velit. In ut ligula nibh, a pulvinar lorem. Nam sed elit eget tellus vestibulum
+        </div>
+        
+    </div>
+    <div id="col2" class="column bottom">
+        
+        <div class="entry">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget tristique velit. In ut ligula nibh, a pulvinar lorem. Nam sed elit eget tellus vestibulum
+        </div>
+        
+    </div>
+    <div id="col3" class="column top"></div>
+    <div id="col4" class="column bottom"></div>
+</div>
+
+
+<p>```</p>
+
+<p>```css</p>
+
+<h1>wall {</h1>
+
+<pre><code>display: -webkit-box;
+-webkit-box-orient: horizontal;
+
+position: absolute !important;
+top:0; 
+right:0; 
+bottom:0; 
+left:0;
+
+overflow: hidden;
+</code></pre>
+
+<p>}</p>
+
+<h1>wall .column {</h1>
+
+<pre><code>display: -webkit-box;
+-webkit-box-sizing: border-box;
+
+-webkit-box-orient: vertical;
+
+-webkit-box-flex: 1;
+width:0px;
+
+border-right: 1px solid #333;
+</code></pre>
+
+<p>}</p>
+
+<p>```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Doctrine 1.2 MSSQL Alternative LIMIT/Paging]]></title>
+    <link href="http://dcousineau.github.com/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/"/>
+    <updated>2010-09-16T11:11:47-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging</id>
+    <content type="html"><![CDATA[<p>At work I had been having all sorts of issues with <code>Doctrine_Connection_Mssql</code>'s <code>LIMIT</code> alteration, based on <code>Zend_Db</code>'s code.</p>
+
+<p>The code used the more-compatible-with-SQL-Server-2000 technique of modifying the query to <code>SELECT TOP (offset + limit)</code>, reverse the <code>ORDER BY</code> clause and <code>SELECT TOP (limit)</code>, then finally reversing the returned dataset.</p>
+
+<p>As ugly as this technique is, it works. The problem is it requires an extreme amount of intelligence or an extreme amount of simplicity in the query in order for an automated system like Doctrine to be usable. The biggest caveat with this technique is good goddamned luck paging your query if it doesn't have an <code>ORDER BY</code>. And sometimes queries that are complex enough break the modified <code>Zend_Db</code> code.</p>
+
+<p>There exists an <a href="http://varjabedian.net/archive/2008/04/09/paging-made-easy-in-ms-sql-server-2005.aspx">easier MSSQL paging technique</a>. Using features first available in SQL Server 2005, with only 1 subquery you can mimic MySQL's <code>LIMIT</code> clause with ease.</p>
+
+<p>Basically, Microsoft provided the following special feature to determine the row number in your final resultset:</p>
+
+<p><code>sql
+SELECT Row_Number() OVER (ORDER BY column) AS RowIndex FROM table
+</code></p>
+
+<p>Notice the <code>OVER (ORDER BY column)</code> segment? This is provided as this query will most often be used in a subquery. Given that MSSQL does not allow <code>ORDER BY</code> statements in subqueries, just move them into the <code>OVER (...)</code> section.</p>
+
+<p>To borrow Ralph Varjabedian's example, the following MySQL query:</p>
+
+<p><code>sql
+SELECT * FROM users LIMIT 15, 15
+</code></p>
+
+<p>Becomes functionally equivalent to the following MSSQL query:</p>
+
+<p>```sql
+SELECT</p>
+
+<pre><code>* 
+</code></pre>
+
+<p>FROM</p>
+
+<pre><code>(
+SELECT 
+    Row_Number() OVER (ORDER BY userID) AS RowIndex, 
+    * 
+FROM 
+    users
+) AS sub 
+</code></pre>
+
+<p>WHERE</p>
+
+<pre><code>sub.RowIndex &gt; 15 
+AND sub.RowIndex &lt;= 30
+</code></pre>
+
+<p>```</p>
+
+<p>Now all I needed to do was add the ability for Doctrine to parse a generated MSSQL query and reform it like the one above!</p>
+
+<p>I've provided a copy of the Doctrine connection adapter I wrote. Simply add the following line to wherever you setup Doctrine:</p>
+
+<p><strong>Please note: This was the result of about 6 hours of hacking today. There are certainly places in the code where it can be more robust or improved, especially in my little parser. Use at your own risk (though I have yet to encounter any errors in my application).</strong></p>
+
+<p>```php
+&lt;?php
+class CaseMan_Doctrine_Connection_Mssql extends Doctrine_Connection_Mssql
+{</p>
+
+<pre><code>/**
+ * @var string $driverName                  the name of this connection driver
+ */
+protected $driverName = 'Mssql';
+
+/**
+ *
+ * @var boolean $is2005OrBetter             cached result determining if server is SQL Server 2005 or better
+ */
+protected $is2005OrBetter;
+
+/**
+ * the constructor
+ *
+ * @param Doctrine_Manager $manager
+ * @param PDO $pdo                          database handle
+ */
+public function __construct(Doctrine_Manager $manager, $adapter)
+{
+    parent::__construct($manager, $adapter);
+}
+
+/**
+ * Adds an adapter-specific LIMIT clause to the SELECT statement.
+ *
+ * @param string $query
+ * @param mixed $limit
+ * @param mixed $offset
+ * @return string
+ */
+public function modifyLimitQuery($query, $limit = false, $offset = false, $isManip = false)
+{
+    if ($limit &lt;= 0 &amp;&amp; $offset &lt;= 0)
+        return $query;
+
+    if( !$this-&gt;is2005OrBetter() ) //Not at least 2005
+        return parent::modifyLimitQuery ($query, $limit, $offset, $isManip);
+
+    //SETUP FIELD ALIASES
+    $inner_query_name = '_inner_query_';
+    $row_count_name = '_inner_query_row_count_';
+
+    //PREPARE TOKENIZER REGEXES
+    $escaped = "\\\.";
+    $sections = "SELECT|FROM|WHERE|GROUP[ ]+BY|HAVING|ORDER[ ]+BY";
+    $open_delimiters = "[\[\(]";
+    $close_delimiters = "[\]\)]";
+    $string_delimiters = "[\"\']";
+
+    //TOKENIZE QUERY
+    $_split_query = preg_split(
+        "#({$escaped}|{$sections}|{$open_delimiters}|{$close_delimiters}|{$string_delimiters})#i",
+        trim($query),
+        -1,
+        PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
+    );
+
+    $query_parts = array();
+    $_state = 'BEGIN';
+    $_current_part = 'SELECT';
+    $_stack = array();
+    while( $_token = array_shift($_split_query) )
+    {
+        switch( $_state )
+        {
+            case 'BEGIN':
+
+                if( trim(strtoupper($_token)) == 'SELECT' )
+                {
+                    $query_parts['SELECT'] = '';
+                    $_current_part = 'SELECT';
+                    $_state = 'SECTION';
+                }
+                else
+                {
+                    throw new Doctrine_Exception("Invalid query passed to modifyLimitQuery, must begin with SELECT");
+                }
+
+                break;
+            case 'SECTION':
+
+                if( preg_match("#^({$sections})$#i", trim($_token)) )
+                {
+                    $_section = strtoupper(trim($_token));
+
+                    $query_parts[$_section] = '';
+                    $_current_part = $_section;
+                    $_state = 'SECTION';
+                }
+                else
+                {
+                    $query_parts[$_current_part] .= $_token;
+
+                    if( preg_match("#^({$string_delimiters})$#i", trim($_token)) )
+                    {
+                        array_push($_stack, trim($_token));
+                        $_state = 'STRING';
+                    } else if( preg_match("#^({$open_delimiters})$#i", trim($_token)) )
+                    {
+                        array_push($_stack, trim($_token));
+                        $_state = 'DELIMITED';
+                    }
+                }
+
+                break;
+            case 'DELIMITED':
+
+                $query_parts[$_current_part] .= $_token;
+
+                if( preg_match("#^({$close_delimiters})$#i", trim($_token)) )
+                {
+                    $_prev_delimiter = array_pop($_stack);
+                    switch( trim($_token) )
+                    {
+                        case ']':
+                            if( $_prev_delimiter != '[' )
+                                throw new Doctrine_Exception("Mismatched ]");
+                            break;
+                        case ')':
+                            if( $_prev_delimiter != '(' )
+                                throw new Doctrine_Excpetion("Mismatched )");
+                            break;
+                        default:
+                            trigger_error("FATAL ERROR: UNRECOGNIZED CLOSE DELIMITER TOKEN '{$_token}' IN " . __CLASS__ . '::' . __METHOD__, E_USER_ERROR);
+                    }
+
+                    if( count($_stack) == 0 )
+                        $_state = 'SECTION';
+                }
+                elseif( preg_match("#^({$open_delimiters})$#i", trim($_token)) )
+                {
+                    array_push($_stack, trim($_token));
+                }
+
+                break;
+            case 'STRING':
+
+                $query_parts[$_current_part] .= $_token;
+
+                if( preg_match("#^({$string_delimiters})$#i", trim($_token)) )
+                {
+                    if( trim($_token) == end($_stack) )
+                    {
+                        array_pop($_stack);
+                        $_state = 'SECTION';
+                    }
+                }
+
+                break;
+        }
+    }
+    unset($item, $_current_part, $_token, $_stack, $_state, $_section);
+
+    //DIVIDE UP THE SELECT STATEMENT TO PREPARE TO INSERT THE ROW_NUMBER() SELECT FIELD
+    $_select_split = array_map('trim', preg_split(
+        "#^(DISTINCT|)[ ]*(TOP[ ]+[0-9]+|)#i",
+        trim($query_parts['SELECT']),
+        -1,
+        PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY
+    ));
+
+    $_select_details = array_pop($_select_split);
+
+    $query_parts['SELECT'] = array_merge((array)implode(' ', $_select_split), (array)$_select_details);
+    unset($_select_split, $_select_details);
+
+
+
+    //SETUP OUTER QUERY SELECT STATEMENT
+    $outer_select = array();
+    foreach( array_map('trim', explode(',', end($query_parts['SELECT']))) as $_select )
+    {
+        $matches = array();
+        if( preg_match('#AS[ ]+(?&lt;alias&gt;.*)$#i', $_select, $matches) )
+        {
+            $outer_select[] = "[{$inner_query_name}]." . trim($matches['alias']);
+        }
+        else if( preg_match('#^(?&lt;table&gt;(\[[^\]]+\]|[^\.]+)\.|)(?&lt;field&gt;.*)#i', $_select, $matches) )
+        {
+            $outer_select[] = "[{$inner_query_name}]." . trim($matches['field']);
+        }
+    }
+
+    //SETUP ROW_COUNT OVER() SEGMENT
+    if( isset($query_parts['ORDER BY']) )
+    {
+        $row_count_select = "Row_Number() OVER (ORDER BY " . $query_parts['ORDER BY'] . ") AS [{$row_count_name}]";
+        unset($query_parts['ORDER BY']); //ORDER BY NOT ALLOWED IN SUBQUERY, OVER(...) TAKES ITS PLACE
+    }
+    else
+    {
+        $row_count_select = "Row_Number() OVER (ORDER BY (SELECT 0)) AS [{$row_count_name}]";
+    }
+
+    $query = implode(' ', array(
+        'SELECT',
+        count($query_parts['SELECT']) &gt; 1 ?
+            $query_parts['SELECT'][0] . ' ' . implode(', ', array(
+                $row_count_select,
+                $query_parts['SELECT'][1]
+            )) :
+            implode(', ', array(
+                $row_count_select,
+                $query_parts['SELECT'][0]
+            )),
+    ));
+
+    unset($query_parts['SELECT']);
+    foreach( $query_parts as $section =&gt; $parameters )
+        $query .= ' ' . $section . ' ' . $parameters;
+
+
+    $outer_query = "SELECT " . implode(', ', $outer_select) . " FROM (" . $query . ") AS [{$inner_query_name}]";
+
+    if( $limit || $offset )
+    {
+        $outer_where = array();
+        if( $limit )
+            $outer_where[] = "[{$inner_query_name}].[{$row_count_name}] &lt;= " . ($limit + $offset);
+        if( $offset )
+            $outer_where[] = "[{$inner_query_name}].[{$row_count_name}] &gt; " . $offset;
+
+        $outer_query .= ' WHERE ' . implode(' AND ', $outer_where);
+    }
+
+    return $outer_query;
+}
+
+public function is2005OrBetter()
+{
+    if( !isset($this-&gt;is2005OrBetter) )
+    {
+        $version = $this-&gt;getServerVersion();
+
+        if( $version['major'] &gt;= 9 )
+            $this-&gt;is2005OrBetter = true;
+        else
+            $this-&gt;is2005OrBetter = false;
+    }
+
+    return $this-&gt;is2005OrBetter;
+}
+
+/**
+ * return version information about the server
+ *
+ * @param bool   $native  determines if the raw version string should be returned
+ * @return array    version information
+ */
+public function getServerVersion($native = false)
+{
+    if ($this-&gt;serverInfo) {
+        $serverInfo = $this-&gt;serverInfo;
+    } else {
+        $query      = 'SELECT @@VERSION';
+        $serverInfo = $this-&gt;fetchOne($query);
+    }
+    // cache server_info
+    $this-&gt;serverInfo = $serverInfo;
+    if ( ! $native) {
+        if (preg_match('/([0-9]+)\.([0-9]+)\.([0-9]+)/', $serverInfo, $tmp)) {
+            $serverInfo = array(
+                'major' =&gt; $tmp[1],
+                'minor' =&gt; $tmp[2],
+                'patch' =&gt; $tmp[3],
+                'extra' =&gt; null,
+                'native' =&gt; $serverInfo,
+            );
+        } else {
+            $serverInfo = array(
+                'major' =&gt; null,
+                'minor' =&gt; null,
+                'patch' =&gt; null,
+                'extra' =&gt; null,
+                'native' =&gt; $serverInfo,
+            );
+        }
+    }
+    return $serverInfo;
+}
+</code></pre>
+
+<p>}
+```</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Netbeans Code Completion and your Zend_View]]></title>
+    <link href="http://dcousineau.github.com/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/"/>
+    <updated>2010-05-11T05:18:38-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2010/05/11/netbeans-code-completion-and-your-zend_view</id>
+    <content type="html"><![CDATA[<p>Oh, look at me, blogging again! I definitely have a lot to blog about as I get the time, I'm coming off of a really involved project and learned a lot of tips I'd like to share about the Zend Framework. In the mean time I thought I'd share something I had a helluva time figuring out.</p>
+
+<p>If you're using Zend Framework and NetBeans, you may be like me and bemoaning the lack of code completion in your Zend Views. As you may know, essentially what Zend_View does is includes your view within a method that belongs to a Zend_View object. This gives your view some nice variable encapsulation as well as access to the <code>$this</code> object (which is how Zend_View provides access to all the ViewHelpers and other functions).</p>
+
+<p>Unfortunately NetBeans can't figures this out (such is the problem with static analysis on a dynamic language) without help. If you've been using NetBeans and its code completion you'll have already noticed that the PHPDocumentor syntax for <code>@var</code> or <code>@return</code> is how NetBeans figures out much of its code completion information, but that syntax doesn't work in a view script.</p>
+
+<p>Thanks to <a href="http://www.tiplite.com/useful-netbeans-6-8-php-tips/">Mystic at tiplite.com</a> I now know that to have code completion in your Zend_View scripts in NetBeans, add the following to the top of your view script:</p>
+
+<p>```php
+&lt;?php
+/<em> @var $this Zend_View </em>/</p>
+
+<p>```</p>
+
+<p>Obviously if you're using custom Zend_View objects you can pass in their class name instead.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Doctrine Migrations Proper]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/10/20/doctrine-migrations-proper/"/>
+    <updated>2009-10-20T12:32:40-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/10/20/doctrine-migrations-proper</id>
+    <content type="html"><![CDATA[<p>I was talking with someone (I will edit this post when I find her card and remember her name) here at ZendCon and discovered that they were having trouble with migrations in Doctrine. Having gone through the same issues of Doctrine seemingly not being able to figure out your changes and generate migration classes, I thought I'd post the solution here for future reference.</p>
+
+<p>Assuming you have access to the Doctrine CLI tool, the sequence you need is:</p>
+
+<ol>
+<li>Make the changes to your YAML schema files</li>
+<li>Run <code>$ doctrine generate-migrations-diff</code> to generate the migration deltas</li>
+<li>Run <code>$ doctrine migrate</code> to determine if your migration deltas are working (a concern if you're using SQL Server)</li>
+<li>Run <code>$ doctrine generate-models-yaml</code> to update your models to reflect the status of your database</li>
+</ol>
+
+
+<p>The reasoning behind this, and if I'm wrong someone can correct me, is the "generate-migrations-diff" task compares the differences between your YAML schema files and your current <strong>models</strong>. If you have updated your models before generating the diff, obviously Doctrine will find no difference and generate no migration delta.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Solve A Sliding Puzzle With JavaScript And Your AI Course: Part 1]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/"/>
+    <updated>2009-10-13T11:06:27-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1</id>
+    <content type="html"><![CDATA[<p>In all my years of web development and formal computer science training, you know I never really got around to truly sitting down and learning JavaScript.</p>
+
+<p>Sure I knew the syntax (C based, not terribly hard), understood closures (LISP will do that to you), understood the prototype approach to Object Orientation (oddly enough playing with Python caused it to finally click).</p>
+
+<p>Well <a href="http://thedailywtf.com/Articles/Sliding-Around.aspx">around a month ago</a> <a href="http://thedailywtf.com">The Daily WTF</a> posted one of their weekly programming puzzles.</p>
+
+<p>Lo and behold, it's the classic "Eight Puzzle" that I had to solve in LISP using several different algorithms!</p>
+
+<p>Feeling particular motivated I decided to finally get around to really learning JavaScript (by learning I mean really knowing the language inside and out, like I know PHP and to a lesser extent Python).</p>
+
+<p>The first thing I had to tackle was: Which algorithm would I choose? There are several to choose from, DFS (depth-first search), BFS (breadth-first search), Greedy, what have you. Well, a testament to my schooling, I do remember the most optimal I could remember was the <strong>A</strong>* algorithm.</p>
+
+<p>The A<em> not terribly complex once you look at it properly. Most examples discuss the A</em>, like most navigation algorithms, as a tree structure which, while academically correct, never actually touches a tree data structure.</p>
+
+<p>The A* algorithm works by examining the current node, the possible exit directions, and how much closer the new states after exit bring you to your goal. It arranges these new nodes in a priority queue and recurses on all the new nodes until such time that the current node is the goal node.</p>
+
+<p>In simpler terms: examine the paths that bring you closer to the goal first.</p>
+
+<p>The Eight-Puzzle is an excellent situation in which to first play with this algorithm as all the pieces we need for the algorithm are easy to conceptualize. It's just a very simple navigation puzzle: How do we move the blank spot to it's final destination (and making sure the other pieces are set too).</p>
+
+<p>By pieces we need for the A* algorithm, I mean:</p>
+
+<ul>
+<li><strong>Heuristic</strong> (or "weight" of a current path, how far are we from the goal, etc.)</li>
+<li><strong>Expansion Function</strong> (from our current node, what are the paths we can take?)</li>
+</ul>
+
+
+<p>The Expansion function is easy. It's literally which way can you move the blank spot. If you're in the exact center of the board, the expansion function will return UP, RIGHT, DOWN, LEFT. If you're in the top left hand corner, the expansion function will return RIGHT, DOWN.</p>
+
+<p>The Heuristic is a little trickier. If we knew the exact distance (number of moves) a certain state in the puzzle is to the finish, we would need a searching algorithm. Instead we estimate (hence this value being called a heuristic).</p>
+
+<p>2 decent estimations would be counting the number of tiles that are not in their final position as well as calculating the <a href="http://en.wikipedia.org/wiki/Taxicab_geometry">manhattan distance</a> between the blank space and it's final spot. The manhattan distance is the actual "walking" distance as opposed to the straight line distance. Think of the grid street system that is famously used in New York City. While drawing a line from point A to point B may be 2.5_ish_ miles, in reality you walk maybe 4 miles as you must walk north about 2 miles and east about 2 miles.</p>
+
+<p>Even better is combining the two values. As excellent as manhattan distance sounds for an estimation, you run into inconsistencies like an unsolved board where the blank spot is in the correct position being given more weight in searching than a board 1 step away from being solved with the blank spot only 1 block away from the correct (and final) position.</p>
+
+<p>In Part 2 I will step away from the algorithm and step into JavaScript to build our basic utility function (namely creating and managing a board).</p>
+
+<p><strong>NOTE</strong> I never finished part 2 however my code can be found <a href="https://github.com/dcousineau/javascript-learnings/tree/master/eight-puzzle">on github</a> of the final solution.</p>
+]]></content>
+  </entry>
+  
+</feed>

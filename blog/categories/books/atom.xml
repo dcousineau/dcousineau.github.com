@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Books | Tower of Power]]></title>
+  <link href="http://dcousineau.github.com/blog/categories/books/atom.xml" rel="self"/>
+  <link href="http://dcousineau.github.com/"/>
+  <updated>2013-04-07T23:18:02-05:00</updated>
+  <id>http://dcousineau.github.com/</id>
+  <author>
+    <name><![CDATA[Daniel Cousineau]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Pro PHP]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/04/15/pro-php/"/>
+    <updated>2008-04-15T19:51:03-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/04/15/pro-php</id>
+    <content type="html"><![CDATA[<p>My copy of <a href="http://www.amazon.com/gp/product/1590598199">Pro PHP: Patterns, Frameworks, Testing and More</a> by <a href="http://www.linkedin.com/in/stormtide">Kevin McArthur</a> has already been worth the money I spent on it.</p>
+
+<p>In our, albeit slow, upgrade to more modern development practices (code version and unit testing being the last elements on my list), I was particularly fearful of code versioning namely concerning issues of automating a build process to export a copy of the repository to our shared development server, or just have a local server installed for everyone one.</p>
+
+<p>However Chapter 8 has pointed me to two programs that I sincerely regret not having heard of until now: <a href="http://phing.info/trac/">Phing</a> and <a href="http://code.google.com/p/xinc/">Xinc</a>.</p>
+
+<p>Phing is a build system written in PHP that works extremely well with PHP and <a href="http://www.phpunit.de/">PHPUnit</a>. You can configure your own build targets, for example like "get" (SVN update essentially), "test" (run PHPUnit or any other unit testing), "try" (copy to a development server), and "deploy" (copy to your live server).</p>
+
+<p>Xinc is a continuous integration server. Essentially, it monitors an SVN repo and performs a user defined action (usually running a phing buildscript) on any changes to the repo. Which is awesome because its solves the issue of updating the dev server. Having Xinc run a <code>&gt; phing try</code> on SVN updates is exactly what we need! I'm even having delusions of grandeur of having it monitor tags for doing live deployments as well.</p>
+
+<p>Don't take my word as gospel, I haven't actually installed and tested these systems out, but when I do you can rest assured I will be writing about it.</p>
+]]></content>
+  </entry>
+  
+</feed>

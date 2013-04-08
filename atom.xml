@@ -4,7 +4,7 @@
   <title><![CDATA[Tower of Power]]></title>
   <link href="http://dcousineau.github.com/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-04-07T11:54:30-05:00</updated>
+  <updated>2013-04-07T23:18:02-05:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -627,6 +627,2367 @@ created <code>$input</code> and <code>$output</code> objects through our <code>r
 
 <p>As an added bonus, this same concept can be applied to creating your own Output class. The Composer project actively makes use
 of this to extend in the ability to do overwrites in the console (the technique used for it&#8217;s fancy progress indication).</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Flex Box: Prevent Children From Stretching]]></title>
+    <link href="http://dcousineau.github.com/blog/2011/07/14/flex-box-prevent-children-from-stretching/"/>
+    <updated>2011-07-14T10:47:57-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2011/07/14/flex-box-prevent-children-from-stretching</id>
+    <content type="html"><![CDATA[<p>So, <a href="http://www.the-haystack.com/2010/01/23/css3-flexbox-part-1/">flex boxes</a> are a glorious addition to CSS3 to make advanced layouts rapidly. No more crazy floats and nested divs and weird percentage values for columns! Just setup your orientation to horizontal and toss a <code>box-flex: 1</code> in for kicks.</p>
+
+<p>However, just a tip: In the course of working with flex boxes, you will find that if you given a parent container a flex value, the children can still stretch it out. For example, a long paragraph will push its parent wider and wider to accommodate unless you give it a static width (which kinda defeats the purpose of using flex boxes really).</p>
+
+<p>A nifty trick, however, is if you give an element with a defined <code>box-flex</code> a <code>width: 0px;</code>, the sizing algorithm will ignore said element&#8217;s children when sizing the element.</p>
+
+<p>Here&#8217;s an example of automatic vertical columns:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;wall&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col1&quot;</span> <span class="na">class=</span><span class="s">&quot;column top&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;entry&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget tristique velit. In ut ligula nibh, a pulvinar lorem. Nam sed elit eget tellus vestibulum
+</span><span class='line'>        <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col2&quot;</span> <span class="na">class=</span><span class="s">&quot;column bottom&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;entry&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget tristique velit. In ut ligula nibh, a pulvinar lorem. Nam sed elit eget tellus vestibulum
+</span><span class='line'>        <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col3&quot;</span> <span class="na">class=</span><span class="s">&quot;column top&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col4&quot;</span> <span class="na">class=</span><span class="s">&quot;column bottom&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nf">#wall</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">display</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">orient</span><span class="o">:</span> <span class="n">horizontal</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span> <span class="cp">!important</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">top</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">right</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">bottom</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">left</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">#wall</span> <span class="nc">.column</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">display</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">sizing</span><span class="o">:</span> <span class="k">border</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">orient</span><span class="o">:</span> <span class="n">vertical</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">flex</span><span class="o">:</span> <span class="m">1</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">width</span><span class="o">:</span><span class="m">0px</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">border-right</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#333</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[A Lesson In Good Architecture]]></title>
+    <link href="http://dcousineau.github.com/blog/2011/01/29/a-lesson-in-good-architecture/"/>
+    <updated>2011-01-29T07:58:56-06:00</updated>
+    <id>http://dcousineau.github.com/blog/2011/01/29/a-lesson-in-good-architecture</id>
+    <content type="html"><![CDATA[<p>We recently began working on our biggest event for our biggest client. In the process of getting everything up and running before the event started, we noticed a show-stopper bug appear out of nowhere.</p>
+
+<p>Our media processor when finished converting videos and creating thumbnails of images publishes said files to our CDN. Only a few hours before our event and our CDN was failing probably 80% of the SSL handshakes for our requests to publish files. There is no need to name names as it was a difficult and obscure bug to diagnose in an extremely short amount of time. We needed to get it working, our CDN provider wasn&#8217;t going to be able to resolve the problem in the extremely short timeframe we required, so the decision was clear: we needed to switch providers for the new content.</p>
+
+<p>Normally this is a 2 week job, switching API calls, testing, finding all the occurrences (we process both videos and photos in different styles of batches), etc. We were able to complete it and have it live in under 1.5 hours. Why? We (and really I mean my coworker as this decision was made before I came on) made som really damned good architecture decisions. Primarly:</p>
+
+<ol>
+<li><p>We used OSS, primarily <a href="">Zend Framework</a> which had well written API libraries for our new CDN</p></li>
+<li><p>All file system operations were abstracted to adapters that all inherited a &#8220;FileStore&#8221; base class</p></li>
+</ol>
+
+
+<p>So, create a file store for our new CDN using the well written, off the shelf API. Change 4 lines of XML configuration, deploy, and we were in business.</p>
+
+<p>Had my coworker succumbed to laziness or listen to some people who claim &#8220;oh you&#8217;re just making it too complicated&#8221; or &#8220;just get it up quickly, damn the design decisions&#8221; we would have been sunk. Instead he took the time to utilize the adapter pattern (even though it probably added an extra 2 days to his total coding time) despite all signs pointing to us never needing to switch CDN&#8217;s (and certainly not within a 2 hour timeframe).</p>
+
+<p>So let this be a lesson to us all. Abstraction and design patterns sometimes feel like an &#8220;enterprisey overcomplication&#8221; but they aren&#8217;t there for everyday needs. They exist for those days when a service provider gets hit by an obscure bug and you have to swap out a component under extreme time schedules. So suck it up, use them, and thank yourself when you find yourself in such a situation.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Doctrine 1.2 MSSQL Alternative LIMIT/Paging]]></title>
+    <link href="http://dcousineau.github.com/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/"/>
+    <updated>2010-09-16T11:11:47-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging</id>
+    <content type="html"><![CDATA[<p>At work I had been having all sorts of issues with <code>Doctrine_Connection_Mssql</code>&#8217;s <code>LIMIT</code> alteration, based on <code>Zend_Db</code>&#8217;s code.</p>
+
+<p>The code used the more-compatible-with-SQL-Server-2000 technique of modifying the query to <code>SELECT TOP (offset + limit)</code>, reverse the <code>ORDER BY</code> clause and <code>SELECT TOP (limit)</code>, then finally reversing the returned dataset.</p>
+
+<p>As ugly as this technique is, it works. The problem is it requires an extreme amount of intelligence or an extreme amount of simplicity in the query in order for an automated system like Doctrine to be usable. The biggest caveat with this technique is good goddamned luck paging your query if it doesn&#8217;t have an <code>ORDER BY</code>. And sometimes queries that are complex enough break the modified <code>Zend_Db</code> code.</p>
+
+<p>There exists an <a href="http://varjabedian.net/archive/2008/04/09/paging-made-easy-in-ms-sql-server-2005.aspx">easier MSSQL paging technique</a>. Using features first available in SQL Server 2005, with only 1 subquery you can mimic MySQL&#8217;s <code>LIMIT</code> clause with ease.</p>
+
+<p>Basically, Microsoft provided the following special feature to determine the row number in your final resultset:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="n">Row_Number</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="k">column</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RowIndex</span> <span class="k">FROM</span> <span class="k">table</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Notice the <code>OVER (ORDER BY column)</code> segment? This is provided as this query will most often be used in a subquery. Given that MSSQL does not allow <code>ORDER BY</code> statements in subqueries, just move them into the <code>OVER (...)</code> section.</p>
+
+<p>To borrow Ralph Varjabedian&#8217;s example, the following MySQL query:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">users</span> <span class="k">LIMIT</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">15</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Becomes functionally equivalent to the following MSSQL query:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='sql'><span class='line'><span class="k">SELECT</span>
+</span><span class='line'>    <span class="o">*</span>
+</span><span class='line'><span class="k">FROM</span>
+</span><span class='line'>    <span class="p">(</span>
+</span><span class='line'>    <span class="k">SELECT</span>
+</span><span class='line'>        <span class="n">Row_Number</span><span class="p">()</span> <span class="n">OVER</span> <span class="p">(</span><span class="k">ORDER</span> <span class="k">BY</span> <span class="n">userID</span><span class="p">)</span> <span class="k">AS</span> <span class="n">RowIndex</span><span class="p">,</span>
+</span><span class='line'>        <span class="o">*</span>
+</span><span class='line'>    <span class="k">FROM</span>
+</span><span class='line'>        <span class="n">users</span>
+</span><span class='line'>    <span class="p">)</span> <span class="k">AS</span> <span class="n">sub</span>
+</span><span class='line'><span class="k">WHERE</span>
+</span><span class='line'>    <span class="n">sub</span><span class="p">.</span><span class="n">RowIndex</span> <span class="o">&gt;</span> <span class="mi">15</span>
+</span><span class='line'>    <span class="k">AND</span> <span class="n">sub</span><span class="p">.</span><span class="n">RowIndex</span> <span class="o">&lt;=</span> <span class="mi">30</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now all I needed to do was add the ability for Doctrine to parse a generated MSSQL query and reform it like the one above!</p>
+
+<p>I&#8217;ve provided a copy of the Doctrine connection adapter I wrote. Simply add the following line to wherever you setup Doctrine:</p>
+
+<p><strong>Please note: This was the result of about 6 hours of hacking today. There are certainly places in the code where it can be more robust or improved, especially in my little parser. Use at your own risk (though I have yet to encounter any errors in my application).</strong></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+<span class='line-number'>153</span>
+<span class='line-number'>154</span>
+<span class='line-number'>155</span>
+<span class='line-number'>156</span>
+<span class='line-number'>157</span>
+<span class='line-number'>158</span>
+<span class='line-number'>159</span>
+<span class='line-number'>160</span>
+<span class='line-number'>161</span>
+<span class='line-number'>162</span>
+<span class='line-number'>163</span>
+<span class='line-number'>164</span>
+<span class='line-number'>165</span>
+<span class='line-number'>166</span>
+<span class='line-number'>167</span>
+<span class='line-number'>168</span>
+<span class='line-number'>169</span>
+<span class='line-number'>170</span>
+<span class='line-number'>171</span>
+<span class='line-number'>172</span>
+<span class='line-number'>173</span>
+<span class='line-number'>174</span>
+<span class='line-number'>175</span>
+<span class='line-number'>176</span>
+<span class='line-number'>177</span>
+<span class='line-number'>178</span>
+<span class='line-number'>179</span>
+<span class='line-number'>180</span>
+<span class='line-number'>181</span>
+<span class='line-number'>182</span>
+<span class='line-number'>183</span>
+<span class='line-number'>184</span>
+<span class='line-number'>185</span>
+<span class='line-number'>186</span>
+<span class='line-number'>187</span>
+<span class='line-number'>188</span>
+<span class='line-number'>189</span>
+<span class='line-number'>190</span>
+<span class='line-number'>191</span>
+<span class='line-number'>192</span>
+<span class='line-number'>193</span>
+<span class='line-number'>194</span>
+<span class='line-number'>195</span>
+<span class='line-number'>196</span>
+<span class='line-number'>197</span>
+<span class='line-number'>198</span>
+<span class='line-number'>199</span>
+<span class='line-number'>200</span>
+<span class='line-number'>201</span>
+<span class='line-number'>202</span>
+<span class='line-number'>203</span>
+<span class='line-number'>204</span>
+<span class='line-number'>205</span>
+<span class='line-number'>206</span>
+<span class='line-number'>207</span>
+<span class='line-number'>208</span>
+<span class='line-number'>209</span>
+<span class='line-number'>210</span>
+<span class='line-number'>211</span>
+<span class='line-number'>212</span>
+<span class='line-number'>213</span>
+<span class='line-number'>214</span>
+<span class='line-number'>215</span>
+<span class='line-number'>216</span>
+<span class='line-number'>217</span>
+<span class='line-number'>218</span>
+<span class='line-number'>219</span>
+<span class='line-number'>220</span>
+<span class='line-number'>221</span>
+<span class='line-number'>222</span>
+<span class='line-number'>223</span>
+<span class='line-number'>224</span>
+<span class='line-number'>225</span>
+<span class='line-number'>226</span>
+<span class='line-number'>227</span>
+<span class='line-number'>228</span>
+<span class='line-number'>229</span>
+<span class='line-number'>230</span>
+<span class='line-number'>231</span>
+<span class='line-number'>232</span>
+<span class='line-number'>233</span>
+<span class='line-number'>234</span>
+<span class='line-number'>235</span>
+<span class='line-number'>236</span>
+<span class='line-number'>237</span>
+<span class='line-number'>238</span>
+<span class='line-number'>239</span>
+<span class='line-number'>240</span>
+<span class='line-number'>241</span>
+<span class='line-number'>242</span>
+<span class='line-number'>243</span>
+<span class='line-number'>244</span>
+<span class='line-number'>245</span>
+<span class='line-number'>246</span>
+<span class='line-number'>247</span>
+<span class='line-number'>248</span>
+<span class='line-number'>249</span>
+<span class='line-number'>250</span>
+<span class='line-number'>251</span>
+<span class='line-number'>252</span>
+<span class='line-number'>253</span>
+<span class='line-number'>254</span>
+<span class='line-number'>255</span>
+<span class='line-number'>256</span>
+<span class='line-number'>257</span>
+<span class='line-number'>258</span>
+<span class='line-number'>259</span>
+<span class='line-number'>260</span>
+<span class='line-number'>261</span>
+<span class='line-number'>262</span>
+<span class='line-number'>263</span>
+<span class='line-number'>264</span>
+<span class='line-number'>265</span>
+<span class='line-number'>266</span>
+<span class='line-number'>267</span>
+<span class='line-number'>268</span>
+<span class='line-number'>269</span>
+<span class='line-number'>270</span>
+<span class='line-number'>271</span>
+<span class='line-number'>272</span>
+<span class='line-number'>273</span>
+<span class='line-number'>274</span>
+<span class='line-number'>275</span>
+<span class='line-number'>276</span>
+<span class='line-number'>277</span>
+<span class='line-number'>278</span>
+<span class='line-number'>279</span>
+<span class='line-number'>280</span>
+<span class='line-number'>281</span>
+<span class='line-number'>282</span>
+<span class='line-number'>283</span>
+<span class='line-number'>284</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CaseMan_Doctrine_Connection_Mssql</span> <span class="k">extends</span> <span class="nx">Doctrine_Connection_Mssql</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * @var string $driverName                  the name of this connection driver</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="nv">$driverName</span> <span class="o">=</span> <span class="s1">&#39;Mssql&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     *</span>
+</span><span class='line'><span class="sd">     * @var boolean $is2005OrBetter             cached result determining if server is SQL Server 2005 or better</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="nv">$is2005OrBetter</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * the constructor</span>
+</span><span class='line'><span class="sd">     *</span>
+</span><span class='line'><span class="sd">     * @param Doctrine_Manager $manager</span>
+</span><span class='line'><span class="sd">     * @param PDO $pdo                          database handle</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">Doctrine_Manager</span> <span class="nv">$manager</span><span class="p">,</span> <span class="nv">$adapter</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="nv">$manager</span><span class="p">,</span> <span class="nv">$adapter</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * Adds an adapter-specific LIMIT clause to the SELECT statement.</span>
+</span><span class='line'><span class="sd">     *</span>
+</span><span class='line'><span class="sd">     * @param string $query</span>
+</span><span class='line'><span class="sd">     * @param mixed $limit</span>
+</span><span class='line'><span class="sd">     * @param mixed $offset</span>
+</span><span class='line'><span class="sd">     * @return string</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">modifyLimitQuery</span><span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$limit</span> <span class="o">=</span> <span class="k">false</span><span class="p">,</span> <span class="nv">$offset</span> <span class="o">=</span> <span class="k">false</span><span class="p">,</span> <span class="nv">$isManip</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$limit</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nv">$offset</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>            <span class="k">return</span> <span class="nv">$query</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span><span class="p">()</span> <span class="p">)</span> <span class="c1">//Not at least 2005</span>
+</span><span class='line'>            <span class="k">return</span> <span class="k">parent</span><span class="o">::</span><span class="na">modifyLimitQuery</span> <span class="p">(</span><span class="nv">$query</span><span class="p">,</span> <span class="nv">$limit</span><span class="p">,</span> <span class="nv">$offset</span><span class="p">,</span> <span class="nv">$isManip</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//SETUP FIELD ALIASES</span>
+</span><span class='line'>        <span class="nv">$inner_query_name</span> <span class="o">=</span> <span class="s1">&#39;_inner_query_&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$row_count_name</span> <span class="o">=</span> <span class="s1">&#39;_inner_query_row_count_&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//PREPARE TOKENIZER REGEXES</span>
+</span><span class='line'>        <span class="nv">$escaped</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\\</span><span class="s2">\.&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$sections</span> <span class="o">=</span> <span class="s2">&quot;SELECT|FROM|WHERE|GROUP[ ]+BY|HAVING|ORDER[ ]+BY&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$open_delimiters</span> <span class="o">=</span> <span class="s2">&quot;[\[\(]&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$close_delimiters</span> <span class="o">=</span> <span class="s2">&quot;[\]\)]&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$string_delimiters</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="se">\&quot;</span><span class="s2">\&#39;]&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//TOKENIZE QUERY</span>
+</span><span class='line'>        <span class="nv">$_split_query</span> <span class="o">=</span> <span class="nb">preg_split</span><span class="p">(</span>
+</span><span class='line'>            <span class="s2">&quot;#(</span><span class="si">{</span><span class="nv">$escaped</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="nv">$sections</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="nv">$open_delimiters</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="nv">$close_delimiters</span><span class="si">}</span><span class="s2">|</span><span class="si">{</span><span class="nv">$string_delimiters</span><span class="si">}</span><span class="s2">)#i&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">trim</span><span class="p">(</span><span class="nv">$query</span><span class="p">),</span>
+</span><span class='line'>            <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">PREG_SPLIT_DELIM_CAPTURE</span> <span class="o">|</span> <span class="nx">PREG_SPLIT_NO_EMPTY</span>
+</span><span class='line'>        <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$query_parts</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>        <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;BEGIN&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$_current_part</span> <span class="o">=</span> <span class="s1">&#39;SELECT&#39;</span><span class="p">;</span>
+</span><span class='line'>        <span class="nv">$_stack</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">while</span><span class="p">(</span> <span class="nv">$_token</span> <span class="o">=</span> <span class="nb">array_shift</span><span class="p">(</span><span class="nv">$_split_query</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="k">switch</span><span class="p">(</span> <span class="nv">$_state</span> <span class="p">)</span>
+</span><span class='line'>            <span class="p">{</span>
+</span><span class='line'>                <span class="k">case</span> <span class="s1">&#39;BEGIN&#39;</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span> <span class="nx">trim</span><span class="p">(</span><span class="nx">strtoupper</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="o">==</span> <span class="s1">&#39;SELECT&#39;</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$_current_part</span> <span class="o">=</span> <span class="s1">&#39;SELECT&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">else</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="k">throw</span> <span class="k">new</span> <span class="nx">Doctrine_Exception</span><span class="p">(</span><span class="s2">&quot;Invalid query passed to modifyLimitQuery, must begin with SELECT&quot;</span><span class="p">);</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">case</span> <span class="s1">&#39;SECTION&#39;</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$sections</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$_section</span> <span class="o">=</span> <span class="nx">strtoupper</span><span class="p">(</span><span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="nv">$query_parts</span><span class="p">[</span><span class="nv">$_section</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$_current_part</span> <span class="o">=</span> <span class="nv">$_section</span><span class="p">;</span>
+</span><span class='line'>                        <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">else</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$query_parts</span><span class="p">[</span><span class="nv">$_current_part</span><span class="p">]</span> <span class="o">.=</span> <span class="nv">$_token</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$string_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                            <span class="nb">array_push</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">));</span>
+</span><span class='line'>                            <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;STRING&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$open_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                            <span class="nb">array_push</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">));</span>
+</span><span class='line'>                            <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;DELIMITED&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">case</span> <span class="s1">&#39;DELIMITED&#39;</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="nv">$query_parts</span><span class="p">[</span><span class="nv">$_current_part</span><span class="p">]</span> <span class="o">.=</span> <span class="nv">$_token</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$close_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nv">$_prev_delimiter</span> <span class="o">=</span> <span class="nb">array_pop</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">);</span>
+</span><span class='line'>                        <span class="k">switch</span><span class="p">(</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                            <span class="k">case</span> <span class="s1">&#39;]&#39;</span><span class="o">:</span>
+</span><span class='line'>                                <span class="k">if</span><span class="p">(</span> <span class="nv">$_prev_delimiter</span> <span class="o">!=</span> <span class="s1">&#39;[&#39;</span> <span class="p">)</span>
+</span><span class='line'>                                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Doctrine_Exception</span><span class="p">(</span><span class="s2">&quot;Mismatched ]&quot;</span><span class="p">);</span>
+</span><span class='line'>                                <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">case</span> <span class="s1">&#39;)&#39;</span><span class="o">:</span>
+</span><span class='line'>                                <span class="k">if</span><span class="p">(</span> <span class="nv">$_prev_delimiter</span> <span class="o">!=</span> <span class="s1">&#39;(&#39;</span> <span class="p">)</span>
+</span><span class='line'>                                    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Doctrine_Excpetion</span><span class="p">(</span><span class="s2">&quot;Mismatched )&quot;</span><span class="p">);</span>
+</span><span class='line'>                                <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                            <span class="k">default</span><span class="o">:</span>
+</span><span class='line'>                                <span class="nb">trigger_error</span><span class="p">(</span><span class="s2">&quot;FATAL ERROR: UNRECOGNIZED CLOSE DELIMITER TOKEN &#39;</span><span class="si">{</span><span class="nv">$_token</span><span class="si">}</span><span class="s2">&#39; IN &quot;</span> <span class="o">.</span> <span class="nx">__CLASS__</span> <span class="o">.</span> <span class="s1">&#39;::&#39;</span> <span class="o">.</span> <span class="nx">__METHOD__</span><span class="p">,</span> <span class="nx">E_USER_ERROR</span><span class="p">);</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="p">)</span>
+</span><span class='line'>                            <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">;</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>                    <span class="k">elseif</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$open_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="nb">array_push</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">));</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>                <span class="k">case</span> <span class="s1">&#39;STRING&#39;</span><span class="o">:</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="nv">$query_parts</span><span class="p">[</span><span class="nv">$_current_part</span><span class="p">]</span> <span class="o">.=</span> <span class="nv">$_token</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s2">&quot;#^(</span><span class="si">{</span><span class="nv">$string_delimiters</span><span class="si">}</span><span class="s2">)$#i&quot;</span><span class="p">,</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">))</span> <span class="p">)</span>
+</span><span class='line'>                    <span class="p">{</span>
+</span><span class='line'>                        <span class="k">if</span><span class="p">(</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$_token</span><span class="p">)</span> <span class="o">==</span> <span class="nb">end</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>                        <span class="p">{</span>
+</span><span class='line'>                            <span class="nb">array_pop</span><span class="p">(</span><span class="nv">$_stack</span><span class="p">);</span>
+</span><span class='line'>                            <span class="nv">$_state</span> <span class="o">=</span> <span class="s1">&#39;SECTION&#39;</span><span class="p">;</span>
+</span><span class='line'>                        <span class="p">}</span>
+</span><span class='line'>                    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>                    <span class="k">break</span><span class="p">;</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="nb">unset</span><span class="p">(</span><span class="nv">$item</span><span class="p">,</span> <span class="nv">$_current_part</span><span class="p">,</span> <span class="nv">$_token</span><span class="p">,</span> <span class="nv">$_stack</span><span class="p">,</span> <span class="nv">$_state</span><span class="p">,</span> <span class="nv">$_section</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//DIVIDE UP THE SELECT STATEMENT TO PREPARE TO INSERT THE ROW_NUMBER() SELECT FIELD</span>
+</span><span class='line'>        <span class="nv">$_select_split</span> <span class="o">=</span> <span class="nb">array_map</span><span class="p">(</span><span class="s1">&#39;trim&#39;</span><span class="p">,</span> <span class="nb">preg_split</span><span class="p">(</span>
+</span><span class='line'>            <span class="s2">&quot;#^(DISTINCT|)[ ]*(TOP[ ]+[0-9]+|)#i&quot;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">trim</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">]),</span>
+</span><span class='line'>            <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+</span><span class='line'>            <span class="nx">PREG_SPLIT_DELIM_CAPTURE</span> <span class="o">|</span> <span class="nx">PREG_SPLIT_NO_EMPTY</span>
+</span><span class='line'>        <span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$_select_details</span> <span class="o">=</span> <span class="nb">array_pop</span><span class="p">(</span><span class="nv">$_select_split</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">((</span><span class="k">array</span><span class="p">)</span><span class="nb">implode</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="nv">$_select_split</span><span class="p">),</span> <span class="p">(</span><span class="k">array</span><span class="p">)</span><span class="nv">$_select_details</span><span class="p">);</span>
+</span><span class='line'>        <span class="nb">unset</span><span class="p">(</span><span class="nv">$_select_split</span><span class="p">,</span> <span class="nv">$_select_details</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//SETUP OUTER QUERY SELECT STATEMENT</span>
+</span><span class='line'>        <span class="nv">$outer_select</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>        <span class="k">foreach</span><span class="p">(</span> <span class="nb">array_map</span><span class="p">(</span><span class="s1">&#39;trim&#39;</span><span class="p">,</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nb">end</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">])))</span> <span class="k">as</span> <span class="nv">$_select</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$matches</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;#AS[ ]+(?&lt;alias&gt;.*)$#i&#39;</span><span class="p">,</span> <span class="nv">$_select</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>            <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$outer_select</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">].&quot;</span> <span class="o">.</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$matches</span><span class="p">[</span><span class="s1">&#39;alias&#39;</span><span class="p">]);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>            <span class="k">else</span> <span class="k">if</span><span class="p">(</span> <span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;#^(?&lt;table&gt;(\[[^\]]+\]|[^\.]+)\.|)(?&lt;field&gt;.*)#i&#39;</span><span class="p">,</span> <span class="nv">$_select</span><span class="p">,</span> <span class="nv">$matches</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>            <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$outer_select</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">].&quot;</span> <span class="o">.</span> <span class="nx">trim</span><span class="p">(</span><span class="nv">$matches</span><span class="p">[</span><span class="s1">&#39;field&#39;</span><span class="p">]);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="c1">//SETUP ROW_COUNT OVER() SEGMENT</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;ORDER BY&#39;</span><span class="p">])</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$row_count_select</span> <span class="o">=</span> <span class="s2">&quot;Row_Number() OVER (ORDER BY &quot;</span> <span class="o">.</span> <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;ORDER BY&#39;</span><span class="p">]</span> <span class="o">.</span> <span class="s2">&quot;) AS [</span><span class="si">{</span><span class="nv">$row_count_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">;</span>
+</span><span class='line'>            <span class="nb">unset</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;ORDER BY&#39;</span><span class="p">]);</span> <span class="c1">//ORDER BY NOT ALLOWED IN SUBQUERY, OVER(...) TAKES ITS PLACE</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">else</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$row_count_select</span> <span class="o">=</span> <span class="s2">&quot;Row_Number() OVER (ORDER BY (SELECT 0)) AS [</span><span class="si">{</span><span class="nv">$row_count_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$query</span> <span class="o">=</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>            <span class="s1">&#39;SELECT&#39;</span><span class="p">,</span>
+</span><span class='line'>            <span class="nb">count</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">?</span>
+</span><span class='line'>                <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                    <span class="nv">$row_count_select</span><span class="p">,</span>
+</span><span class='line'>                    <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+</span><span class='line'>                <span class="p">))</span> <span class="o">:</span>
+</span><span class='line'>                <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                    <span class="nv">$row_count_select</span><span class="p">,</span>
+</span><span class='line'>                    <span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</span><span class='line'>                <span class="p">)),</span>
+</span><span class='line'>        <span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nb">unset</span><span class="p">(</span><span class="nv">$query_parts</span><span class="p">[</span><span class="s1">&#39;SELECT&#39;</span><span class="p">]);</span>
+</span><span class='line'>        <span class="k">foreach</span><span class="p">(</span> <span class="nv">$query_parts</span> <span class="k">as</span> <span class="nv">$section</span> <span class="o">=&gt;</span> <span class="nv">$parameters</span> <span class="p">)</span>
+</span><span class='line'>            <span class="nv">$query</span> <span class="o">.=</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nv">$section</span> <span class="o">.</span> <span class="s1">&#39; &#39;</span> <span class="o">.</span> <span class="nv">$parameters</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$outer_query</span> <span class="o">=</span> <span class="s2">&quot;SELECT &quot;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">,</span> <span class="nv">$outer_select</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot; FROM (&quot;</span> <span class="o">.</span> <span class="nv">$query</span> <span class="o">.</span> <span class="s2">&quot;) AS [</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span> <span class="nv">$limit</span> <span class="o">||</span> <span class="nv">$offset</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$outer_where</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="nv">$limit</span> <span class="p">)</span>
+</span><span class='line'>                <span class="nv">$outer_where</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">].[</span><span class="si">{</span><span class="nv">$row_count_name</span><span class="si">}</span><span class="s2">] &lt;= &quot;</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$limit</span> <span class="o">+</span> <span class="nv">$offset</span><span class="p">);</span>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="nv">$offset</span> <span class="p">)</span>
+</span><span class='line'>                <span class="nv">$outer_where</span><span class="p">[]</span> <span class="o">=</span> <span class="s2">&quot;[</span><span class="si">{</span><span class="nv">$inner_query_name</span><span class="si">}</span><span class="s2">].[</span><span class="si">{</span><span class="nv">$row_count_name</span><span class="si">}</span><span class="s2">] &gt; &quot;</span> <span class="o">.</span> <span class="nv">$offset</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="nv">$outer_query</span> <span class="o">.=</span> <span class="s1">&#39; WHERE &#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39; AND &#39;</span><span class="p">,</span> <span class="nv">$outer_where</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$outer_query</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">is2005OrBetter</span><span class="p">()</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>        <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$version</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">getServerVersion</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>            <span class="k">if</span><span class="p">(</span> <span class="nv">$version</span><span class="p">[</span><span class="s1">&#39;major&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">9</span> <span class="p">)</span>
+</span><span class='line'>                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'>            <span class="k">else</span>
+</span><span class='line'>                <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span> <span class="o">=</span> <span class="k">false</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">is2005OrBetter</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * return version information about the server</span>
+</span><span class='line'><span class="sd">     *</span>
+</span><span class='line'><span class="sd">     * @param bool   $native  determines if the raw version string should be returned</span>
+</span><span class='line'><span class="sd">     * @return array    version information</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getServerVersion</span><span class="p">(</span><span class="nv">$native</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">serverInfo</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$serverInfo</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">serverInfo</span><span class="p">;</span>
+</span><span class='line'>        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>            <span class="nv">$query</span>      <span class="o">=</span> <span class="s1">&#39;SELECT @@VERSION&#39;</span><span class="p">;</span>
+</span><span class='line'>            <span class="nv">$serverInfo</span> <span class="o">=</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">fetchOne</span><span class="p">(</span><span class="nv">$query</span><span class="p">);</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="c1">// cache server_info</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">serverInfo</span> <span class="o">=</span> <span class="nv">$serverInfo</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">if</span> <span class="p">(</span> <span class="o">!</span> <span class="nv">$native</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>            <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;/([0-9]+)\.([0-9]+)\.([0-9]+)/&#39;</span><span class="p">,</span> <span class="nv">$serverInfo</span><span class="p">,</span> <span class="nv">$tmp</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$serverInfo</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                    <span class="s1">&#39;major&#39;</span> <span class="o">=&gt;</span> <span class="nv">$tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+</span><span class='line'>                    <span class="s1">&#39;minor&#39;</span> <span class="o">=&gt;</span> <span class="nv">$tmp</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+</span><span class='line'>                    <span class="s1">&#39;patch&#39;</span> <span class="o">=&gt;</span> <span class="nv">$tmp</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span>
+</span><span class='line'>                    <span class="s1">&#39;extra&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;native&#39;</span> <span class="o">=&gt;</span> <span class="nv">$serverInfo</span><span class="p">,</span>
+</span><span class='line'>                <span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span><span class='line'>                <span class="nv">$serverInfo</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                    <span class="s1">&#39;major&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;minor&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;patch&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;extra&#39;</span> <span class="o">=&gt;</span> <span class="k">null</span><span class="p">,</span>
+</span><span class='line'>                    <span class="s1">&#39;native&#39;</span> <span class="o">=&gt;</span> <span class="nv">$serverInfo</span><span class="p">,</span>
+</span><span class='line'>                <span class="p">);</span>
+</span><span class='line'>            <span class="p">}</span>
+</span><span class='line'>        <span class="p">}</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$serverInfo</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Netbeans Code Completion and your Zend_View]]></title>
+    <link href="http://dcousineau.github.com/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/"/>
+    <updated>2010-05-11T05:18:38-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2010/05/11/netbeans-code-completion-and-your-zend_view</id>
+    <content type="html"><![CDATA[<p>Oh, look at me, blogging again! I definitely have a lot to blog about as I get the time, I&#8217;m coming off of a really involved project and learned a lot of tips I&#8217;d like to share about the Zend Framework. In the mean time I thought I&#8217;d share something I had a helluva time figuring out.</p>
+
+<p>If you&#8217;re using Zend Framework and NetBeans, you may be like me and bemoaning the lack of code completion in your Zend Views. As you may know, essentially what Zend_View does is includes your view within a method that belongs to a Zend_View object. This gives your view some nice variable encapsulation as well as access to the <code>$this</code> object (which is how Zend_View provides access to all the ViewHelpers and other functions).</p>
+
+<p>Unfortunately NetBeans can&#8217;t figures this out (such is the problem with static analysis on a dynamic language) without help. If you&#8217;ve been using NetBeans and its code completion you&#8217;ll have already noticed that the PHPDocumentor syntax for <code>@var</code> or <code>@return</code> is how NetBeans figures out much of its code completion information, but that syntax doesn&#8217;t work in a view script.</p>
+
+<p>Thanks to <a href="http://www.tiplite.com/useful-netbeans-6-8-php-tips/">Mystic at tiplite.com</a> I now know that to have code completion in your Zend_View scripts in NetBeans, add the following to the top of your view script:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="cm">/* @var $this Zend_View */</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Obviously if you&#8217;re using custom Zend_View objects you can pass in their class name instead.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Doctrine Migrations Proper]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/10/20/doctrine-migrations-proper/"/>
+    <updated>2009-10-20T12:32:40-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/10/20/doctrine-migrations-proper</id>
+    <content type="html"><![CDATA[<p>I was talking with someone (I will edit this post when I find her card and remember her name) here at ZendCon and discovered that they were having trouble with migrations in Doctrine. Having gone through the same issues of Doctrine seemingly not being able to figure out your changes and generate migration classes, I thought I&#8217;d post the solution here for future reference.</p>
+
+<p>Assuming you have access to the Doctrine CLI tool, the sequence you need is:</p>
+
+<ol>
+<li>Make the changes to your YAML schema files</li>
+<li>Run <code>$ doctrine generate-migrations-diff</code> to generate the migration deltas</li>
+<li>Run <code>$ doctrine migrate</code> to determine if your migration deltas are working (a concern if you&#8217;re using SQL Server)</li>
+<li>Run <code>$ doctrine generate-models-yaml</code> to update your models to reflect the status of your database</li>
+</ol>
+
+
+<p>The reasoning behind this, and if I&#8217;m wrong someone can correct me, is the &#8220;generate-migrations-diff&#8221; task compares the differences between your YAML schema files and your current <strong>models</strong>. If you have updated your models before generating the diff, obviously Doctrine will find no difference and generate no migration delta.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Make The Most Of ZendCon]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/10/15/make-the-most-of-zendcon/"/>
+    <updated>2009-10-15T19:43:12-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/10/15/make-the-most-of-zendcon</id>
+    <content type="html"><![CDATA[<p>I felt like I should take a break from finishing up my <a href="http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/">multi-part javascript series</a> to rehash some points being made recently by <a href="http://caseysoftware.com/blog/so-its-your-first-conference">Keith Casey</a> and <a href="http://blog.phpdeveloper.org/?p=221">Chris Cornutt</a> about making the most of your N-th conference (and in particular, ZendCon).</p>
+
+<p>My first ever professional conference (ignoring BarCamps) was last year&#8217;s ZendCon. I showed up in Santa Clara not knowing anyone except for a few brief appearances on #phpc (freenode).</p>
+
+<p>What made ZendCon absolutely enjoyable was indeed what everyone is suggesting to you: the hallway track.</p>
+
+<p>I could have easily attended sessions then hid in my room until the next day, yet I chose to go out to the social events and thanks to that decision, ZendCon &#8216;08 remains currently one of my fondest memories.</p>
+
+<p>It&#8217;s one thing to sit down and listen to talks from famous PHP developers, those that I read about all the time (or read their books in many cases). It&#8217;s a whole other beast to find yourself sharing a beer with them in some random &#8220;English Pub&#8221; while getting your ass kicked at trivia (I still have the beer glasses that were given to me by the real winners).</p>
+
+<p>And these events didn&#8217;t happen because I&#8217;m some modest uber-genius (I am by no means modest), I&#8217;m famous, or even particularly well respected (&#8220;He&#8217;s not stupid&#8221; is as gracious as a comment as I could want in a programming community).</p>
+
+<p>They happened because someone yelled &#8220;Pub Crawl!&#8221; and, dammit, I was there.</p>
+
+<p>They happened because I struck up conversations with random people.</p>
+
+<p>They happened because I got in religious flame wars with random people. (Ask me about the time, thought not at ZendCon, where I launched into a tirade against CakePHP with who I later found out was the founder of CakePHP)</p>
+
+<p>As it has been reiterated time and time again, this conference is not really about the sessions (it&#8217;s a success if there&#8217;s just 1 talk that you go to). It&#8217;s about the people you meet and the friendships you foster.</p>
+
+<p>In summation, I have a list of goals for you, my loyal readers that are attending ZendCon:</p>
+
+<ol>
+<li>Start a conversation with a random person in a hallway</li>
+<li>Find and say hi to an author of one your PHP books. Tell them how awesome the book has been</li>
+<li>Attend at least 1 UnCon session</li>
+<li>Attend at least 1 post-session social (keep track on Twitter and ask your fellow attendees for info)</li>
+<li>Find me and introduce yourself</li>
+</ol>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Solve A Sliding Puzzle With JavaScript And Your AI Course: Part 1]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/"/>
+    <updated>2009-10-13T11:06:27-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1</id>
+    <content type="html"><![CDATA[<p>In all my years of web development and formal computer science training, you know I never really got around to truly sitting down and learning JavaScript.</p>
+
+<p>Sure I knew the syntax (C based, not terribly hard), understood closures (LISP will do that to you), understood the prototype approach to Object Orientation (oddly enough playing with Python caused it to finally click).</p>
+
+<p>Well <a href="http://thedailywtf.com/Articles/Sliding-Around.aspx">around a month ago</a> <a href="http://thedailywtf.com">The Daily WTF</a> posted one of their weekly programming puzzles.</p>
+
+<p>Lo and behold, it&#8217;s the classic &#8220;Eight Puzzle&#8221; that I had to solve in LISP using several different algorithms!</p>
+
+<p>Feeling particular motivated I decided to finally get around to really learning JavaScript (by learning I mean really knowing the language inside and out, like I know PHP and to a lesser extent Python).</p>
+
+<p>The first thing I had to tackle was: Which algorithm would I choose? There are several to choose from, DFS (depth-first search), BFS (breadth-first search), Greedy, what have you. Well, a testament to my schooling, I do remember the most optimal I could remember was the <strong>A</strong>* algorithm.</p>
+
+<p>The A<em> not terribly complex once you look at it properly. Most examples discuss the A</em>, like most navigation algorithms, as a tree structure which, while academically correct, never actually touches a tree data structure.</p>
+
+<p>The A* algorithm works by examining the current node, the possible exit directions, and how much closer the new states after exit bring you to your goal. It arranges these new nodes in a priority queue and recurses on all the new nodes until such time that the current node is the goal node.</p>
+
+<p>In simpler terms: examine the paths that bring you closer to the goal first.</p>
+
+<p>The Eight-Puzzle is an excellent situation in which to first play with this algorithm as all the pieces we need for the algorithm are easy to conceptualize. It&#8217;s just a very simple navigation puzzle: How do we move the blank spot to it&#8217;s final destination (and making sure the other pieces are set too).</p>
+
+<p>By pieces we need for the A* algorithm, I mean:</p>
+
+<ul>
+<li><strong>Heuristic</strong> (or &#8220;weight&#8221; of a current path, how far are we from the goal, etc.)</li>
+<li><strong>Expansion Function</strong> (from our current node, what are the paths we can take?)</li>
+</ul>
+
+
+<p>The Expansion function is easy. It&#8217;s literally which way can you move the blank spot. If you&#8217;re in the exact center of the board, the expansion function will return UP, RIGHT, DOWN, LEFT. If you&#8217;re in the top left hand corner, the expansion function will return RIGHT, DOWN.</p>
+
+<p>The Heuristic is a little trickier. If we knew the exact distance (number of moves) a certain state in the puzzle is to the finish, we would need a searching algorithm. Instead we estimate (hence this value being called a heuristic).</p>
+
+<p>2 decent estimations would be counting the number of tiles that are not in their final position as well as calculating the <a href="http://en.wikipedia.org/wiki/Taxicab_geometry">manhattan distance</a> between the blank space and it&#8217;s final spot. The manhattan distance is the actual &#8220;walking&#8221; distance as opposed to the straight line distance. Think of the grid street system that is famously used in New York City. While drawing a line from point A to point B may be 2.5_ish_ miles, in reality you walk maybe 4 miles as you must walk north about 2 miles and east about 2 miles.</p>
+
+<p>Even better is combining the two values. As excellent as manhattan distance sounds for an estimation, you run into inconsistencies like an unsolved board where the blank spot is in the correct position being given more weight in searching than a board 1 step away from being solved with the blank spot only 1 block away from the correct (and final) position.</p>
+
+<p>In Part 2 I will step away from the algorithm and step into JavaScript to build our basic utility function (namely creating and managing a board).</p>
+
+<p><strong>NOTE</strong> I never finished part 2 however my code can be found <a href="https://github.com/dcousineau/javascript-learnings/tree/master/eight-puzzle">on github</a> of the final solution.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Development Environment Help! Setting Up PHP mail() On Windows, Or: Where Is My Windows sendmail.exe?]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/08/21/development-environment-help-setting-up-php-mail-on-windows-or-where-is-my-windows-sendmail-exe/"/>
+    <updated>2009-08-21T05:39:00-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/08/21/development-environment-help-setting-up-php-mail-on-windows-or-where-is-my-windows-sendmail-exe</id>
+    <content type="html"><![CDATA[<p>Lately at work I&#8217;ve been having the worst of trouble getting PHP on my workstation to send mail. Previously it was a simple trek to a website to download a Windows build of sendmail.exe, but for some reason I cannot get access to it, so I have to go another route.</p>
+
+<p>Enter <a href="http://www.hmailserver.com/">hMailServer</a>, a free, full-featured SMTP/POP/IMAP server for Windows with a pretty, shiny GUI configuration interface. All I really want to do is setup SMTP for localhost only but one could easily use hMailServer as a production mail server.</p>
+
+<p>To start things off, lets make sure our php.ini directives are setup correctly. By correct, I mean PHP needs to be looking for our SMTP server on my local machine (localhost) at the default SMTP port (25), and, just in case, set a default from address:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[mail function]</span>
+</span><span class='line'><span class="c">; For Win32 only.</span>
+</span><span class='line'><span class="na">smtp</span> <span class="o">=</span> <span class="s">localhost</span>
+</span><span class='line'><span class="na">smtp_port</span> <span class="o">=</span> <span class="s">25</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">; For Win32 only.</span>
+</span><span class='line'><span class="na">sendmail_from</span> <span class="o">=</span> <span class="s">user@domain.tld</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Looks good. Second step is to download and install hMailServer. This tutorial is working from <a href="http://www.hmailserver.com/?page=download_mirrors&amp;downloadid=185">version 5.2 build 356</a>, but you should be able to use the latest stable or unstable version that you might desire.</p>
+
+<p>Once you&#8217;re installed and configured, run the administrative application. If you click over to status you will notice a message to the effect of &#8220;You haven&#8217;t specified the public host name for this computer in the SMTP settings.&#8221; That means we have some more configuration to do!</p>
+
+<p><img src="http://dcousineau.github.com/images/posts/2009/08/hmailserver-1.png"></p>
+
+<p>Now mosey on over to Settings » Protocols » SMTP, navigate to the &#8220;Delivery of e-mail&#8221; tab. We set our &#8220;Local host name&#8221; to &#8220;localhost&#8221; and click &#8220;Save&#8221;.</p>
+
+<p><img src="http://dcousineau.github.com/images/posts/2009/08/hmailserver-2.png"></p>
+
+<p>Next, for securities sake (as well as to ensure we don&#8217;t have to waste time configuring account as this is only a dev machine), go to Settings » Advanced » IP Ranges » My Computer. Un-check the POP3 and IMAP checkboxes under the &#8220;Allow Connections&#8221; as we don&#8217;t intend to receive mail, nor use the IMAP protocol. Then, un-check everything under &#8220;Requires SMTP authentication&#8221; as we want our PHP applications to have full reign. Finally, click &#8220;Save&#8221;. Remember, this is a dev box.</p>
+
+<p><img src="http://dcousineau.github.com/images/posts/2009/08/hmailserver-3.PNG"></p>
+
+<p>UNDER NO CIRCUMSTANCES SHOULD YOU USE THESE SETTINGS ON A BOX THAT WILL BE EXPOSING ITSELF TO THE INTERNET OR ON A PRODUCTION SERVER! However, since our local machine will obviously have internet connectivity, lets remove all access from outsiders!</p>
+
+<p>Navigate to Settings » Advanced » IP Ranges » Internet. Un-check EVERYTHING from &#8220;Allow connections&#8221; to deny outsiders any services, and, just in case, check EVERYTHING under &#8220;Require SMTP authentication&#8221;  and click &#8220;Save&#8221;.</p>
+
+<p><img src="http://dcousineau.github.com/images/posts/2009/08/hmailserver-4.PNG"></p>
+
+<p>And <em>voilà</em>! We have a fully functioning SMTP server that our local PHP environment can use to send test email messages.</p>
+
+<p>The nice thing about our administrative interface is if we go to Status, navigate to the &#8220;Logging&#8221; tab, and click &#8220;Start,&#8221; we can capture the dialogue between hMailServer and your PHP app when sending an email address (very useful for debugging).</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Good News Everyone!]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/07/01/good-news-everyone/"/>
+    <updated>2009-07-01T08:14:54-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/07/01/good-news-everyone</id>
+    <content type="html"><![CDATA[<p>Naturally it&#8217;s been over a month since I&#8217;ve updated and rather than posting something techincal I feel I should be a little selfish and announce that:</p>
+
+<h3>I&#8217;M GOING TO BE SPEAKING AT <a href="http://zendcon.com/">ZENDCON 09</a>!</h3>
+
+<p>I will be giving my talk on automated deployment techniques with Phing.</p>
+
+<p>To say that I&#8217;m excited is quite an understatement. Nervous now probably tops excitement as now I have to make sure I give a damned good talk and not make <a href="http://eliw.com/">Eli White</a> look like a fool for having picked me for a slot.</p>
+
+<p>Time to go bury my nose in Power Point and research!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Calculating Daylight Savings Time Boundary In PHP]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php/"/>
+    <updated>2009-03-10T03:30:23-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php</id>
+    <content type="html"><![CDATA[<p>I had an issue recently where I needed to calculate the Unix timestamp for the daylight savings time boundaries. According to the <a href="http://aa.usno.navy.mil/faq/docs/daylight_time.php">United States Naval Observatory</a>, daylight savings time begins the <strong>Second Sunday of March</strong> and ends on the <strong>First Sunday of November</strong>.</p>
+
+<p>Awkward date calculations if you don&#8217;t have the magical <a href="http://php.net/strtotime"><code>strtotime()</code></a> function in PHP. <code>strtotime()</code> is able to do relativistic time conversions from the common &#8220;+1 hours&#8221; to the more complex (and more relevant) &#8220;Second Sunday March 0&#8221;.</p>
+
+<p>Why do we do the &#8216;March 0&#8217; in the above string to calculate the start boundary? Doing some tests with <code>strtotime()</code> reveals some behavior you should be aware of.</p>
+
+<p><code>strtotime("March");</code> doesn&#8217;t actually give you the first of March, it gives you the current day in the month specified (<code>date('D, F j, Y, g:i a', strtotime("March"));</code> returns <code>Tue, March 10, 2009, 12:00 am</code> at the time of this post). Doing a similar test but substituting April for March results in the 10th of April (at 12 am).</p>
+
+<p>Now in most cases doing a <code>strtotime("March 1")</code> will suffice (<code>date('D, F j, Y, g:i a', strtotime("March 1"));</code> results in <code>Sun, March 1, 2009, 12:00 am</code>). However, as you can tell, this month is going to be awkward because the first day of the month is a Sunday. <code>strtotime()</code>, when calculating the fuzzy &#8220;Second Sunday,&#8221; doesn&#8217;t include the current day. So calculating <code>date('D, F j, Y, g:i a', strtotime("Second Sunday March 1"));</code> will actually return the 3rd Sunday (<code>Sun, March 15, 2009, 12:00 am</code>).</p>
+
+<p>So our solution is actually to take a step back and return the <strong>PREVIOUS</strong> day to the first day of March and then calculate the Second Sunday from there (since we know that starting from the next day will account for the first). Normally, dealing with the last day in February is a headache, BUT again thanks to PHP magic we don&#8217;t have to figure out if it&#8217;s February 28th or 29th, we merely do a &#8220;March 0&#8221; which steps us back a month (<code>date('D, F j, Y, g:i a', strtotime("March 0"));</code> returns <code>Sat, February 28, 2009, 12:00 am</code>). From there we can calculate the Second Sunday with ease and eventually determine that the second sunday is March 8th, which is confirmed by the above USNO website.</p>
+
+<p>Applying these lessons to calculating the first Sunday in November we come up with the following snippit:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="nv">$remove_hour</span> <span class="o">=</span> <span class="nb">strtotime</span><span class="p">(</span><span class="s2">&quot;Second Sunday March 0&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$add_hour</span> <span class="o">=</span> <span class="nb">strtotime</span><span class="p">(</span><span class="s2">&quot;First Sunday November 0&quot;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$time</span>  <span class="o">=</span> <span class="nb">time</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">if</span><span class="p">(</span> <span class="nv">$time</span> <span class="o">&gt;=</span> <span class="nv">$remove_hour</span> <span class="o">&amp;&amp;</span> <span class="nv">$time</span> <span class="o">&lt;</span> <span class="nv">$add_hour</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nb">var_dump</span><span class="p">(</span><span class="s2">&quot;Lost an hour&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nb">var_dump</span><span class="p">(</span><span class="s2">&quot;Gained an hour&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Cheers!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PHP File Uploads And Background Conversion: Oopsie]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/02/26/php-file-uploads-and-background-conversion-oopsie/"/>
+    <updated>2009-02-26T09:53:19-06:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/02/26/php-file-uploads-and-background-conversion-oopsie</id>
+    <content type="html"><![CDATA[<p>So I spent an inordinate amount of time tracking down a bug recently for a former employer in a system that accepts media file uploads and converts them on the fly.</p>
+
+<p>The system spawns off a small script that manages mplayer/ffmpeg/lame into the background and holds on to the PID to track the conversion process. HOWEVER, there was a problem in the system where large files were being ignored and no error messages were popping up.</p>
+
+<p>What ended up happening was I forgot to take into account PHP&#8217;s file upload behavior in the conversion process.</p>
+
+<p>When PHP accepts a file upload it creates a temporary file (usually in <code>/tmp/</code>). The caveat is PHP frees (read: deletes) the temporary uploaded file at the end of script execution.</p>
+
+<p>So, while the converters could convert a small file in the same encoding as the desired output, a large file (say, a 10mb MPEG) that needed to be converted to a different format (say, a FLV), the converter would begin working in the background but when the PHP script finished executing, PHP would delete the file right out from under the converter&#8217;s feet.</p>
+
+<p>So, a tip to anyone doing anything similar, go ahead and at least rename/move the file (I created a unique MD5 hash from the current time plus a few other things and use that as the new file name) and pass that to any background processing functions so PHP won&#8217;t delete the file at the end of processing.</p>
+
+<p>It will save a WHOLE lot of headaches for you in the future.</p>
+
+<p>Also, if anyone is interested, I will probably write up a tutorial on how to write a PHP script that will convert your MP3&#8217;s in the background.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PHP, Mumbles (Growl), and DBus: Sweeet]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/02/12/php-mumbles-growl-and-dbus-sweeet/"/>
+    <updated>2009-02-12T19:58:30-06:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/02/12/php-mumbles-growl-and-dbus-sweeet</id>
+    <content type="html"><![CDATA[<p>So, after reading <a href="http://www.markshuttleworth.com/archives/253">Mark Shuttlework&#8217;s blog on ideas for notifications in Ubuntu</a> (basically mimicking <a href="http://growl.info/">Growl</a> notifications for the Mac), I decided I wanted that kind of functionality, but&#8230; you know, NOW!</p>
+
+<p>There are a multitude of options available but currently I&#8217;m liking <a href="http://www.mumbles-project.org/">Mumbles</a>. <del>Unlike, say, <a href="http://specto.sourceforge.net/">Specto</a>, which does the monitoring itself, Mumbles provides a DBus interface, a command-line app named <code>mumbles-send</code>, and (I&#8217;m not sure if it&#8217;s implemented in the current stable download) libnotify support.</del> Woutc, from the Specto project, commented below explaining that Specto is not intended to be a Mumbles competitor, but a package to easily monitor system internals (I quote <em>&#8220;&#8230;the purposes from mumbles and specto are different…specto is monitoring what happens outside your desktop, mumbles monitors what happens on your desktop (or in your network)&#8230;&#8221;</em>) Apparently he has plans to build a Mumbles plugin so that one can optionally have Specto send its messages to Mumbles for display.</p>
+
+<p>I decided the <del>best</del> easiest route is to access the internal DBus API, however the forums and other resources on the Mumbles site&#8230; well&#8230; just plain suck. And by suck I mean tell you that something exists and&#8230; thaaats about it.</p>
+
+<p><img src="http://dcousineau.github.com/images/posts/2009/02/d-feet.png"></p>
+
+<p>Well in my Google quest I discovered the existence of <a href="https://fedorahosted.org/d-feet/">D-Feet</a>, a DBus debugging tool (on <a href="http://arstechnica.com/open-source/news/2008/01/learning-from-d-feet-a-quick-look-at-a-new-d-bus-debugger.ars">Ars</a> of all places). Thanks to a quick <code>sudo apt-get install d-feet</code> I found the existence of a public interface in <code>info.growl.Growl</code> that allows for a <code>Notify(title, message)</code> signal to be passed.</p>
+
+<p>Well, with a place to access all I needed was DBus integration with PHP (because I want to start sending debug notification via Growl/Mumbles like <a href="http://framework.zend.com/wiki/pages/viewpage.action?pageId=8454257">this idea</a> on the Zend Framework incubator).</p>
+
+<p>Luckily, GREE Labs provides a <a href="http://labs.gree.jp/Top/OpenSource/DBus-en.html">DBus C extension for PHP</a> that was easily downloaded and installed. Once installed I read <a href="http://labs.gree.jp/Top/OpenSource/DBus/Document-en.html">the documentation</a> to get an idea on how to use the API (which is a 1:1 mapping to the <a href="http://dbus.freedesktop.org/doc/api/html/">DBus API</a>).</p>
+
+<p>After a bit of hacking I finally came up with an alpha product:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">function</span> <span class="nf">null_callback</span><span class="p">()</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>        <span class="nb">var_dump</span><span class="p">(</span><span class="nb">func_get_args</span><span class="p">());</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$dbus</span> <span class="o">=</span> <span class="nx">dbus_bus_get</span><span class="p">(</span><span class="nx">DBUS_BUS_SESSION</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$m</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DBusMessage</span><span class="p">(</span><span class="nx">DBUS_MESSAGE_TYPE_SIGNAL</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">setPath</span><span class="p">(</span><span class="s1">&#39;/info/growl/Growl&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">setInterface</span><span class="p">(</span><span class="s1">&#39;info.growl.Growl&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">setMember</span><span class="p">(</span><span class="s1">&#39;Notify&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">appendArgs</span><span class="p">(</span><span class="s1">&#39;Hello World!&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">appendArgs</span><span class="p">(</span><span class="s1">&#39;Lorem Ipsum Dolor Sit Amet. (&#39;</span> <span class="o">.</span> <span class="nb">time</span><span class="p">()</span> <span class="o">.</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$r</span><span class="o">=</span> <span class="nv">$dbus</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$m</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After running the script in the console, did I see success?</p>
+
+<p><img src="http://dcousineau.github.com/images/posts/2009/02/mumbles-php.png"></p>
+
+<p>Damn right I did!</p>
+
+<p><del>
+Though with a caveat:
+</del></p>
+
+<p><del></p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>Warning: dbusconnection::sendwithreplyandblock(): dbus_connection_send_with_reply_and_block() failed (Traceback (most recent call last):
+</span><span class='line'>  File &quot;/var/lib/python-support/python2.5/dbus/service.py&quot;, line 643, in _message_cb
+</span><span class='line'>    (candidate_method, parent_method) = _method_lookup(self, method_name, interface_name)
+</span><span class='line'>  File &quot;/var/lib/python-support/python2.5/dbus/service.py&quot;, line 244, in _method_lookup
+</span><span class='line'>    raise UnknownMethodException(&#39;%s is not a valid method of interface %s&#39; % (method_name, dbus_interface))
+</span><span class='line'>UnknownMethodException: org.freedesktop.DBus.Error.UnknownMethod: Unknown method: Notify is not a valid method of interface info.growl.Growl
+</span><span class='line'>) in /home/daniel/test.php on line 21
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>Call Stack:
+</span><span class='line'>    0.0002      64496   1. {main}() /home/daniel/test.php:0
+</span><span class='line'>    0.0024      66372   2. dbusconnection-&gt;sendwithreplyandblock() /home/daniel/test.php:21
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p></del></p>
+
+<p><del>
+Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to to find the Notify signal (though everything works correctly). I guess I could ignore this, use the error suppressor (<code>@</code>), or even yell at GREE Labs to have the objects throw exceptions so I can catch them&#8230; I guess I&#8217;ll hack on it some more and report back. I should probably spend more time learning the DBus specs since this is my first project playing with DBus&#8230;
+</del></p>
+
+<p><strong>Update:</strong> Though it&#8217;s not listed on the API page for PHP DBus&#8217;s API, there is a method <code>send()</code> that takes only a single argument (the message object).</p>
+
+<p><strong>Edit:</strong></p>
+
+<p>I saw a question on Reddit asking what is the use of this technique if it&#8217;s limited to the desktop it was called on and PHP is primarily a server side language. Why not do this in Python or Perl?</p>
+
+<p>Well, Mumbles was written in Python so there&#8217;s no point in me doing this in Python: it&#8217;s already been done.</p>
+
+<p>However, the primary use case of a technique like this is having a web app post notifications and errors for the developer. When I work on a site I have a local copy running on my desktop and/or laptop, so when it posts Growl/Mumbles notifications, I get them on my desktop. It&#8217;s great for situations where, say, I have a page in my PHP app that never displays its contents because it processes data then redirects to another page. If a warning or other non-fatal error that I should really fix occurs, then I would normally have to dig through the system wide PHP error log (if you even have error logging enabled). However, if I wrote a custom error handler that posts errors to Growl/Mumbles as they happen, when I visit a transitory page like I described I get little Growl/Mumbles notifications showing that I screwed up!</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[OSS Bugs Are Features]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/01/16/oss-bugs-are-features/"/>
+    <updated>2009-01-16T08:47:13-06:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/01/16/oss-bugs-are-features</id>
+    <content type="html"><![CDATA[<p>I&#8217;ve been thinking a lot lately about a presentation given by <a href="http://whurley.com/">whurley</a> at a <a href="http://refreshbcs.org/">refreshBCS</a> meeting a long time ago. He gave his presentation on Open Source Software, only SLIGHTLY an era of his expertise (just in case you can&#8217;t tell, that was sarcasm) and raise an interesting point.</p>
+
+<p>He talked about how when <a href="http://www.bmc.com/BMC/Common/CDA/hou_Page_Detail/0,3464,9926222_10636326_76443375,00.html">BMC Software</a> picked him up to head up their open source efforts, he battled a little bit the developers. They wanted to make sure the code was perfected, polished, and at its best whenever they started dumping it on the public. Of course they&#8217;d want to do this, releasing code as OSS is almost equivalent to deciding to present yourself to the work naked and without makeup. They wanted their friends who could see the code to be in awe, and their code base to be a shining example of a project done right.</p>
+
+<p>Whurley wanted them just to release it. Not because he wanted it now, not because of impatience or deadlines or anything else. He wanted them to just release it because, and I&#8217;m paraphrasing him, releasing open source thats a little buggy will actually help grow and foster the project. Granted, you do not introduce bugs, you just open and display the code and start making releases even though there are still tickets in your bug tracking system.</p>
+
+<p>He gave the hypothetical example of the stereotypical arrogant OSS developer finding a bug in BMC&#8217;s FooBar software, calling the BMC devs dumbasses, fixing it (because it was a small and easy bug), and now being invested in the software. You don&#8217;t really lose much reputation, but you gain an invested and loyal following.</p>
+
+<p>While this sounds good and true, and it makes a lot of sense (if there&#8217;s nothing to do, OSS developers will never get involved), it never really clicked for me until I associated another story with whurley&#8217;s principle.</p>
+
+<p>I meet Elizabeth Marie Smith (aka auroraeosrose) at ZendCon08 and had good times talking with her and many of the other #phpc members. At one point in the conference, at an opening for one of her talks (a brief overview of PECL extensions), she told the audience how she got into programming PHP and PHP C extensions. She wasn&#8217;t a computer science major, she only started in the early 2000&#8217;s (prior to that not much computer science experience).</p>
+
+<p>What had happened was, to the best of my recollection and <a href="http://elizabethmariesmith.com/2009/01/seven-weird-things/">her seven things post</a>, in the early days of 2001-ish she was really big into Anime and wanted to start a fan site. Her dad helped her install a forum (written in PHP) on a server he was running out of his house on a cable connection.</p>
+
+<p>Well, as with many of the forum projects, there were bugs to be had in the software. Elizabeth was dedicated to the idea of her site and decided to break open the forum and dig around to fix the bugs. Fix them she did but everything kinda snowballed from there. In fact it was bugs in the PHP-GTK extension that caused her to learn C (not an easy feat) and become the maintainer of PHP-GTK as well as the Windows port of PHP maintainer.</p>
+
+<p>It was bugs and problems in the software that caused her to be where she is now, it was bugs in the OSS world that caused her to latch on to PHP-GTK and the Windows PHP port and get them to where they are today. Though she told this story a long time ago, and whurley&#8217;s presentation was even further back yet, it only just now clicked that I had seen a real life example of whurley&#8217;s principle of &#8220;just publish it, flaws and all.&#8221;</p>
+
+<p>The lesson from all this can even be applied outside of OSS development. It&#8217;s a lesson on perfectionism and can be applied towards my personal development practices. I know that agile teaches to publish early and publish often, fixing bugs and adding features on the way, but perfectionism still plagues me. I have maybe 10 drafts on this blog on small little PHP and Python topics I could publish that I never do because I feel it&#8217;s not good enough, or too simple. I have had code at work that I could have released a week ago but instead I obsess over making sure its &#8220;perfect&#8221; when a simple staging deployment will keep everyone happy, keep my moral up, and show me where the REAL bugs are.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Zend Framework Module Init Script (Controller Plugin)]]></title>
+    <link href="http://dcousineau.github.com/blog/2009/01/06/zend-framework-module-init-script-controller-plugin/"/>
+    <updated>2009-01-06T11:12:56-06:00</updated>
+    <id>http://dcousineau.github.com/blog/2009/01/06/zend-framework-module-init-script-controller-plugin</id>
+    <content type="html"><![CDATA[<p>Well, it&#8217;s been a while since I&#8217;ve done a PHP update hasn&#8217;t it? Well alls well here in CStat, I have a quickie for you folks.</p>
+
+<p>Recently at work I had the need to run a script before every single controller (namely to add a plugin folder to Dwoo) for a specific module that I did not desire for any other modules.</p>
+
+<p>I could have subclassed all my controllers to extend a custom action controller that handled this in the <code>init()</code> method, however I&#8217;m lazy so I wrote a quick Zend Controller Plugin to handle this for me.</p>
+
+<p>What it does is grabs the module name from the request object on routeShutdown (the routeShutdown happens after the route has been parsed and the request object has been generated, but before the action controller is instantiated and executed). From there it uses <code>Zend_Font_Controller::getInstance()-&gt;getModuleDirectory(...)</code> to grab the literal path to the module directory, tacks on our init file name (in our case &#8220;init.php&#8221;), and if it exists execute it in its own clean environment.</p>
+
+<p>The init.php file has access to <code>$this</code>, where <code>$this</code> is an instance of the controller plugin (in particular we can do <code>$this-&gt;getRequest()</code> inside the init script).</p>
+
+<p>The code is as follows:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="sd">/**</span>
+</span><span class='line'><span class="sd"> * This checks the current request module&#39;s directory for an initFile (defaults</span>
+</span><span class='line'><span class="sd"> * to init.php) and runs it before the controller is loaded.</span>
+</span><span class='line'><span class="sd"> * </span>
+</span><span class='line'><span class="sd"> * @copyright 2009 Daniel Cousineau</span>
+</span><span class='line'><span class="sd"> * @license http://opensource.org/licenses/mit-license.php MIT License</span>
+</span><span class='line'><span class="sd"> * @version 0.1.0</span>
+</span><span class='line'><span class="sd"> */</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">My_Controller_Plugin_ModuleInit</span> <span class="k">extends</span> <span class="nx">Zend_Controller_Plugin_Abstract</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="nv">$initFileName</span> <span class="o">=</span> <span class="s2">&quot;init.php&quot;</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * @param Zend_Controller_Request_Abstract $request</span>
+</span><span class='line'><span class="sd">  * @return null</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">routeShutdown</span><span class="p">(</span><span class="nx">Zend_Controller_Request_Abstract</span> <span class="nv">$request</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$moduleName</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getModuleName</span><span class="p">();</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nv">$moduleDirectory</span> <span class="o">=</span> <span class="nx">Zend_Controller_Front</span><span class="o">::</span><span class="na">getInstance</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getModuleDirectory</span><span class="p">(</span><span class="nv">$moduleName</span><span class="p">);</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c1">//Trim the paths and filenames to prevent any problems</span>
+</span><span class='line'>      <span class="nv">$initFile</span> <span class="o">=</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$moduleDirectory</span><span class="p">,</span><span class="s1">&#39;/\&#39;) . &#39;</span><span class="o">/</span><span class="s1">&#39; . ltrim(self::$initFileName,&#39;</span><span class="o">/</span><span class="nx">\</span><span class="err">&#39;</span><span class="p">);</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runInitFile</span><span class="p">(</span><span class="nv">$initFile</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Run the file in its own cleaned scope</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @param string $_initFile location of the input file</span>
+</span><span class='line'><span class="sd">  * @return null</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">function</span> <span class="nf">runInitFile</span><span class="p">(</span><span class="nv">$_initFile</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nv">$_initFile</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>          <span class="k">include_once</span> <span class="nv">$_initFile</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As always all code I post on this blog is covered under the MIT license.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Serialize Python Variables To PHP]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/10/21/serialize-python-variables-to-php/"/>
+    <updated>2008-10-21T21:34:47-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/10/21/serialize-python-variables-to-php</id>
+    <content type="html"><![CDATA[<p>So I&#8217;m in the planning stages of a project where I&#8217;ll probably be doing some heavy lifting in Python and serving up the output through PHP. Obviously this will entail transmitting data between Python and PHP and while I haven&#8217;t had a chance to do performance testing to see if it&#8217;s worth it to save to a database, the only other option was to serialize the data to a file that PHP could parse quickly. Obviously, the output from <code>serialize()</code> is going to be the fastest way to recieved the data.</p>
+
+<p>While there already <a href="http://hurring.com/scott/code/python/serialize/">exists</a> a Python set of classes that serializes (and serializes) Python data, it (a) didn&#8217;t handle objects and (b) was licensed under the GPL (rant to follow later), meaning I couldn&#8217;t use it for it&#8217;s intended purpose due to the closed source nature of my project.</p>
+
+<p>I decided this was a good enough time to play around with git so I created a github repo <a href="http://github.com/dcousineau/phpserialize/tree/master">here</a>.</p>
+
+<p>It could probably still use some more TLC in the object area, maybe a few more supported types, and unserialization functions would be nice.</p>
+
+<p>I do feel it wasn&#8217;t bad for a few hours of hacking if I do say so myself.</p>
+
+<p>The code for the module (should be in a phpserialize.py file) is as follows:</p>
+
+<!-- more -->
+
+
+<h3>Python Code</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd">Collection of functions to serialize Python variables to the native PHP format</span>
+</span><span class='line'>
+</span><span class='line'><span class="sd">@version 0.1</span>
+</span><span class='line'><span class="sd">@author Daniel Cousineau &lt;dcousineau@gmail.com&gt;</span>
+</span><span class='line'><span class="sd">@copyright Copyright (c) 2008 Daniel Cousineau</span>
+</span><span class='line'><span class="sd">@license http://www.opensource.org/licenses/mit-license.php MIT License</span>
+</span><span class='line'><span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="o">*</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Serialize var to the native PHP serialization format</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">IntType</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">LongType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_int</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">FloatType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_decimal</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">BooleanType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_boolean</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">StringType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_string</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_null</span><span class="p">()</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">ListType</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">TupleType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_array</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">DictType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_dictionary</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">InstanceType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_object</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Invalid Type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)))</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_string</span><span class="p">(</span><span class="n">string</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Format: s:L:&quot;STRING&quot;;</span>
+</span><span class='line'><span class="sd">     L: Length of the string</span>
+</span><span class='line'><span class="sd">     STRING: The string itself. No need to escape quotes (&quot;)</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s">&quot;s:</span><span class="si">%d</span><span class="s">:&quot;</span><span class="o">%</span><span class="n">s</span><span class="s">&quot;;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">string</span><span class="p">),</span> <span class="n">string</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_int</span><span class="p">(</span><span class="nb">int</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Format: i:D;</span>
+</span><span class='line'><span class="sd">     D: the integer</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s">&quot;i:</span><span class="si">%d</span><span class="s">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_decimal</span><span class="p">(</span><span class="n">decimal</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Format: d:D;</span>
+</span><span class='line'><span class="sd">     D: the decimal (accepts expontent notation)</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s">&quot;d:</span><span class="si">%s</span><span class="s">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">decimal</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_boolean</span><span class="p">(</span><span class="n">boolean</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Format: b:B;</span>
+</span><span class='line'><span class="sd">     B: 1 for True, 0 for False</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s">&quot;b:</span><span class="si">%d</span><span class="s">;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">boolean</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_null</span><span class="p">():</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Format: N;</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s">&quot;N;&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_array</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Format: a:K:{VALUES}</span>
+</span><span class='line'><span class="sd">     K: Number of entries (number of keys for dictionaries)</span>
+</span><span class='line'><span class="sd">     VALUES: serialized key appended to serialized value. Do not worry about ;</span>
+</span><span class='line'><span class="sd">             if a value is an array</span>
+</span><span class='line'><span class="sd"> </span>
+</span><span class='line'><span class="sd"> DOES NOT END WITH A ;</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+</span><span class='line'>      <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">serialize_array_key</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+</span><span class='line'>      <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s">&quot;a:</span><span class="si">%d</span><span class="s">:{</span><span class="si">%s</span><span class="s">}&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_array_key</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Decimals and Boolans are automatically converted to integers for key values.</span>
+</span><span class='line'><span class="sd"> Arrays and Objects throw errors if they are set as a key</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">IntType</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">FloatType</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">BooleanType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_int</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">var</span><span class="p">))</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">elif</span> <span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)</span> <span class="ow">is</span> <span class="n">StringType</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">return</span> <span class="n">serialize_string</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">else</span><span class="p">:</span>
+</span><span class='line'>      <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Invalid Key Type </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">var</span><span class="p">)))</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_dictionary</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> See serialize_array()</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+</span><span class='line'>      <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">serialize_array_key</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+</span><span class='line'>      <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">return</span> <span class="s">&quot;a:</span><span class="si">%d</span><span class="s">:{</span><span class="si">%s</span><span class="s">}&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">),</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">def</span> <span class="nf">serialize_object</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+</span><span class='line'>  <span class="sd">&quot;&quot;&quot;</span>
+</span><span class='line'><span class="sd"> Format: O:L:&quot;CLASS&quot;:K:{MEMBERS}</span>
+</span><span class='line'><span class="sd">     L: Length of class name</span>
+</span><span class='line'><span class="sd">     CLASS: class name (string)</span>
+</span><span class='line'><span class="sd">     K: Number of class members (ignore &#39;static&#39; members)</span>
+</span><span class='line'><span class="sd">     MEMBERS: Members as an associative array (dictionary) (ignore &#39;static&#39; members)</span>
+</span><span class='line'><span class="sd"> &quot;&quot;&quot;</span>
+</span><span class='line'>  <span class="n">objClass</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span class='line'>  <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+</span><span class='line'>      <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">serialize_array_key</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
+</span><span class='line'>      <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">serialize</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">return</span> <span class="s">&quot;O:</span><span class="si">%d</span><span class="s">:&quot;</span><span class="o">%</span><span class="n">s</span><span class="s">&quot;:</span><span class="si">%d</span><span class="s">:{</span><span class="si">%s</span><span class="s">}&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">objClass</span><span class="p">),</span> <span class="n">objClass</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span><span class="p">),</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>I also wrote up some tests in PHP:</p>
+
+<h3>PHP Test Code</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;BEGINNING TESTS:n&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;----------------nn&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//STRING</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="s2">&quot;String&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize(&quot;String&quot;)</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;STRINGS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//INTEGER</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="mi">52</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize(52)</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;INTEGERS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//DECIMAL</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="mf">9.8</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize(9.8)</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;DECIMALS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="mf">1.52</span><span class="o">*</span><span class="nx">pow</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">5</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize(1.52*pow(10,-5))</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;DECIMALS (exponential format)&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//BOOLEAN</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="k">true</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize(True)</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;BOOLEANS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//NULL</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="k">null</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize(None)</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;NULLS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//ARRAY</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize((9, 8, 7))</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;SIMPLE ARRAYS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;key&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="mi">5</span> <span class="o">=&gt;</span> <span class="s2">&quot;another value&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize({&quot;key&quot;:&quot;value&quot;,5:&quot;another value&quot;})</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;ASSOCIATIVE ARRAYS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;key&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="mi">5</span> <span class="o">=&gt;</span> <span class="k">array</span><span class="p">(</span><span class="s2">&quot;values&quot;</span><span class="p">));</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'><span class="s">print phpserialize.serialize({&quot;key&quot;:&quot;value&quot;,5:[&quot;values&quot;]})</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;COMPLEX ARRAYS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//OBJECTS</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Test</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nv">$i</span> <span class="o">=</span> <span class="s2">&quot;PUBLIC&quot;</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">public</span> <span class="nv">$j</span> <span class="o">=</span> <span class="s2">&quot;B0RKED&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Test</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$python</span> <span class="o">=</span> <span class="s">&lt;&lt;&lt;HEREDOC</span>
+</span><span class='line'><span class="s">import phpserialize</span>
+</span><span class='line'>
+</span><span class='line'><span class="s">class Test:</span>
+</span><span class='line'><span class="s">  def __init__(self):</span>
+</span><span class='line'><span class="s">      self.i = &quot;PUBLIC&quot;</span>
+</span><span class='line'><span class="s">      self.j = &quot;B0RKED&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="s">print phpserialize.serialize(Test())</span>
+</span><span class='line'><span class="s">HEREDOC;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">print_results</span><span class="p">(</span><span class="s2">&quot;OBJECTS&quot;</span><span class="p">,</span> <span class="nv">$test</span><span class="p">,</span> <span class="nv">$python</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">function</span> <span class="nf">print_results</span><span class="p">(</span><span class="nv">$test_name</span><span class="p">,</span> <span class="nv">$var</span><span class="p">,</span> <span class="nv">$python_code</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">echo</span> <span class="nb">sprintf</span><span class="p">(</span> <span class="s2">&quot;TESTING %s:nn&quot;</span><span class="p">,</span> <span class="nv">$test_name</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">echo</span> <span class="nb">sprintf</span><span class="p">(</span> <span class="s2">&quot;Expecting:  %sn&quot;</span><span class="p">,</span> <span class="nb">serialize</span><span class="p">(</span><span class="nv">$var</span><span class="p">)</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">echo</span> <span class="nb">sprintf</span><span class="p">(</span> <span class="s2">&quot;            %sn&quot;</span><span class="p">,</span> <span class="nb">implode</span><span class="p">(</span><span class="s2">&quot;n            &quot;</span><span class="p">,</span> <span class="nb">explode</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="nb">print_r</span><span class="p">(</span><span class="nv">$var</span><span class="p">,</span> <span class="k">true</span><span class="p">)))</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">echo</span> <span class="s2">&quot;n&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="nv">$recieved</span> <span class="o">=</span> <span class="nb">exec</span><span class="p">(</span><span class="s2">&quot;python -c &quot;</span> <span class="o">.</span> <span class="nb">escapeshellarg</span><span class="p">(</span><span class="nv">$python_code</span><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">echo</span> <span class="nb">sprintf</span><span class="p">(</span> <span class="s2">&quot;Recieved:   %sn&quot;</span><span class="p">,</span> <span class="nv">$recieved</span> <span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">echo</span> <span class="nb">sprintf</span><span class="p">(</span> <span class="s2">&quot;            %sn&quot;</span><span class="p">,</span> <span class="nb">implode</span><span class="p">(</span><span class="s2">&quot;n            &quot;</span><span class="p">,</span> <span class="nb">explode</span><span class="p">(</span><span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="nb">print_r</span><span class="p">(</span><span class="nb">unserialize</span><span class="p">(</span><span class="nv">$recieved</span><span class="p">),</span> <span class="k">true</span><span class="p">)))</span> <span class="p">);</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="k">echo</span> <span class="s2">&quot;n---nn&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Which gives us the following output:</p>
+
+<h3>PHP Test Results</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+<span class='line-number'>94</span>
+<span class='line-number'>95</span>
+<span class='line-number'>96</span>
+<span class='line-number'>97</span>
+<span class='line-number'>98</span>
+<span class='line-number'>99</span>
+<span class='line-number'>100</span>
+<span class='line-number'>101</span>
+<span class='line-number'>102</span>
+<span class='line-number'>103</span>
+<span class='line-number'>104</span>
+<span class='line-number'>105</span>
+<span class='line-number'>106</span>
+<span class='line-number'>107</span>
+<span class='line-number'>108</span>
+<span class='line-number'>109</span>
+<span class='line-number'>110</span>
+<span class='line-number'>111</span>
+<span class='line-number'>112</span>
+<span class='line-number'>113</span>
+<span class='line-number'>114</span>
+<span class='line-number'>115</span>
+<span class='line-number'>116</span>
+<span class='line-number'>117</span>
+<span class='line-number'>118</span>
+<span class='line-number'>119</span>
+<span class='line-number'>120</span>
+<span class='line-number'>121</span>
+<span class='line-number'>122</span>
+<span class='line-number'>123</span>
+<span class='line-number'>124</span>
+<span class='line-number'>125</span>
+<span class='line-number'>126</span>
+<span class='line-number'>127</span>
+<span class='line-number'>128</span>
+<span class='line-number'>129</span>
+<span class='line-number'>130</span>
+<span class='line-number'>131</span>
+<span class='line-number'>132</span>
+<span class='line-number'>133</span>
+<span class='line-number'>134</span>
+<span class='line-number'>135</span>
+<span class='line-number'>136</span>
+<span class='line-number'>137</span>
+<span class='line-number'>138</span>
+<span class='line-number'>139</span>
+<span class='line-number'>140</span>
+<span class='line-number'>141</span>
+<span class='line-number'>142</span>
+<span class='line-number'>143</span>
+<span class='line-number'>144</span>
+<span class='line-number'>145</span>
+<span class='line-number'>146</span>
+<span class='line-number'>147</span>
+<span class='line-number'>148</span>
+<span class='line-number'>149</span>
+<span class='line-number'>150</span>
+<span class='line-number'>151</span>
+<span class='line-number'>152</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>BEGINNING TESTS:
+</span><span class='line'>----------------
+</span><span class='line'>
+</span><span class='line'>TESTING STRINGS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  s:6:&quot;String&quot;;
+</span><span class='line'>            String
+</span><span class='line'>
+</span><span class='line'>Recieved:   s:6:&quot;String&quot;;
+</span><span class='line'>            String
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING INTEGERS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  i:52;
+</span><span class='line'>            52
+</span><span class='line'>
+</span><span class='line'>Recieved:   i:52;
+</span><span class='line'>            52
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING DECIMALS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  d:9.800000000000000710542735760100185871124267578125;
+</span><span class='line'>            9.8
+</span><span class='line'>
+</span><span class='line'>Recieved:   d:9.8;
+</span><span class='line'>            9.8
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING DECIMALS (exponential format):
+</span><span class='line'>
+</span><span class='line'>Expecting:  d:1.5200000000000001853270141516372149226299370639026165008544921875E-5;
+</span><span class='line'>            1.52E-5
+</span><span class='line'>
+</span><span class='line'>Recieved:   d:1.52e-05;
+</span><span class='line'>            1.52E-5
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING BOOLEANS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  b:1;
+</span><span class='line'>            1
+</span><span class='line'>
+</span><span class='line'>Recieved:   b:1;
+</span><span class='line'>            1
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING NULLS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  N;
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Recieved:   N;
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING SIMPLE ARRAYS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  a:3:{i:0;i:9;i:1;i:8;i:2;i:7;}
+</span><span class='line'>            Array
+</span><span class='line'>            (
+</span><span class='line'>                [0] =&gt; 9
+</span><span class='line'>                [1] =&gt; 8
+</span><span class='line'>                [2] =&gt; 7
+</span><span class='line'>            )
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Recieved:   a:3:{i:0;i:9;i:1;i:8;i:2;i:7;}
+</span><span class='line'>            Array
+</span><span class='line'>            (
+</span><span class='line'>                [0] =&gt; 9
+</span><span class='line'>                [1] =&gt; 8
+</span><span class='line'>                [2] =&gt; 7
+</span><span class='line'>            )
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING ASSOCIATIVE ARRAYS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  a:2:{s:3:&quot;key&quot;;s:5:&quot;value&quot;;i:5;s:13:&quot;another value&quot;;}
+</span><span class='line'>            Array
+</span><span class='line'>            (
+</span><span class='line'>                [key] =&gt; value
+</span><span class='line'>                [5] =&gt; another value
+</span><span class='line'>            )
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Recieved:   a:2:{i:5;s:13:&quot;another value&quot;;s:3:&quot;key&quot;;s:5:&quot;value&quot;;}
+</span><span class='line'>            Array
+</span><span class='line'>            (
+</span><span class='line'>                [5] =&gt; another value
+</span><span class='line'>                [key] =&gt; value
+</span><span class='line'>            )
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING COMPLEX ARRAYS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  a:2:{s:3:&quot;key&quot;;s:5:&quot;value&quot;;i:5;a:1:{i:0;s:6:&quot;values&quot;;}}
+</span><span class='line'>            Array
+</span><span class='line'>            (
+</span><span class='line'>                [key] =&gt; value
+</span><span class='line'>                [5] =&gt; Array
+</span><span class='line'>                    (
+</span><span class='line'>                        [0] =&gt; values
+</span><span class='line'>                    )
+</span><span class='line'>
+</span><span class='line'>            )
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Recieved:   a:2:{i:5;a:1:{i:0;s:6:&quot;values&quot;;}s:3:&quot;key&quot;;s:5:&quot;value&quot;;}
+</span><span class='line'>            Array
+</span><span class='line'>            (
+</span><span class='line'>                [5] =&gt; Array
+</span><span class='line'>                    (
+</span><span class='line'>                        [0] =&gt; values
+</span><span class='line'>                    )
+</span><span class='line'>
+</span><span class='line'>                [key] =&gt; value
+</span><span class='line'>            )
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>---
+</span><span class='line'>
+</span><span class='line'>TESTING OBJECTS:
+</span><span class='line'>
+</span><span class='line'>Expecting:  O:4:&quot;Test&quot;:2:{s:1:&quot;i&quot;;s:6:&quot;PUBLIC&quot;;s:1:&quot;j&quot;;s:6:&quot;B0RKED&quot;;}
+</span><span class='line'>            Test Object
+</span><span class='line'>            (
+</span><span class='line'>                [i] =&gt; PUBLIC
+</span><span class='line'>                [j] =&gt; B0RKED
+</span><span class='line'>            )
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Recieved:   O:4:&quot;Test&quot;:2:{s:1:&quot;i&quot;;s:6:&quot;PUBLIC&quot;;s:1:&quot;j&quot;;s:6:&quot;B0RKED&quot;;}
+</span><span class='line'>            Test Object
+</span><span class='line'>            (
+</span><span class='line'>                [i] =&gt; PUBLIC
+</span><span class='line'>                [j] =&gt; B0RKED
+</span><span class='line'>            )
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>---
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Outputting CSV as a Downloadable File in PHP]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/10/10/outputting-csv-as-a-downloadable-file-in-php/"/>
+    <updated>2008-10-10T05:42:13-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/10/10/outputting-csv-as-a-downloadable-file-in-php</id>
+    <content type="html"><![CDATA[<p>Nearly every application you could write in for the business sphere in PHP probably requires some sort of data export, most likely in the CSV format.</p>
+
+<p>The easiest way to provide a downloadable file is by altering the headers and echo&#8217;ing the file content. In our case:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s2">&quot;Content-type: text/csv&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s2">&quot;Cache-Control: no-store, no-cache&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=&quot;filename.csv&quot;&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>We want to set our applicable Content-Type so that the browsers associate the file properly. Just relying on the extension doesn&#8217;t work, even in Windows. The magic is in the third header setting, &#8220;Content-Disposition,&#8221; which informs the browser to download as a separate file (don&#8217;t open a new window and display a blank page, just display the file download box) and tell the browser the filename is &#8220;filename.csv&#8221;. This way rewrite rules like http://localhost/export/csv/ will result in a download box that declares the file &#8220;filename.csv&#8221; rather than a randomly assigned name or whatever the current url is.</p>
+
+<p>Into the meat of the CSV export. At the very beginning we need to open up a stream to the PHP output (the same place where echo sends its string content, which is NOT stdout):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$outstream</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s2">&quot;php://output&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Next we&#8217;re going to assume you already have your data packed nicely into an array (or array of arrays) so long as we have a single array per row/line.</p>
+
+<p>The magic comes into play using the build in PHP function <a href="http://php.net/fgetcsv"><code>fgetcsv()</code></a>. <code>fgetcsv()</code> takes an array for a single row and outputs it, automatically escaping output according to column and enclosure delimiters!</p>
+
+<p><code>fgetcsv()</code> requires a file resource as its first parameter and the magic of PHP streams is they act like a file resource (actually a file resource is just a file stream), so we give it <code>$outstream</code> to make <code>fputcsv()</code> echo its output. We fill in the rest of the parameters according to the php.net documentation and voila we have:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s2">&quot;Content-type: text/csv&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s2">&quot;Cache-Control: no-store, no-cache&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=&quot;filename.csv&quot;&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$outstream</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s2">&quot;php://output&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test_data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="k">array</span><span class="p">(</span> <span class="s1">&#39;Cell 1,A&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell 1,B&#39;</span> <span class="p">),</span>
+</span><span class='line'>  <span class="k">array</span><span class="p">(</span> <span class="s1">&#39;Cell 2,A&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell 2,B&#39;</span> <span class="p">)</span>
+</span><span class='line'><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="nv">$test_data</span> <span class="k">as</span> <span class="nv">$row</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nb">fputcsv</span><span class="p">(</span><span class="nv">$outstream</span><span class="p">,</span> <span class="nv">$row</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">fclose</span><span class="p">(</span><span class="nv">$outstream</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For more output stream craziness, <a href="http://zaemis.blogspot.com/">Timothy Boronczyk</a> from the #phpc IRC channel on freenode shared a code snipped that outputs CSV either to the output buffer OR will return it as a string using some clever streams hackery:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">function</span> <span class="nf">exportCSV</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="nv">$col_headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(),</span> <span class="nv">$return_string</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nv">$stream</span> <span class="o">=</span> <span class="p">(</span><span class="nv">$return_string</span><span class="p">)</span> <span class="o">?</span> <span class="nb">fopen</span> <span class="p">(</span><span class="s1">&#39;php://temp/maxmemory&#39;</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nb">fopen</span> <span class="p">(</span><span class="s1">&#39;php://output&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$col_headers</span><span class="p">))</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nb">fputcsv</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$col_headers</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$record</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nb">fputcsv</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$record</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$return_string</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nb">rewind</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>        <span class="nv">$retVal</span> <span class="o">=</span> <span class="nb">stream_get_contents</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>        <span class="nb">fclose</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$retVal</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nb">fclose</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ZendCon08 Wrapup]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/09/22/zendcon08-wrapup/"/>
+    <updated>2008-09-22T11:49:42-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/09/22/zendcon08-wrapup</id>
+    <content type="html"><![CDATA[<p>So I kinda had a thing going about blogging during ZendCon but lost it, so I might as well just do a single day wrap up.</p>
+
+<p>So ZendCon turned out to be completely worth it, even if only for the chance to meet in person a lot of the core PHP community and then drink semi-copiously with them.</p>
+
+<p>The talks were good, though most of them were either more basic than I would have liked or really indepth (/me thinks back to Sara&#8217;s PHP Extension Writing talk, though that was more &#8220;few php developers gets this deep&#8221; than indepth/complicated).</p>
+
+<p>The uncon was nice, which of course I&#8217;d like it given my love for barcamps, refreshes, and generally community driven and adhoc events.</p>
+
+<p>The Yahoo party started out awkward given that one expects an open bar after paying $500+ for tickets to a conference, however from what I gathered it really wasn&#8217;t so much Yahoo&#8217;s fault more the hotel&#8217;s. I won the raffle for the &#8220;Day with Rasmus&#8221; prize and felt bad &#8216;cause when one of the Yahoo girls came to me and to have me verify my information, I told them my email (which was a gmail account) was correct but if they still have trouble to just google my first and last name since I dominate the first page for my name.</p>
+
+<p>My only problem with ZendCon is that it ended&#8230;</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ZendCon08 Day 1 Wrap Up]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/09/17/zendcon08-day-1-wrap-up/"/>
+    <updated>2008-09-17T12:52:40-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/09/17/zendcon08-day-1-wrap-up</id>
+    <content type="html"><![CDATA[<p>Turned out to be a fairly exciting day. I woke up late wondering why my alarms didn&#8217;t go off, just barely got to lunch and regretted missing <a href="http://www.jpipes.com/index.php">Jay Pipes</a>&#8217; talk.</p>
+
+<p><a href="http://blog.libssh2.org/">Sara Golemon</a> gave an interesting introduction to PHP extension writing. I bow to her vastly superior C-fu.</p>
+
+<p>I <a href="http://dcousineau.github.com/blog/2008/09/16/zendcon-day-1-pecl-picks/">already</a> <a href="http://dcousineau.github.com/blog/2008/09/16/zendcon08-day-1-the-knight-rider-methodology-to-software-development/">discussed</a> a few talks that I went to yesterday as well.</p>
+
+<p>Ended the night doing a pub crawl with some people (hung out with Jay Pipes at the end which is what caused me to regret missing his talk).</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ZendCon08 Day 1 - The Knight Rider Methodology to Software Development]]></title>
+    <link href="http://dcousineau.github.com/blog/2008/09/16/zendcon08-day-1-the-knight-rider-methodology-to-software-development/"/>
+    <updated>2008-09-16T11:24:08-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2008/09/16/zendcon08-day-1-the-knight-rider-methodology-to-software-development</id>
+    <content type="html"><![CDATA[<p><a href="http://eliw.com/">Eli White</a> gave a talk called <a href="http://eliw.com/conference/zendcon-2008-KnightRider.pdf">&#8220;The Knight Rider Methodology to Software Development&#8221;</a>.</p>
+
+<p>He compares software development methodologies to the old TV show <a href="http://en.wikipedia.org/wiki/Knight_Rider">Knight Rider</a>, in that the main character, Michael Knight, was average and ordinary except for the fact that he had an applicable toolset for what he needed to do (KITT).</p>
+
+<p>Eli talks about how while locking yourself into a programming language (company wise) is okay in that when you hire you know that the candidate has to know at lease a finite number of languages. But you shouldn&#8217;t force employees to use locked in tools. If they like their own editor debugger combo, let them use it because they will be faster, the code will still work the same.</p>
+
+<p>He goes over different tools you&#8217;ll use for different purposes. Editors, debuggers, load testers, etc.</p>
+
+<p>The movie clips are great, which you unfortunately don&#8217;t get on the downloadable presentation.</p>
 ]]></content>
   </entry>
   

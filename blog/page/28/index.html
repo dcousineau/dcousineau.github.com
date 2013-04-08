@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Tower of Power</title>
+  <meta name="author" content="Daniel Cousineau">
+
+  
+  <meta name="description" content="So I see a link on reddit today to an article entitled No, your code is not so great that it doesn’t need comments. The article site was down so I &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://dcousineau.github.com/blog/page/28/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Tower of Power" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Tower of Power</a></h1>
+  
+    <h2>Too sweet to be sour.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dcousineau.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/projects">Projects</a></li>
+  <li><a href="/about">About</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2008/07/28/are-we-still-arguing-the-merits-of-code-comments/">Are We Still Arguing the Merits of Code Comments?</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2008-07-28T04:52:18-05:00" pubdate data-updated="true">Jul 28<span>th</span>, 2008</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>So I see a link on reddit today to an article entitled <a href="http://www.reddit.com/comments/6tqre/no_your_code_is_not_so_great_that_it_doesnt_need/">No, your code is not so great that it doesn’t need comments</a>. The article site was down so I started reading the comments and was very disheartened to see an actual debate over whether pro developers put comments in or left them out.</p>
+
+<p>For example, we have this from &#8220;ckwop&#8221;:</p>
+
+<blockquote><p>I find that the number of comments a developer puts in to their code is inversely proportional to the amount of experience they have.</p></blockquote>
+
+<p>I believe the reason for this is two fold.</p>
+
+<p>Firstly, as you become more experienced you become fluent in reading code. You&#8217;re not expending mental energy trying to grok the syntax and the flow of the program. It just comes naturally.</p>
+
+<p>Secondly, as you become more experienced, you learn how to layout you code in a more readable way. You name classes and variables such that the code is, for the most part, self-documenting.</p>
+
+<p>I don&#8217;t quite know how to describe the absolute FAIL in this particular statement. While he does go on to say:</p>
+
+<blockquote><p>The only comments left in programs written by experienced programmers are comments which document decisions. Why one approach was taken over another, for example.</p></blockquote>
+
+<p>It still doesn&#8217;t redeem himself. Comments like his betray a staggering amount of arrogance that poisons the mind of developers and turn otherwise good programmers into spaghetti-spewing monsters that take on government jobs so it&#8217;ll take longer for them to get fired.</p>
+
+<p>This person (and sadly many others) assert that well written code is intuitive. These people are the same people that try and tell me Python is perfect for everything and I shouldn&#8217;t work in any other language unless I&#8217;m working in the embedded space, in which case I should write myself a Python-To-Assembly script prefixed with the cute little &#8220;py&#8221;.</p>
+
+<p>Comments are meant to provide a quick overview of code flow and reasoning behind particular decisions. Comments should be clear and concise and allow a developer to spend 5 minutes figuring out where in the code base they need to be to fix the rounding issue rather than spending 40 minutes tracing program flow.</p>
+
+<p>Comments are meant to help developers who either have limited experience in a language, who are new to a language, or who haven&#8217;t used a particular language in quite some time. Your Haskell code may be clear and simple to you, but I can&#8217;t read a single damned line of it: comment it!</p>
+
+<p>Comments are meant for the developer who puts down a project to focus on something else for a few months only to pick the original code back up. The sign of a mature developer is one who accepts the fact that when he puts down code for a few days, he forgets the &#8220;why&#8221;. No developer is immune to this, and anyone that tries to tell you they are different is not worth the time you wasted listening to them.</p>
+
+<p>So, to &#8220;ckwop&#8221; and all the other developers out there that think code should speak for itself I have a few things to say:</p>
+
+<ul>
+<li>If code could speak for itself, it wouldn&#8217;t be called code</li>
+<li>You will not remember your design decisions, and in some cases even code flow, after a month</li>
+<li>Comments make it much easier for me to debug when your company hires me to fix your failures both as a programmer and as a human being.</li>
+</ul>
+
+
+<p>In closing: The debate has long been over, comment your fucking code.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/blog/page/29/">&larr; Older</a>
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/blog/page/27/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>Latest Tweets</h1>
+  <ul id="tweets">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  <script type="text/javascript">
+    $.domReady(function(){
+      getTwitterFeed("dcousineau", 4, false);
+    });
+  </script>
+  <script src="/javascripts/twitter.js" type="text/javascript"> </script>
+  
+    <a href="http://twitter.com/dcousineau" class="twitter-follow-button" data-show-count="true">Follow @dcousineau</a>
+  
+</section>
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Daniel Cousineau -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'dcousineaublog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
