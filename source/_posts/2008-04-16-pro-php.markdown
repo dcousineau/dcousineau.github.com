@@ -1,0 +1,26 @@
+---
+author: admin
+comments: true
+date: 2008-04-16 00:51:03
+layout: post
+slug: pro-php
+title: Pro PHP
+wordpress_id: 42
+categories:
+- Books
+tags:
+- PHP
+- Review
+---
+
+My copy of [Pro PHP: Patterns, Frameworks, Testing and More](http://www.amazon.com/gp/product/1590598199) by [Kevin McArthur](http://www.linkedin.com/in/stormtide) has already been worth the money I spent on it.
+
+In our, albeit slow, upgrade to more modern development practices (code version and unit testing being the last elements on my list), I was particularly fearful of code versioning namely concerning issues of automating a build process to export a copy of the repository to our shared development server, or just have a local server installed for everyone one.
+
+However Chapter 8 has pointed me to two programs that I sincerely regret not having heard of until now: [Phing](http://phing.info/trac/) and [Xinc](http://code.google.com/p/xinc/).
+
+Phing is a build system written in PHP that works extremely well with PHP and [PHPUnit](http://www.phpunit.de/). You can configure your own build targets, for example like "get" (SVN update essentially), "test" (run PHPUnit or any other unit testing), "try" (copy to a development server), and "deploy" (copy to your live server).
+
+Xinc is a continuous integration server. Essentially, it monitors an SVN repo and performs a user defined action (usually running a phing buildscript) on any changes to the repo. Which is awesome because its solves the issue of updating the dev server. Having Xinc run a `> phing try` on SVN updates is exactly what we need! I'm even having delusions of grandeur of having it monitor tags for doing live deployments as well.
+
+Don't take my word as gospel, I haven't actually installed and tested these systems out, but when I do you can rest assured I will be writing about it.

@@ -1,0 +1,35 @@
+---
+
+comments: true
+date: 2008-05-10 19:47:35
+layout: post
+slug: indy
+title: Indy!!
+wordpress_id: 47
+categories:
+- Offbeat
+tags:
+- Humor
+- Python
+---
+
+
+```python
+from indiana import jones
+import whip
+import ruins
+
+cave = new Ruins()
+
+trap = indiana.steal( cave.treasure )
+indiana.escape( trap )
+```
+
+```text
+ImportError: Snakes? I hate snakes!
+```
+
+
+
+
+

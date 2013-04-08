@@ -1,15 +1,14 @@
 ---
 layout: page
-#title: "About Me"
-date: 2012-07-24 15:19
+title: "About"
+date: 2013-04-07 23:07
 comments: false
 sharing: false
 footer: false
-
 ---
 
-{% img left /images/me.320.jpeg %}
+Your blogger for the evening is Daniel Cousineau, developer at [Splash Media](http://splashmedia.com)
 
-Daniel Cousineau is a software developer for Splash Media in Dallas, TX. He helps co-organize the [DallasPHP](http://phpdallas.org/) user group, helped co-orgainze the second annual [Lone Star PHP conference](http://lonestarphp.com/), and has spoken at conferences like ZendCon 09 and 11, O'Reilly Where 2.0 2011, and php|tek 2012 on topics ranging from PHP application deployment techniques to jQuery Mobile and JavaScript best practices.
+I have been on computers since before my infantile amnesia phase (take psychology), only knowing this through a picture of me leaning on the keyboard of a Compaq Portable II.
 
-You can follow Daniel on Twitter at [@dcousineau](http://twitter.com/dcousineau).
+I first worked with HTML around 1998, 1999 and have fallen in love with the web industry ever since. You can find me on [Facebook](http://facebook.com/dcousineau), [Twitter](http://twitter.com/dcousineau), [GitHub](https://github.com/dcousineau), and a few other websites I don't feel like listing at the moment. I can be contacted through my various social networks or a comment on this blog.
