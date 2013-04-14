@@ -1,0 +1,182 @@
+/* line 4, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.clearfix {
+  zoom: 1;
+}
+/* line 6, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.clearfix:after {
+  display: block;
+  visibility: hidden;
+  height: 0;
+  clear: both;
+  content: ".";
+}
+/* line 15, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  background: #555;
+}
+/* line 24, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+* {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+/* line 26, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-box;
+  display: box;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  -ms-box-orient: horizontal;
+  -o-box-orient: horizontal;
+  box-orient: horizontal;
+  height: 100%;
+  width: 100%;
+  min-height: 1120px;
+  min-width: 2088px;
+}
+/* line 35, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-box;
+  display: box;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  -ms-box-orient: vertical;
+  -o-box-orient: vertical;
+  box-orient: vertical;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  box-flex: 1;
+  flex: 1;
+  width: 0;
+}
+/* line 41, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column.up {
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+/* line 44, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column.up > * {
+  -webkit-transform: rotate(-180deg);
+  -moz-transform: rotate(-180deg);
+  -o-transform: rotate(-180deg);
+  -ms-transform: rotate(-180deg);
+  transform: rotate(-180deg);
+}
+/* line 52, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip-container {
+  width: 100%;
+  position: relative;
+  -webkit-perspective: 1000px;
+  -moz-perspective: 1000px;
+  perspective: 1000px;
+  background: #000;
+}
+/* line 61, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip {
+  width: 100%;
+  height: 320px;
+  -webkit-transition: -webkit-transform 1s;
+  -moz-transition: -moz-transform 1s;
+  -o-transition: -o-transform 1s;
+  -ms-transition: -ms-transform 1s;
+  transition: transform 1s;
+  -webkit-transform-style: preserve-3d;
+  -moz-transform-style: preserve-3d;
+  -ms-transform-style: preserve-3d;
+  transform-style: preserve-3d;
+}
+/* line 68, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip figure {
+  position: absolute;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+/* line 85, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip figure.back {
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  -ms-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+}
+/* line 90, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip.flipped {
+  -webkit-transform: rotateY(180deg);
+  -moz-transform: rotateY(180deg);
+  -o-transform: rotateY(180deg);
+  -ms-transform: rotateY(180deg);
+  transform: rotateY(180deg);
+}
+/* line 98, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip .twitter {
+  text-align: center;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-box;
+  display: box;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  -ms-box-orient: vertical;
+  -o-box-orient: vertical;
+  box-orient: vertical;
+}
+/* line 104, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip .twitter hgroup {
+  padding-top: 15px;
+}
+/* line 105, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip .twitter hgroup h1 {
+  margin: 0;
+}
+/* line 109, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip .twitter hgroup h2 {
+  margin: 0;
+}
+/* line 116, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip .twitter p {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  box-flex: 1;
+  flex: 1;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-box;
+  display: box;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  -ms-box-orient: vertical;
+  -o-box-orient: vertical;
+  box-orient: vertical;
+  -webkit-box-pack: center;
+  -moz-box-pack: center;
+  -ms-box-pack: center;
+  -o-box-pack: center;
+  box-pack: center;
+}
+/* line 123, /Users/dcousineau/Projects/croscon/nike-fuelband/styles/large.less */
+.column-container .column .chip .twitter .details {
+  padding-bottom: 15px;
+}
