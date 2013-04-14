@@ -308,6 +308,8 @@ namespace MyApp\Console;
 use MyApp\Console\Command;
 use Symfony\Component\Console\Application as BaseApplication;
 
+use Silex\Application;
+
 class Application extends BaseApplication {
     /**
      * @var Silex\Application;
