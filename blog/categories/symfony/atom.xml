@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Symfony | Tower of Power]]></title>
   <link href="http://dcousineau.github.com/blog/categories/symfony/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-04-09T00:45:53-05:00</updated>
+  <updated>2013-04-14T00:43:53-05:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -277,7 +277,7 @@ namespace MyApp\Console\Command;</p>
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;</p>
 
-<p>use Silex\Application</p>
+<p>use Silex\Application;</p>
 
 <p>abstract class ContainerAwareCommand extends Command {</p>
 
@@ -336,6 +336,8 @@ namespace MyApp\Console;</p>
 
 <p>use MyApp\Console\Command;
 use Symfony\Component\Console\Application as BaseApplication;</p>
+
+<p>use Silex\Application;</p>
 
 <p>class Application extends BaseApplication {</p>
 
