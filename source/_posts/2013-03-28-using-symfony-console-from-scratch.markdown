@@ -256,7 +256,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-use Silex\Application
+use Silex\Application;
 
 abstract class ContainerAwareCommand extends Command {
     /**
