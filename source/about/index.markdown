@@ -7,7 +7,7 @@ sharing: false
 footer: false
 ---
 
-Your blogger for the evening is Daniel Cousineau, developer at [Splash Media](http://splashmedia.com)
+Your blogger for the evening is Daniel Cousineau, Senior Software Engineer at [CROSCON](http://croscon.com)
 
 I have been on computers since before my infantile amnesia phase (take psychology), only knowing this through a picture of me leaning on the keyboard of a Compaq Portable II.
 
