@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="Unfortunately, Plesk does (and according to atomicturtle will continue to) hate on developers by enabling open_basedir by default and not give any &hellip;">
+  <meta name="description" content="I&#8217;ve started to amass a large amount of feeds in my reader and I thought I&#8217;d share a few with you: PHPDeveloper.org (feed) Great &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/02/01/plesk-open_basedir-workaround/">Plesk Open_basedir Workaround</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/02/14/php-feeds-or-get-your-read-on/">PHP Feeds, or, Get Your Read On!</a></h1>
     
     
       <p class="meta">
@@ -88,47 +88,46 @@
   
 
 
-<time datetime="2008-02-01T19:47:41-06:00" pubdate data-updated="true">Feb 1<span>st</span>, 2008</time>
+<time datetime="2008-02-14T19:29:36-06:00" pubdate data-updated="true">Feb 14<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Unfortunately, Plesk does (and according to atomicturtle will continue to) hate on developers by enabling open_basedir by default and not give any way to change such behavior.</p>
+  <div class="entry-content"><p>I&#8217;ve started to amass a large amount of feeds in my reader and I thought I&#8217;d share a few with you:</p>
 
-<p>A work around is possible, overriding the setting in a vhost.conf file (httpd.include files are not so good because Plesk rewrites them every time a change is made to a domain&#8217;s settings, or whenever Plesk feels like it). However, adding the line <code>php_admin_value open_basedir none</code> is completely ineffective (as I would assume the vhost.conf is being included before offending open_basedir changes are made?).</p>
+<blockquote><p><strong><a href="http://www.phpdeveloper.org/">PHPDeveloper.org</a></strong> (<a href="http://www.phpdeveloper.org/phpdev.rdf">feed</a>)</p></blockquote>
 
-<p>However I found that doing this (those familiar with Plesk&#8217;s httpd.include will recognize this block):</p>
+<p>Great aggregation of blog posts and updates in the PHP world.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='apache'><span class='line'><span class="nt">&lt;Directory</span> <span class="s">/path/to/domain/httpdocs</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;IfModule</span> <span class="s">sapi_apache2.c</span><span class="nt">&gt;</span>
-</span><span class='line'>        <span class="nb">php_admin_value</span> open_basedir <span class="k">none</span>
-</span><span class='line'>    <span class="nt">&lt;/IfModule&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;IfModule</span> <span class="s">mod_php5.c</span><span class="nt">&gt;</span>
-</span><span class='line'>        <span class="nb">php_admin_value</span> open_basedir <span class="k">none</span>
-</span><span class='line'>    <span class="nt">&lt;/IfModule&gt;</span>
-</span><span class='line'><span class="nt">&lt;/Directory&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
+<blockquote><p><strong><a href="http://devzone.zend.com/public/view">Zend Developer Zone</a></strong> (<a href="http://feeds.feedburner.com/ZendDeveloperZone">feed</a>)</p></blockquote>
 
+<p>Zend&#8217;s place for all things PHP related</p>
 
-<p>Guarantees that open_basedir will plague you no more.</p>
+<blockquote><p><strong><a href="http://www.sitepoint.com/">SitePoint.com</a></strong> (<a href="http://www.sitepoint.com/blogs/feed/">blogs</a>) (<a href="http://www.sitepoint.com/recent.rdf">articles</a>)</p></blockquote>
 
-<p>Some may ask why I want open_basedir enabled, it&#8217;s leaving me open to vulnerabilities! Some applications have a control panel on a separate sub domain and require the ability to write files to it&#8217;s parent domain, something Plesk beats down with an ugly stick, as well as some applications requiring access to the system wide PEAR libraries, something open_basedir ironicaly beats down as well (despite the system wide PEAR libraries being included in the include_path directive).</p>
+<p>The infamous SitePoint. Not entirely PHP, but excellent web related articles and a good way to keep loose tabs on the other web spheres (ASP.NET and RoR in particular)</p>
 
-<p>Later I&#8217;ll be digging through Plesk&#8217;s ability to trigger commands on updates and domain creations to automate this vhost.conf setting (namely grabbing that path to the httpdocs folder that is so critical and time consuming).</p>
+<blockquote><p><strong><a href="http://particletree.com/">Particletree</a></strong> (<a href="http://feeds.feedburner.com/particletree">feed</a>)</p></blockquote>
 
-<p><strong>EDIT:</strong> To apply the changes, follow markus&#8217; example:</p>
+<p>Doesn&#8217;t update very often, but each article is a gem (in terms of solving a programming problem).</p>
 
-<blockquote><p>I just have my setting in the vhost.conf, and it works just fine. Just remember to update Plesks settings manually afterwards, with <code>/usr/local/psa/admin/sbin/websrvmng -u –vhost-name=example.com</code> (it doesn’t read directly from the vhost.conf).</p></blockquote>
+<blockquote><p><strong><a href="http://shiflett.org/">Chris Shiflett</a></strong> (<a href="http://feeds.feedburner.com/shiflett">feed</a>)</p></blockquote>
+
+<p>THE PHP and Web Application Security guy.</p>
+
+<blockquote><p><strong><a href="http://www.joelonsoftware.com/">Joel on Software</a></strong> (<a href="http://www.joelonsoftware.com/rss.xml">feed</a>)</p></blockquote>
+
+<p>A classic, not really PHP oriented.</p>
+
+<p>And finally, definitely not PHP focused, but a very good blog to read if you do any MySQL work (if you are a PHP person, chances are this includes you)</p>
+
+<blockquote><p><strong><a href="http://www.mysqlperformanceblog.com/">MySQL Performance Blog</a></strong> (<a href="http://www.mysqlperformanceblog.com/feed/">feed</a>)</p></blockquote>
+
+<p>Great collection of articles and talks on optimizing MySQL, either at the server or query level, and more&#8230;</p>
+
+<p>While this isn&#8217;t all of the feeds I have on programming related topics, some of them are new adds and I want to give it some time before I share the links.</p>
 </div>
   
   
@@ -137,6 +136,8 @@
     </article>
   
   <div class="pagination">
+    
+      <a class="prev" href="/blog/page/44/">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -149,6 +150,10 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
@@ -164,10 +169,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

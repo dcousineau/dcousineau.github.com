@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="Lately at work I&#8217;ve been having the worst of trouble getting PHP on my workstation to send mail. Previously it was a simple trek to a website &hellip;">
+  <meta name="description" content="In all my years of web development and formal computer science training, you know I never really got around to truly sitting down and learning &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2009/08/21/development-environment-help-setting-up-php-mail-on-windows-or-where-is-my-windows-sendmail-exe/">Development Environment Help! Setting Up PHP Mail() on Windows, or: Where Is My Windows sendmail.exe?</a></h1>
+      <h1 class="entry-title"><a href="/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/">Solve a Sliding Puzzle With JavaScript and Your AI Course: Part 1</a></h1>
     
     
       <p class="meta">
@@ -88,59 +88,52 @@
   
 
 
-<time datetime="2009-08-21T05:39:00-05:00" pubdate data-updated="true">Aug 21<span>st</span>, 2009</time>
+<time datetime="2009-10-13T11:06:27-05:00" pubdate data-updated="true">Oct 13<span>th</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Lately at work I&#8217;ve been having the worst of trouble getting PHP on my workstation to send mail. Previously it was a simple trek to a website to download a Windows build of sendmail.exe, but for some reason I cannot get access to it, so I have to go another route.</p>
+  <div class="entry-content"><p>In all my years of web development and formal computer science training, you know I never really got around to truly sitting down and learning JavaScript.</p>
 
-<p>Enter <a href="http://www.hmailserver.com/">hMailServer</a>, a free, full-featured SMTP/POP/IMAP server for Windows with a pretty, shiny GUI configuration interface. All I really want to do is setup SMTP for localhost only but one could easily use hMailServer as a production mail server.</p>
+<p>Sure I knew the syntax (C based, not terribly hard), understood closures (LISP will do that to you), understood the prototype approach to Object Orientation (oddly enough playing with Python caused it to finally click).</p>
 
-<p>To start things off, lets make sure our php.ini directives are setup correctly. By correct, I mean PHP needs to be looking for our SMTP server on my local machine (localhost) at the default SMTP port (25), and, just in case, set a default from address:</p>
+<p>Well <a href="http://thedailywtf.com/Articles/Sliding-Around.aspx">around a month ago</a> <a href="http://thedailywtf.com">The Daily WTF</a> posted one of their weekly programming puzzles.</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[mail function]</span>
-</span><span class='line'><span class="c">; For Win32 only.</span>
-</span><span class='line'><span class="na">smtp</span> <span class="o">=</span> <span class="s">localhost</span>
-</span><span class='line'><span class="na">smtp_port</span> <span class="o">=</span> <span class="s">25</span>
-</span><span class='line'>
-</span><span class='line'><span class="c">; For Win32 only.</span>
-</span><span class='line'><span class="na">sendmail_from</span> <span class="o">=</span> <span class="s">user@domain.tld</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>Lo and behold, it&#8217;s the classic &#8220;Eight Puzzle&#8221; that I had to solve in LISP using several different algorithms!</p>
+
+<p>Feeling particular motivated I decided to finally get around to really learning JavaScript (by learning I mean really knowing the language inside and out, like I know PHP and to a lesser extent Python).</p>
+
+<p>The first thing I had to tackle was: Which algorithm would I choose? There are several to choose from, DFS (depth-first search), BFS (breadth-first search), Greedy, what have you. Well, a testament to my schooling, I do remember the most optimal I could remember was the <strong>A</strong>* algorithm.</p>
+
+<p>The A<em> not terribly complex once you look at it properly. Most examples discuss the A</em>, like most navigation algorithms, as a tree structure which, while academically correct, never actually touches a tree data structure.</p>
+
+<p>The A* algorithm works by examining the current node, the possible exit directions, and how much closer the new states after exit bring you to your goal. It arranges these new nodes in a priority queue and recurses on all the new nodes until such time that the current node is the goal node.</p>
+
+<p>In simpler terms: examine the paths that bring you closer to the goal first.</p>
+
+<p>The Eight-Puzzle is an excellent situation in which to first play with this algorithm as all the pieces we need for the algorithm are easy to conceptualize. It&#8217;s just a very simple navigation puzzle: How do we move the blank spot to it&#8217;s final destination (and making sure the other pieces are set too).</p>
+
+<p>By pieces we need for the A* algorithm, I mean:</p>
+
+<ul>
+<li><strong>Heuristic</strong> (or &#8220;weight&#8221; of a current path, how far are we from the goal, etc.)</li>
+<li><strong>Expansion Function</strong> (from our current node, what are the paths we can take?)</li>
+</ul>
 
 
-<p>Looks good. Second step is to download and install hMailServer. This tutorial is working from <a href="http://www.hmailserver.com/?page=download_mirrors&amp;downloadid=185">version 5.2 build 356</a>, but you should be able to use the latest stable or unstable version that you might desire.</p>
+<p>The Expansion function is easy. It&#8217;s literally which way can you move the blank spot. If you&#8217;re in the exact center of the board, the expansion function will return UP, RIGHT, DOWN, LEFT. If you&#8217;re in the top left hand corner, the expansion function will return RIGHT, DOWN.</p>
 
-<p>Once you&#8217;re installed and configured, run the administrative application. If you click over to status you will notice a message to the effect of &#8220;You haven&#8217;t specified the public host name for this computer in the SMTP settings.&#8221; That means we have some more configuration to do!</p>
+<p>The Heuristic is a little trickier. If we knew the exact distance (number of moves) a certain state in the puzzle is to the finish, we would need a searching algorithm. Instead we estimate (hence this value being called a heuristic).</p>
 
-<p><img src="/images/posts/2009/08/hmailserver-1.png"></p>
+<p>2 decent estimations would be counting the number of tiles that are not in their final position as well as calculating the <a href="http://en.wikipedia.org/wiki/Taxicab_geometry">manhattan distance</a> between the blank space and it&#8217;s final spot. The manhattan distance is the actual &#8220;walking&#8221; distance as opposed to the straight line distance. Think of the grid street system that is famously used in New York City. While drawing a line from point A to point B may be 2.5_ish_ miles, in reality you walk maybe 4 miles as you must walk north about 2 miles and east about 2 miles.</p>
 
-<p>Now mosey on over to Settings » Protocols » SMTP, navigate to the &#8220;Delivery of e-mail&#8221; tab. We set our &#8220;Local host name&#8221; to &#8220;localhost&#8221; and click &#8220;Save&#8221;.</p>
+<p>Even better is combining the two values. As excellent as manhattan distance sounds for an estimation, you run into inconsistencies like an unsolved board where the blank spot is in the correct position being given more weight in searching than a board 1 step away from being solved with the blank spot only 1 block away from the correct (and final) position.</p>
 
-<p><img src="/images/posts/2009/08/hmailserver-2.png"></p>
+<p>In Part 2 I will step away from the algorithm and step into JavaScript to build our basic utility function (namely creating and managing a board).</p>
 
-<p>Next, for securities sake (as well as to ensure we don&#8217;t have to waste time configuring account as this is only a dev machine), go to Settings » Advanced » IP Ranges » My Computer. Un-check the POP3 and IMAP checkboxes under the &#8220;Allow Connections&#8221; as we don&#8217;t intend to receive mail, nor use the IMAP protocol. Then, un-check everything under &#8220;Requires SMTP authentication&#8221; as we want our PHP applications to have full reign. Finally, click &#8220;Save&#8221;. Remember, this is a dev box.</p>
-
-<p><img src="/images/posts/2009/08/hmailserver-3.PNG"></p>
-
-<p>UNDER NO CIRCUMSTANCES SHOULD YOU USE THESE SETTINGS ON A BOX THAT WILL BE EXPOSING ITSELF TO THE INTERNET OR ON A PRODUCTION SERVER! However, since our local machine will obviously have internet connectivity, lets remove all access from outsiders!</p>
-
-<p>Navigate to Settings » Advanced » IP Ranges » Internet. Un-check EVERYTHING from &#8220;Allow connections&#8221; to deny outsiders any services, and, just in case, check EVERYTHING under &#8220;Require SMTP authentication&#8221;  and click &#8220;Save&#8221;.</p>
-
-<p><img src="/images/posts/2009/08/hmailserver-4.PNG"></p>
-
-<p>And <em>voilà</em>! We have a fully functioning SMTP server that our local PHP environment can use to send test email messages.</p>
-
-<p>The nice thing about our administrative interface is if we go to Status, navigate to the &#8220;Logging&#8221; tab, and click &#8220;Start,&#8221; we can capture the dialogue between hMailServer and your PHP app when sending an email address (very useful for debugging).</p>
+<p><strong>NOTE</strong> I never finished part 2 however my code can be found <a href="https://github.com/dcousineau/javascript-learnings/tree/master/eight-puzzle">on github</a> of the final solution.</p>
 </div>
   
   
@@ -165,6 +158,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -178,10 +175,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="(This is the sequal to my previous post, Database Normalization And Design: A Primer) ">
+  <meta name="description" content="My copy of Pro PHP: Patterns, Frameworks, Testing and More by Kevin McArthur has already been worth the money I spent on it. In our, albeit slow, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/04/03/database-normalization-and-design-part-ii/">Database Normalization and Design: Part II</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/04/15/pro-php/">Pro PHP</a></h1>
     
     
       <p class="meta">
@@ -88,21 +88,26 @@
   
 
 
-<time datetime="2008-04-03T09:07:56-05:00" pubdate data-updated="true">Apr 3<span>rd</span>, 2008</time>
+<time datetime="2008-04-15T19:51:03-05:00" pubdate data-updated="true">Apr 15<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>(This is the sequal to my previous post, <a href="/blog/2008/04/01/database-normalization-and-design-a-primer/">Database Normalization And Design: A Primer</a>)</p>
+  <div class="entry-content"><p>My copy of <a href="http://www.amazon.com/gp/product/1590598199">Pro PHP: Patterns, Frameworks, Testing and More</a> by <a href="http://www.linkedin.com/in/stormtide">Kevin McArthur</a> has already been worth the money I spent on it.</p>
 
+<p>In our, albeit slow, upgrade to more modern development practices (code version and unit testing being the last elements on my list), I was particularly fearful of code versioning namely concerning issues of automating a build process to export a copy of the repository to our shared development server, or just have a local server installed for everyone one.</p>
+
+<p>However Chapter 8 has pointed me to two programs that I sincerely regret not having heard of until now: <a href="http://phing.info/trac/">Phing</a> and <a href="http://code.google.com/p/xinc/">Xinc</a>.</p>
+
+<p>Phing is a build system written in PHP that works extremely well with PHP and <a href="http://www.phpunit.de/">PHPUnit</a>. You can configure your own build targets, for example like &#8220;get&#8221; (SVN update essentially), &#8220;test&#8221; (run PHPUnit or any other unit testing), &#8220;try&#8221; (copy to a development server), and &#8220;deploy&#8221; (copy to your live server).</p>
+
+<p>Xinc is a continuous integration server. Essentially, it monitors an SVN repo and performs a user defined action (usually running a phing buildscript) on any changes to the repo. Which is awesome because its solves the issue of updating the dev server. Having Xinc run a <code>&gt; phing try</code> on SVN updates is exactly what we need! I&#8217;m even having delusions of grandeur of having it monitor tags for doing live deployments as well.</p>
+
+<p>Don&#8217;t take my word as gospel, I haven&#8217;t actually installed and tested these systems out, but when I do you can rest assured I will be writing about it.</p>
 </div>
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2008/04/03/database-normalization-and-design-part-ii/">Read on &rarr;</a>
-    </footer>
   
 
 
@@ -125,6 +130,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -138,10 +147,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

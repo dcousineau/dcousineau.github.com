@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="In my previous article (Microsoft Access and PHP), I discussed getting mdbtools setup and dynamically interacting with a instance of mdb-sql. Well it &hellip;">
+  <meta name="description" content="I am by no means a database expert, such titles are best left to people like Peter Zaitsev and Vadim Tkachenko, however one of my co workers has been &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/03/28/updates-and-s/">Updates and ::&#8217;s</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/04/01/database-normalization-and-design-a-primer/">Database Normalization and Design: A Primer</a></h1>
     
     
       <p class="meta">
@@ -88,24 +88,29 @@
   
 
 
-<time datetime="2008-03-28T08:46:34-05:00" pubdate data-updated="true">Mar 28<span>th</span>, 2008</time>
+<time datetime="2008-04-01T08:34:36-05:00" pubdate data-updated="true">Apr 1<span>st</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>In my previous article (<a href="http://www.toosweettobesour.com/2008/03/24/microsoft-access-and-php/">Microsoft Access and PHP</a>), I discussed getting mdbtools setup and dynamically interacting with a instance of mdb-sql. Well it turns out somewhere in the pipeline (probably mdb-tools), we&#8217;re either not getting an EOF or reading an EOF right and as such I can read lines from the program&#8217;s STDOUT stream, but as soon as I hit the end of the output my script hangs indefinitely waiting for something and all my attempts at detecting an EOF failed. Sorry to disappoint.</p>
+  <div class="entry-content"><p>I am by no means a database expert, such titles are best left to people like <a href="http://www.mysqlperformanceblog.com/">Peter Zaitsev and Vadim Tkachenko</a>, however one of my co workers has been asking me for some help on how I come about my database designs, particularly issues concerning <a href="http://en.wikipedia.org/wiki/Database_normalization">normal form</a>.</p>
 
-<p>On lighter news, my coworker got the greatest error ever:</p>
+<p>Whlie I could spend several posts going over the intricacies of 1st, 2nd, 3rd, and 4th normal form as well as &#8220;The key, the whole key, and nothing but the key so help me Codd&#8221; Boyce-Codd normal form, however reality dictates that time spent strictly to these academic levels is either time wasted (projects with due dates unfortunately cannot spend forever on the database design) or pointless as being reasonably intelligent will bring you very close, if not within 3rd normal form.</p>
 
-<blockquote><p>Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM</p></blockquote>
+<p>If you&#8217;re really interested, Wikipedia provides a great resource to get started learning the more academic aspects.</p>
 
-<p>Turns out according to <a href="http://www.webmasterworld.com/forum88/5127.htm">these guys</a> it&#8217;s Hebrew and refers to the double colon (::) operator.</p>
+<p>I&#8217;m going to assume that you have done a bit of database work and at least understand the concept of a <a href="http://en.wikipedia.org/wiki/Join_(sql">join</a>).</p>
 
-<p>Right&#8230;</p>
+<p>The one of the goals of database normalization is to reduce the repetition of information and thereby reduce the complexity of an update of said information. If the same string is in the database N times, we should abstract it so that if we need to update said string due to a typo or anything else, we need to only change but one location.</p>
+
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2008/04/01/database-normalization-and-design-a-primer/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -128,6 +133,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -141,10 +150,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

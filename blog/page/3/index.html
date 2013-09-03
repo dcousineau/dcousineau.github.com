@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="We recently began working on our biggest event for our biggest client. In the process of getting everything up and running before the event started, &hellip;">
+  <meta name="description" content="So, flex boxes are a glorious addition to CSS3 to make advanced layouts rapidly. No more crazy floats and nested divs and weird percentage values for &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson in Good Architecture</a></h1>
+      <h1 class="entry-title"><a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a></h1>
     
     
       <p class="meta">
@@ -88,30 +88,114 @@
   
 
 
-<time datetime="2011-01-29T07:58:56-06:00" pubdate data-updated="true">Jan 29<span>th</span>, 2011</time>
+<time datetime="2011-07-14T10:47:57-05:00" pubdate data-updated="true">Jul 14<span>th</span>, 2011</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>We recently began working on our biggest event for our biggest client. In the process of getting everything up and running before the event started, we noticed a show-stopper bug appear out of nowhere.</p>
+  <div class="entry-content"><p>So, <a href="http://www.the-haystack.com/2010/01/23/css3-flexbox-part-1/">flex boxes</a> are a glorious addition to CSS3 to make advanced layouts rapidly. No more crazy floats and nested divs and weird percentage values for columns! Just setup your orientation to horizontal and toss a <code>box-flex: 1</code> in for kicks.</p>
 
-<p>Our media processor when finished converting videos and creating thumbnails of images publishes said files to our CDN. Only a few hours before our event and our CDN was failing probably 80% of the SSL handshakes for our requests to publish files. There is no need to name names as it was a difficult and obscure bug to diagnose in an extremely short amount of time. We needed to get it working, our CDN provider wasn&#8217;t going to be able to resolve the problem in the extremely short timeframe we required, so the decision was clear: we needed to switch providers for the new content.</p>
+<p>However, just a tip: In the course of working with flex boxes, you will find that if you given a parent container a flex value, the children can still stretch it out. For example, a long paragraph will push its parent wider and wider to accommodate unless you give it a static width (which kinda defeats the purpose of using flex boxes really).</p>
 
-<p>Normally this is a 2 week job, switching API calls, testing, finding all the occurrences (we process both videos and photos in different styles of batches), etc. We were able to complete it and have it live in under 1.5 hours. Why? We (and really I mean my coworker as this decision was made before I came on) made som really damned good architecture decisions. Primarly:</p>
+<p>A nifty trick, however, is if you give an element with a defined <code>box-flex</code> a <code>width: 0px;</code>, the sizing algorithm will ignore said element&#8217;s children when sizing the element.</p>
 
-<ol>
-<li><p>We used OSS, primarily <a href="">Zend Framework</a> which had well written API libraries for our new CDN</p></li>
-<li><p>All file system operations were abstracted to adapters that all inherited a &#8220;FileStore&#8221; base class</p></li>
-</ol>
+<p>Here&#8217;s an example of automatic vertical columns:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;wall&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col1&quot;</span> <span class="na">class=</span><span class="s">&quot;column top&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;entry&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget tristique velit. In ut ligula nibh, a pulvinar lorem. Nam sed elit eget tellus vestibulum
+</span><span class='line'>        <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col2&quot;</span> <span class="na">class=</span><span class="s">&quot;column bottom&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;entry&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget tristique velit. In ut ligula nibh, a pulvinar lorem. Nam sed elit eget tellus vestibulum
+</span><span class='line'>        <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col3&quot;</span> <span class="na">class=</span><span class="s">&quot;column top&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col4&quot;</span> <span class="na">class=</span><span class="s">&quot;column bottom&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>So, create a file store for our new CDN using the well written, off the shelf API. Change 4 lines of XML configuration, deploy, and we were in business.</p>
 
-<p>Had my coworker succumbed to laziness or listen to some people who claim &#8220;oh you&#8217;re just making it too complicated&#8221; or &#8220;just get it up quickly, damn the design decisions&#8221; we would have been sunk. Instead he took the time to utilize the adapter pattern (even though it probably added an extra 2 days to his total coding time) despite all signs pointing to us never needing to switch CDN&#8217;s (and certainly not within a 2 hour timeframe).</p>
 
-<p>So let this be a lesson to us all. Abstraction and design patterns sometimes feel like an &#8220;enterprisey overcomplication&#8221; but they aren&#8217;t there for everyday needs. They exist for those days when a service provider gets hit by an obscure bug and you have to swap out a component under extreme time schedules. So suck it up, use them, and thank yourself when you find yourself in such a situation.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nf">#wall</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">display</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">orient</span><span class="o">:</span> <span class="n">horizontal</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span> <span class="cp">!important</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">top</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">right</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">bottom</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">left</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nf">#wall</span> <span class="nc">.column</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">display</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">sizing</span><span class="o">:</span> <span class="k">border</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">orient</span><span class="o">:</span> <span class="n">vertical</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">flex</span><span class="o">:</span> <span class="m">1</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">width</span><span class="o">:</span><span class="m">0px</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">border-right</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#333</span><span class="p">;</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
 </div>
   
   
@@ -136,6 +220,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -149,10 +237,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

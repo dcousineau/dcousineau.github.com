@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="I had an issue recently where I needed to calculate the Unix timestamp for the daylight savings time boundaries. According to the United States Naval &hellip;">
+  <meta name="description" content="Naturally it&#8217;s been over a month since I&#8217;ve updated and rather than posting something techincal I feel I should be a little selfish and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php/">Calculating Daylight Savings Time Boundary in PHP</a></h1>
+      <h1 class="entry-title"><a href="/blog/2009/07/01/good-news-everyone/">Good News Everyone!</a></h1>
     
     
       <p class="meta">
@@ -88,59 +88,22 @@
   
 
 
-<time datetime="2009-03-10T03:30:23-05:00" pubdate data-updated="true">Mar 10<span>th</span>, 2009</time>
+<time datetime="2009-07-01T08:14:54-05:00" pubdate data-updated="true">Jul 1<span>st</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>I had an issue recently where I needed to calculate the Unix timestamp for the daylight savings time boundaries. According to the <a href="http://aa.usno.navy.mil/faq/docs/daylight_time.php">United States Naval Observatory</a>, daylight savings time begins the <strong>Second Sunday of March</strong> and ends on the <strong>First Sunday of November</strong>.</p>
+  <div class="entry-content"><p>Naturally it&#8217;s been over a month since I&#8217;ve updated and rather than posting something techincal I feel I should be a little selfish and announce that:</p>
 
-<p>Awkward date calculations if you don&#8217;t have the magical <a href="http://php.net/strtotime"><code>strtotime()</code></a> function in PHP. <code>strtotime()</code> is able to do relativistic time conversions from the common &#8220;+1 hours&#8221; to the more complex (and more relevant) &#8220;Second Sunday March 0&#8221;.</p>
+<h3>I&#8217;M GOING TO BE SPEAKING AT <a href="http://zendcon.com/">ZENDCON 09</a>!</h3>
 
-<p>Why do we do the &#8216;March 0&#8217; in the above string to calculate the start boundary? Doing some tests with <code>strtotime()</code> reveals some behavior you should be aware of.</p>
+<p>I will be giving my talk on automated deployment techniques with Phing.</p>
 
-<p><code>strtotime("March");</code> doesn&#8217;t actually give you the first of March, it gives you the current day in the month specified (<code>date('D, F j, Y, g:i a', strtotime("March"));</code> returns <code>Tue, March 10, 2009, 12:00 am</code> at the time of this post). Doing a similar test but substituting April for March results in the 10th of April (at 12 am).</p>
+<p>To say that I&#8217;m excited is quite an understatement. Nervous now probably tops excitement as now I have to make sure I give a damned good talk and not make <a href="http://eliw.com/">Eli White</a> look like a fool for having picked me for a slot.</p>
 
-<p>Now in most cases doing a <code>strtotime("March 1")</code> will suffice (<code>date('D, F j, Y, g:i a', strtotime("March 1"));</code> results in <code>Sun, March 1, 2009, 12:00 am</code>). However, as you can tell, this month is going to be awkward because the first day of the month is a Sunday. <code>strtotime()</code>, when calculating the fuzzy &#8220;Second Sunday,&#8221; doesn&#8217;t include the current day. So calculating <code>date('D, F j, Y, g:i a', strtotime("Second Sunday March 1"));</code> will actually return the 3rd Sunday (<code>Sun, March 15, 2009, 12:00 am</code>).</p>
-
-<p>So our solution is actually to take a step back and return the <strong>PREVIOUS</strong> day to the first day of March and then calculate the Second Sunday from there (since we know that starting from the next day will account for the first). Normally, dealing with the last day in February is a headache, BUT again thanks to PHP magic we don&#8217;t have to figure out if it&#8217;s February 28th or 29th, we merely do a &#8220;March 0&#8221; which steps us back a month (<code>date('D, F j, Y, g:i a', strtotime("March 0"));</code> returns <code>Sat, February 28, 2009, 12:00 am</code>). From there we can calculate the Second Sunday with ease and eventually determine that the second sunday is March 8th, which is confirmed by the above USNO website.</p>
-
-<p>Applying these lessons to calculating the first Sunday in November we come up with the following snippit:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'><span class="nv">$remove_hour</span> <span class="o">=</span> <span class="nb">strtotime</span><span class="p">(</span><span class="s2">&quot;Second Sunday March 0&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$add_hour</span> <span class="o">=</span> <span class="nb">strtotime</span><span class="p">(</span><span class="s2">&quot;First Sunday November 0&quot;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$time</span>  <span class="o">=</span> <span class="nb">time</span><span class="p">();</span>
-</span><span class='line'>
-</span><span class='line'><span class="k">if</span><span class="p">(</span> <span class="nv">$time</span> <span class="o">&gt;=</span> <span class="nv">$remove_hour</span> <span class="o">&amp;&amp;</span> <span class="nv">$time</span> <span class="o">&lt;</span> <span class="nv">$add_hour</span> <span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="nb">var_dump</span><span class="p">(</span><span class="s2">&quot;Lost an hour&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'><span class="k">else</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>    <span class="nb">var_dump</span><span class="p">(</span><span class="s2">&quot;Gained an hour&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Cheers!</p>
+<p>Time to go bury my nose in Power Point and research!</p>
 </div>
   
   
@@ -165,6 +128,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -178,10 +145,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

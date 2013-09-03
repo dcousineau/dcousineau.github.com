@@ -9,7 +9,8 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="So, flex boxes are a glorious addition to CSS3 to make advanced layouts rapidly. No more crazy floats and nested divs and weird percentage values for &hellip;">
+  <meta name="description" content="CLI applications are extremely useful for many, if not most web projects. The Symfony framework even goes so
+far as to include an extensible CLI &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +73,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2011/07/14/flex-box-prevent-children-from-stretching/">Flex Box: Prevent Children From Stretching</a></h1>
+      <h1 class="entry-title"><a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a></h1>
     
     
       <p class="meta">
@@ -88,20 +89,88 @@
   
 
 
-<time datetime="2011-07-14T10:47:57-05:00" pubdate data-updated="true">Jul 14<span>th</span>, 2011</time>
+<time datetime="2013-03-28T22:20:00-05:00" pubdate data-updated="true">Mar 28<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>So, <a href="http://www.the-haystack.com/2010/01/23/css3-flexbox-part-1/">flex boxes</a> are a glorious addition to CSS3 to make advanced layouts rapidly. No more crazy floats and nested divs and weird percentage values for columns! Just setup your orientation to horizontal and toss a <code>box-flex: 1</code> in for kicks.</p>
+  <div class="entry-content"><p>CLI applications are extremely useful for many, if not most web projects. The <a href="http://symfony.com/">Symfony framework</a> even goes so
+far as to include an extensible CLI console used for everything from running cache cleanup/warmup tasks, to user account management.</p>
 
-<p>However, just a tip: In the course of working with flex boxes, you will find that if you given a parent container a flex value, the children can still stretch it out. For example, a long paragraph will push its parent wider and wider to accommodate unless you give it a static width (which kinda defeats the purpose of using flex boxes really).</p>
+<p>Many CLI scripts for web projects consist of just a static <code>.php</code> file which works fine but grow unweildy over time. Thankfully, the
+aforementioned Symfony Console component is released as a decoupled standalone that can be installed and setup easily and provide us
+with structure and organization (and some powerful features).</p>
 
-<p>A nifty trick, however, is if you give an element with a defined <code>box-flex</code> a <code>width: 0px;</code>, the sizing algorithm will ignore said element&#8217;s children when sizing the element.</p>
+<h1>Setup</h1>
 
-<p>Here&#8217;s an example of automatic vertical columns:</p>
+<p>The Symfony Console component can be found on GitHub at <a href="https://github.com/symfony/console">github.com/symfony/console</a>. While
+installing by hand is doable, I much prefer using <a href="http://getcomposer.org/">Composer</a> to handle my dependencies. If you haven&#8217;t
+used Composer before, I suggest following the <a href="http://getcomposer.org/doc/00-intro.md#installation-nix">Getting Started</a> documentation.</p>
+
+<p>To start things off, we&#8217;ll need to setup, or modify, our <code>composer.json</code> file:</p>
+
+<figure class='code'><figcaption><span>composer.json</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="s2">&quot;require&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;symfony/console&quot;</span><span class="o">:</span> <span class="s2">&quot;2.1.*&quot;</span>
+</span><span class='line'>    <span class="p">},</span>
+</span><span class='line'>    <span class="s2">&quot;autoload&quot;</span><span class="o">:</span> <span class="p">{</span>
+</span><span class='line'>        <span class="s2">&quot;psr-0&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s2">&quot;&quot;</span><span class="o">:</span> <span class="s2">&quot;src/&quot;</span> <span class="p">}</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And then update our dependencies:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ php composer.phar update
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now that we have Symfony Console and all it&#8217;s dependencies downloaded and ready, we&#8217;ll need to setup our actual console executable:</p>
+
+<figure class='code'><figcaption><span>bin/console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">#!/usr/bin/env php</span>
+</span><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">date_default_timezone_set</span><span class="p">(</span><span class="s1">&#39;UTC&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">set_time_limit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../../autoload.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Application</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Afterwards a simple <code>chmod +x bin/console</code> will make it executable and you&#8217;ll be ready to begin. You&#8217;ll notice we placed this in a
+file named simply <code>console</code> in the <code>bin</code> directory, this is purely a stylistic choice, name it whatever you want. Giving it a test
+whirl, you should see the output:</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -121,30 +190,33 @@
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;wall&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col1&quot;</span> <span class="na">class=</span><span class="s">&quot;column top&quot;</span><span class="nt">&gt;</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ bin/console
+</span><span class='line'>My CLI Application version 0.1.0
 </span><span class='line'>
-</span><span class='line'>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;entry&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget tristique velit. In ut ligula nibh, a pulvinar lorem. Nam sed elit eget tellus vestibulum
-</span><span class='line'>        <span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>Usage:
+</span><span class='line'>  [options] command [arguments]
 </span><span class='line'>
-</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col2&quot;</span> <span class="na">class=</span><span class="s">&quot;column bottom&quot;</span><span class="nt">&gt;</span>
+</span><span class='line'>Options:
+</span><span class='line'>  --help           -h Display this help message.
+</span><span class='line'>  --quiet          -q Do not output any message.
+</span><span class='line'>  --verbose        -v Increase verbosity of messages.
+</span><span class='line'>  --version        -V Display this application version.
+</span><span class='line'>  --ansi              Force ANSI output.
+</span><span class='line'>  --no-ansi           Disable ANSI output.
+</span><span class='line'>  --no-interaction -n Do not ask any interactive question.
 </span><span class='line'>
-</span><span class='line'>        <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">&quot;entry&quot;</span><span class="nt">&gt;</span>
-</span><span class='line'>            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam eget tristique velit. In ut ligula nibh, a pulvinar lorem. Nam sed elit eget tellus vestibulum
-</span><span class='line'>        <span class="nt">&lt;/div&gt;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="nt">&lt;/div&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col3&quot;</span> <span class="na">class=</span><span class="s">&quot;column top&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-</span><span class='line'>    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;col4&quot;</span> <span class="na">class=</span><span class="s">&quot;column bottom&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
-</span><span class='line'><span class="nt">&lt;/div&gt;</span>
+</span><span class='line'>Available commands:
+</span><span class='line'>  help   Displays help for a command
+</span><span class='line'>  list   Lists commands
 </span></code></pre></td></tr></table></div></figure>
 
 
+<h1>Commands</h1>
 
+<p>Syfmony Console commands are simply classes you override and inject into the application instance. The skeleton for any given command
+looks something like this:</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<figure class='code'><figcaption><span>src/MyApp/Console/Command/TestCommand.php</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
@@ -168,34 +240,475 @@
 <span class='line-number'>22</span>
 <span class='line-number'>23</span>
 <span class='line-number'>24</span>
-</pre></td><td class='code'><pre><code class='css'><span class='line'><span class="nf">#wall</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">display</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">orient</span><span class="o">:</span> <span class="n">horizontal</span><span class="p">;</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">namespace</span> <span class="nx">MyApp\Console\Command</span><span class="p">;</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span> <span class="cp">!important</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">top</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">right</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">bottom</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">left</span><span class="o">:</span><span class="m">0</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Command\Command</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Input\InputInterface</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Output\OutputInterface</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Input\InputArgument</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Input\InputOption</span><span class="p">;</span>
 </span><span class='line'>
-</span><span class='line'>    <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
-</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">TestCommand</span> <span class="k">extends</span> <span class="nx">Command</span> <span class="p">{</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">configure</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setName</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+</span><span class='line'>             <span class="o">-&gt;</span><span class="na">setDescription</span><span class="p">(</span><span class="s2">&quot;Sample description for our command named test&quot;</span><span class="p">)</span>
+</span><span class='line'>             <span class="o">-&gt;</span><span class="na">setDefinition</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>             <span class="p">))</span>
+</span><span class='line'>             <span class="o">-&gt;</span><span class="na">setHelp</span><span class="p">(</span><span class="s">&lt;&lt;&lt;EOT</span>
+</span><span class='line'><span class="s">The &lt;info&gt;test&lt;/info&gt; command does things and stuff</span>
+</span><span class='line'><span class="s">EOT</span>
+</span><span class='line'>             <span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
 </span><span class='line'>
-</span><span class='line'><span class="nf">#wall</span> <span class="nc">.column</span> <span class="p">{</span>
-</span><span class='line'>    <span class="k">display</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">sizing</span><span class="o">:</span> <span class="k">border</span><span class="o">-</span><span class="n">box</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">orient</span><span class="o">:</span> <span class="n">vertical</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">flex</span><span class="o">:</span> <span class="m">1</span><span class="p">;</span>
-</span><span class='line'>    <span class="k">width</span><span class="o">:</span><span class="m">0px</span><span class="p">;</span>
-</span><span class='line'>
-</span><span class='line'>    <span class="k">border-right</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#333</span><span class="p">;</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">execute</span><span class="p">(</span><span class="nx">InputInterface</span> <span class="nv">$input</span><span class="p">,</span> <span class="nx">OutputInterface</span> <span class="nv">$output</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="c1">//...</span>
+</span><span class='line'>    <span class="p">}</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure>
 
 
+<p>While we have created the class, we haven&#8217;t attached it to our console application. To do this we edit our <code>bin/console</code> file
+and add the follwoing code between the <code>new Application(...)</code> and the <code>$app-&gt;run()</code>:</p>
 
+<figure class='code'><figcaption><span>bin/console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="c1">//...</span>
+</span><span class='line'><span class="nv">$app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">addCommands</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="k">new</span> <span class="nx">MyApp\Console\Command\TestCommand</span><span class="p">(),</span>
+</span><span class='line'><span class="p">));</span>
+</span><span class='line'><span class="nv">$app</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</span><span class='line'><span class="c1">//...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>When we run our <code>bin/console</code> we&#8217;ll notice the output is now midly different:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ bin/console
+</span><span class='line'>My CLI Application version 0.1.0
+</span><span class='line'>
+</span><span class='line'>Usage:
+</span><span class='line'>  [options] command [arguments]
+</span><span class='line'>
+</span><span class='line'>Options:
+</span><span class='line'>  --help           -h Display this help message.
+</span><span class='line'>  --quiet          -q Do not output any message.
+</span><span class='line'>  --verbose        -v Increase verbosity of messages.
+</span><span class='line'>  --version        -V Display this application version.
+</span><span class='line'>  --ansi              Force ANSI output.
+</span><span class='line'>  --no-ansi           Disable ANSI output.
+</span><span class='line'>  --no-interaction -n Do not ask any interactive question.
+</span><span class='line'>
+</span><span class='line'>Available commands:
+</span><span class='line'>  help   Displays help for a command
+</span><span class='line'>  list   Lists commands
+</span><span class='line'>  test   Sample description for our command named test
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And we can even use the help command to describe our newly created test command:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ bin/console help test
+</span><span class='line'>Usage:
+</span><span class='line'> test
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>Help:
+</span><span class='line'> The test command does things and stuff
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>Output</h2>
+
+<p>Syfmony Console applications direct all their output through the <code>$output</code> variable provided. What these output objects gives
+us is easy ANSI coloring utilizing XML-like tags. For example, a <code>$output-&gt;writeln("&lt;info&gt;This will be green&lt;/info&gt; This will be white");</code>
+will print the ecapsulated text in the &#8220;info&#8221; style which is green. You can add and override styles to your hearts content, just
+peruse the <a href="http://symfony.com/doc/2.0/components/console/introduction.html#coloring-the-output">official documentation</a>.</p>
+
+<h2>Input</h2>
+
+<p>CLI input comes in 2 flavors: <em>Arguments</em> and <em>Options</em>. In essence, Options are flags using the - or &#8211; operators and Arguments are your
+classic space separated values. To put it visually:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ bin/consle --option=value argument
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Symfony Console requires you to be strict and actively provide your definition in the <code>configure()</code> method. For example, we can
+setup an option and an argument:</p>
+
+<figure class='code'><figcaption><span>src/MyApp/Console/Command/TestCommand.php</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="c1">//...</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="k">function</span> <span class="nf">configure</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">setName</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">)</span>
+</span><span class='line'>             <span class="o">-&gt;</span><span class="na">setDescription</span><span class="p">(</span><span class="s2">&quot;Sample description for our command named test&quot;</span><span class="p">)</span>
+</span><span class='line'>             <span class="o">-&gt;</span><span class="na">setDefinition</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>                <span class="k">new</span> <span class="nx">InputOption</span><span class="p">(</span><span class="s1">&#39;flag&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="nx">InputOption</span><span class="o">::</span><span class="na">VALUE_NONE</span><span class="p">,</span> <span class="s1">&#39;Raise a flag&#39;</span><span class="p">),</span>
+</span><span class='line'>                <span class="k">new</span> <span class="nx">InputArgument</span><span class="p">(</span><span class="s1">&#39;activities&#39;</span><span class="p">,</span> <span class="nx">InputArgument</span><span class="o">::</span><span class="na">IS_ARRAY</span><span class="p">,</span> <span class="s1">&#39;Space-separated activities to perform&#39;</span><span class="p">,</span> <span class="k">null</span><span class="p">),</span>
+</span><span class='line'>             <span class="p">))</span>
+</span><span class='line'>             <span class="o">-&gt;</span><span class="na">setHelp</span><span class="p">(</span><span class="s">&lt;&lt;&lt;EOT</span>
+</span><span class='line'><span class="s">The &lt;info&gt;test&lt;/info&gt; command does things and stuff</span>
+</span><span class='line'><span class="s">EOT</span>
+</span><span class='line'>             <span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="c1">//...</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Here we have defined a <code>--flag</code> option which has no value expected (meaning &#8211;flag=value would be technically be illegal) and an
+array argument (which means an infinite series, e.g. <code>bin/console activities1 activities2</code>, etc). When we run our help command,
+you&#8217;ll notice our output has changed to reflect our definition:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>$ bin/console help test
+</span><span class='line'>Usage:
+</span><span class='line'> test [-f|--flag] [activities1] ... [activitiesN]
+</span><span class='line'>
+</span><span class='line'>Arguments:
+</span><span class='line'> activities  Space-separated activities to perform
+</span><span class='line'>
+</span><span class='line'>Options:
+</span><span class='line'> --flag (-f) Raise a flag
+</span><span class='line'>
+</span><span class='line'>Help:
+</span><span class='line'> The test command does things and stuff
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now when our command is actually running we can check whether or not a flag was issued with a simple <code>$input-&gt;getOption('flag');</code>
+as well as we can get all of our activities with a <code>$input-&gt;getArgument('activities');</code>.</p>
+
+<p>There are many modifiers to be used with both Arguments and Options. For example, you can have required Arguments, Options that
+require a value to be set, so on and so forth. You can view the <a href="http://symfony.com/doc/2.0/components/console/introduction.html#using-command-arguments">official documentation</a>
+to get an idea of the power available to you.</p>
+
+<h1>Integrating With Your Application</h1>
+
+<p>The bulk of power you gain from writing CLI apps comes from the ability to share code and resources with your main application.</p>
+
+<p>Symfony Console does not provide an &#8220;out of the box&#8221; way to integrate with anything, however it is fairly trivial to roll in support
+on your own.</p>
+
+<p>For example, say you were building a CLI app to complement your Silex web application. You have configured services and database connections
+you would like to share via the Silex DI container/application object.</p>
+
+<p>A best practice would be to create a base command class that can accept your DI container and have your commands inherit from it:</p>
+
+<figure class='code'><figcaption><span>src/MyApp/Console/Command/ContainerAwareCommand.php</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">namespace</span> <span class="nx">MyApp\Console\Command</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Command\Command</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Input\InputInterface</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Output\OutputInterface</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">Silex\Application</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">abstract</span> <span class="k">class</span> <span class="nc">ContainerAwareCommand</span> <span class="k">extends</span> <span class="nx">Command</span> <span class="p">{</span>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * @var Silex\Application</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="nv">$app</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">Application</span> <span class="nv">$app</span><span class="p">,</span> <span class="nv">$name</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="nv">$name</span><span class="p">);</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span> <span class="o">=</span> <span class="nv">$app</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And update your <code>bin/console</code> file to include the PHP file responsible for creating and configuring the Application object and pass
+said Application object into the commands:</p>
+
+<figure class='code'><figcaption><span>bin/console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">#!/usr/bin/env php</span>
+</span><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">date_default_timezone_set</span><span class="p">(</span><span class="s1">&#39;UTC&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">set_time_limit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../../autoload.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//Provides $app, which is an instance of Silex\Application</span>
+</span><span class='line'><span class="k">require_once</span> <span class="s1">&#39;path/to/app/setup.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Application</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$cli_app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$cli_app</span><span class="o">-&gt;</span><span class="na">addCommands</span><span class="p">(</span><span class="k">array</span><span class="p">(</span>
+</span><span class='line'>    <span class="k">new</span> <span class="nx">MyApp\Console\Command\TestCommand</span><span class="p">(</span><span class="nv">$app</span><span class="p">),</span>
+</span><span class='line'><span class="p">));</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$cli_app</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Another path is to contemplate overloading the actualy Symfony Console Application class. Doing this affords you the ability to
+override the help message as well as any global option definitions:</p>
+
+<figure class='code'><figcaption><span>src/MyApp/Console/Application.php</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">namespace</span> <span class="nx">MyApp\Console</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">MyApp\Console\Command</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Application</span> <span class="k">as</span> <span class="nx">BaseApplication</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">Silex\Application</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">class</span> <span class="nc">Application</span> <span class="k">extends</span> <span class="nx">BaseApplication</span> <span class="p">{</span>
+</span><span class='line'>    <span class="sd">/**</span>
+</span><span class='line'><span class="sd">     * @var Silex\Application;</span>
+</span><span class='line'><span class="sd">     */</span>
+</span><span class='line'>    <span class="k">protected</span> <span class="nv">$app</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nx">Application</span> <span class="nv">$app</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span> <span class="o">=</span> <span class="nv">$app</span><span class="p">;</span>
+</span><span class='line'>        <span class="k">parent</span><span class="o">::</span><span class="na">__construct</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">public</span> <span class="k">function</span> <span class="nf">getDefaultCommands</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>        <span class="nv">$commands</span> <span class="o">=</span> <span class="k">parent</span><span class="o">::</span><span class="na">getDefaultCommands</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="nv">$commands</span><span class="p">[]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Command\TestCommand</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">app</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$commands</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Which has another added benefit of keeping your <code>bin/console</code> file simple:</p>
+
+<figure class='code'><figcaption><span>bin/console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">#!/usr/bin/env php</span>
+</span><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">date_default_timezone_set</span><span class="p">(</span><span class="s1">&#39;UTC&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">set_time_limit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../../autoload.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//Provides $app, which is an instance of Silex\Application</span>
+</span><span class='line'><span class="k">require_once</span> <span class="s1">&#39;path/to/app/setup.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">MyApp\Console\Application</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$cli_app</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="nv">$app</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$cli_app</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">();</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>Environment</h1>
+
+<p>One thing to be aware of, most web applications these days are aware of environments when it comes to what configurations to use.
+The Symfony Console Application object allows you to manually create your <code>$input</code> and <code>$output</code> options, which allows us to
+perform a neat little trick and gain early access to the option parsing.</p>
+
+<p>If you look at lines 19 and 20 below you can see us checking the <code>--env</code> option to see if it&#8217;s set, if not using a default environment
+variable <code>MYAPP_ENV</code> from the shell or our fallback &#8216;dev&#8217; environment designation. We then just go ahead and forward our newly
+created <code>$input</code> and <code>$output</code> objects through our <code>run()</code> method as shown on line 23.</p>
+
+<figure class='code'><figcaption><span>bin/console</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="x">#!/usr/bin/env php</span>
+</span><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">date_default_timezone_set</span><span class="p">(</span><span class="s1">&#39;UTC&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">set_time_limit</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="p">(</span><span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../vendor/autoload.php&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="o">@</span><span class="k">include_once</span> <span class="nx">__DIR__</span> <span class="o">.</span> <span class="s1">&#39;/../../../autoload.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//Provides $app, which is an instance of Silex\Application</span>
+</span><span class='line'><span class="k">require_once</span> <span class="s1">&#39;path/to/app/setup.php&#39;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">use</span> <span class="nx">MyApp\Console\Application</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Input\ArgvInput</span><span class="p">;</span>
+</span><span class='line'><span class="k">use</span> <span class="nx">Symfony\Component\Console\Output\ConsoleOutput</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$input</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ArgvInput</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$output</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ConsoleOutput</span><span class="p">();</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">//Determine Environment</span>
+</span><span class='line'><span class="nv">$env</span> <span class="o">=</span> <span class="nv">$input</span><span class="o">-&gt;</span><span class="na">getParameterOption</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;--env&#39;</span><span class="p">,</span> <span class="s1">&#39;-e&#39;</span><span class="p">),</span> <span class="nb">getenv</span><span class="p">(</span><span class="s1">&#39;MYAPP_ENV&#39;</span><span class="p">)</span> <span class="o">?:</span> <span class="s1">&#39;prod&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$app</span><span class="p">[</span><span class="s1">&#39;environment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$env</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$cli_app_</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Application</span><span class="p">(</span><span class="s1">&#39;My CLI Application&#39;</span><span class="p">,</span> <span class="s1">&#39;0.1.0&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="nv">$cli_app_</span><span class="o">-&gt;</span><span class="na">run</span><span class="p">(</span><span class="nv">$input</span><span class="p">,</span> <span class="nv">$output</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As an added bonus, this same concept can be applied to creating your own Output class. The Composer project actively makes use
+of this to extend in the ability to do overwrites in the console (the technique used for it&#8217;s fancy progress indication).</p>
 </div>
   
   
@@ -220,6 +733,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -233,10 +750,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

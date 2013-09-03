@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="Naturally it&#8217;s been over a month since I&#8217;ve updated and rather than posting something techincal I feel I should be a little selfish and &hellip;">
+  <meta name="description" content="Lately at work I&#8217;ve been having the worst of trouble getting PHP on my workstation to send mail. Previously it was a simple trek to a website &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2009/07/01/good-news-everyone/">Good News Everyone!</a></h1>
+      <h1 class="entry-title"><a href="/blog/2009/08/21/development-environment-help-setting-up-php-mail-on-windows-or-where-is-my-windows-sendmail-exe/">Development Environment Help! Setting Up PHP Mail() on Windows, or: Where Is My Windows sendmail.exe?</a></h1>
     
     
       <p class="meta">
@@ -88,22 +88,59 @@
   
 
 
-<time datetime="2009-07-01T08:14:54-05:00" pubdate data-updated="true">Jul 1<span>st</span>, 2009</time>
+<time datetime="2009-08-21T05:39:00-05:00" pubdate data-updated="true">Aug 21<span>st</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Naturally it&#8217;s been over a month since I&#8217;ve updated and rather than posting something techincal I feel I should be a little selfish and announce that:</p>
+  <div class="entry-content"><p>Lately at work I&#8217;ve been having the worst of trouble getting PHP on my workstation to send mail. Previously it was a simple trek to a website to download a Windows build of sendmail.exe, but for some reason I cannot get access to it, so I have to go another route.</p>
 
-<h3>I&#8217;M GOING TO BE SPEAKING AT <a href="http://zendcon.com/">ZENDCON 09</a>!</h3>
+<p>Enter <a href="http://www.hmailserver.com/">hMailServer</a>, a free, full-featured SMTP/POP/IMAP server for Windows with a pretty, shiny GUI configuration interface. All I really want to do is setup SMTP for localhost only but one could easily use hMailServer as a production mail server.</p>
 
-<p>I will be giving my talk on automated deployment techniques with Phing.</p>
+<p>To start things off, lets make sure our php.ini directives are setup correctly. By correct, I mean PHP needs to be looking for our SMTP server on my local machine (localhost) at the default SMTP port (25), and, just in case, set a default from address:</p>
 
-<p>To say that I&#8217;m excited is quite an understatement. Nervous now probably tops excitement as now I have to make sure I give a damned good talk and not make <a href="http://eliw.com/">Eli White</a> look like a fool for having picked me for a slot.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ini'><span class='line'><span class="k">[mail function]</span>
+</span><span class='line'><span class="c">; For Win32 only.</span>
+</span><span class='line'><span class="na">smtp</span> <span class="o">=</span> <span class="s">localhost</span>
+</span><span class='line'><span class="na">smtp_port</span> <span class="o">=</span> <span class="s">25</span>
+</span><span class='line'>
+</span><span class='line'><span class="c">; For Win32 only.</span>
+</span><span class='line'><span class="na">sendmail_from</span> <span class="o">=</span> <span class="s">user@domain.tld</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>Time to go bury my nose in Power Point and research!</p>
+
+<p>Looks good. Second step is to download and install hMailServer. This tutorial is working from <a href="http://www.hmailserver.com/?page=download_mirrors&amp;downloadid=185">version 5.2 build 356</a>, but you should be able to use the latest stable or unstable version that you might desire.</p>
+
+<p>Once you&#8217;re installed and configured, run the administrative application. If you click over to status you will notice a message to the effect of &#8220;You haven&#8217;t specified the public host name for this computer in the SMTP settings.&#8221; That means we have some more configuration to do!</p>
+
+<p><img src="/images/posts/2009/08/hmailserver-1.png"></p>
+
+<p>Now mosey on over to Settings » Protocols » SMTP, navigate to the &#8220;Delivery of e-mail&#8221; tab. We set our &#8220;Local host name&#8221; to &#8220;localhost&#8221; and click &#8220;Save&#8221;.</p>
+
+<p><img src="/images/posts/2009/08/hmailserver-2.png"></p>
+
+<p>Next, for securities sake (as well as to ensure we don&#8217;t have to waste time configuring account as this is only a dev machine), go to Settings » Advanced » IP Ranges » My Computer. Un-check the POP3 and IMAP checkboxes under the &#8220;Allow Connections&#8221; as we don&#8217;t intend to receive mail, nor use the IMAP protocol. Then, un-check everything under &#8220;Requires SMTP authentication&#8221; as we want our PHP applications to have full reign. Finally, click &#8220;Save&#8221;. Remember, this is a dev box.</p>
+
+<p><img src="/images/posts/2009/08/hmailserver-3.PNG"></p>
+
+<p>UNDER NO CIRCUMSTANCES SHOULD YOU USE THESE SETTINGS ON A BOX THAT WILL BE EXPOSING ITSELF TO THE INTERNET OR ON A PRODUCTION SERVER! However, since our local machine will obviously have internet connectivity, lets remove all access from outsiders!</p>
+
+<p>Navigate to Settings » Advanced » IP Ranges » Internet. Un-check EVERYTHING from &#8220;Allow connections&#8221; to deny outsiders any services, and, just in case, check EVERYTHING under &#8220;Require SMTP authentication&#8221;  and click &#8220;Save&#8221;.</p>
+
+<p><img src="/images/posts/2009/08/hmailserver-4.PNG"></p>
+
+<p>And <em>voilà</em>! We have a fully functioning SMTP server that our local PHP environment can use to send test email messages.</p>
+
+<p>The nice thing about our administrative interface is if we go to Status, navigate to the &#8220;Logging&#8221; tab, and click &#8220;Start,&#8221; we can capture the dialogue between hMailServer and your PHP app when sending an email address (very useful for debugging).</p>
 </div>
   
   
@@ -128,6 +165,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -141,10 +182,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

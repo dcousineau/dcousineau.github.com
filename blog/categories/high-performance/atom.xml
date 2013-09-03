@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: High Performance | Tower of Power]]></title>
+  <link href="http://dcousineau.github.com/blog/categories/high-performance/atom.xml" rel="self"/>
+  <link href="http://dcousineau.github.com/"/>
+  <updated>2013-09-03T11:13:31-05:00</updated>
+  <id>http://dcousineau.github.com/</id>
+  <author>
+    <name><![CDATA[Daniel Cousineau]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[High Performance JS Tip: Dimensions are not your friend]]></title>
+    <link href="http://dcousineau.github.com/blog/2013/09/03/high-performance-js-tip/"/>
+    <updated>2013-09-03T10:24:00-05:00</updated>
+    <id>http://dcousineau.github.com/blog/2013/09/03/high-performance-js-tip</id>
+    <content type="html"><![CDATA[<p>Several months back I was tasked with building an <a href="https://twitter.com/NikeNYC/status/322955662013374464/photo/1">interactive instagram scroller</a>
+that was to be slotted into large display via a Safari 5.1 "widget".</p>
+
+<p>The project was generally fairly simple, 3 columns scrolling infinitely in alternate directions.
+The individual pictures, or "chips" as I called them were to do a 3D rotate transition to keep
+the visual appeal up.</p>
+
+<p>I covered all the usual suspects to maximize performance, I used as many CSS transitions as possible
+to harness the GPU, keept everything asynchronous as possible, kept the DOM cleaned up, use <code>requestAnimationFrame</code>.
+However the biggest problem I encountered was getting the scroll smooth.</p>
+
+<p>Initially the page was fully dynamic and my anmiation code used the <code>scrollTop</code> property (while
+inserting new chips as needed to prevent stoppage). That proved problematic and terrible performance-wise.</p>
+
+<p>Next I tried inserting chips in the top of their column container with a negative margin and slowly
+animating the first chip to a margin of 0 (effecitvely constantly pushing all other chips down). This
+also posed problems and I couldn't approach what looked like a fluid animation. It would always do a slight,
+maybe 2-3ms stutter when a new chip was introduced and there was nothing I could do to eliminate it. I tried
+optimizing my DOM interaction to use DOM DocumentFragment, dropping all jQuery code and going full-native.</p>
+
+<p>Finally I moved to using absolutely positioned chips that I tracked one by one in my animation loop. However,
+<em>even this</em> was insufficient and I was still getting a stutter.</p>
+
+<p>After much forehead-meets-desk time, I remembered a conversation I had with <a href="https://twitter.com/creationix">Tim Caswell</a>
+a long while back (revolving around the HP TouchPad) where he told me about an interesting quirk of WebKit that
+turned out to be the cause of my problems:</p>
+
+<p>To make my display flexible I was using the <code>getBoundingClientRect</code> method to calculate when a chip rolls off-screen
+so I can either remove it from the DOM and insert a new chip at the beginning (as well as to calculate initial position).</p>
+
+<p>The <strong>problem</strong> is WebKit likes to recalculate the layout of the dom pretty much every single time you use something
+similar to <code>getBoundingClientRect</code>. (Even getting the window's <code>innerHeight</code>/<code>innerWidth</code> will force a recalculation).
+The stutter was coming from WebKit constantly recalculating the layout!</p>
+
+<p>So, a quick refactor to use static, precalculated dimensions for the chips (calculated once on window resize/document load)
+and BOOM, performance issues gone. So, lesson learned?</p>
+
+<blockquote><p>All calls to get any calculated dimension from the DOM should be cached or avoided.</p></blockquote>
+]]></content>
+  </entry>
+  
+</feed>

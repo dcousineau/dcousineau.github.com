@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="So I kinda had a thing going about blogging during ZendCon but lost it, so I might as well just do a single day wrap up. So ZendCon turned out to be &hellip;">
+  <meta name="description" content="Nearly every application you could write in for the business sphere in PHP probably requires some sort of data export, most likely in the CSV format &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/09/22/zendcon08-wrapup/">ZendCon08 Wrapup</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/10/10/outputting-csv-as-a-downloadable-file-in-php/">Outputting CSV as a Downloadable File in PHP</a></h1>
     
     
       <p class="meta">
@@ -88,24 +88,136 @@
   
 
 
-<time datetime="2008-09-22T11:49:42-05:00" pubdate data-updated="true">Sep 22<span>nd</span>, 2008</time>
+<time datetime="2008-10-10T05:42:13-05:00" pubdate data-updated="true">Oct 10<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>So I kinda had a thing going about blogging during ZendCon but lost it, so I might as well just do a single day wrap up.</p>
+  <div class="entry-content"><p>Nearly every application you could write in for the business sphere in PHP probably requires some sort of data export, most likely in the CSV format.</p>
 
-<p>So ZendCon turned out to be completely worth it, even if only for the chance to meet in person a lot of the core PHP community and then drink semi-copiously with them.</p>
+<p>The easiest way to provide a downloadable file is by altering the headers and echo&#8217;ing the file content. In our case:</p>
 
-<p>The talks were good, though most of them were either more basic than I would have liked or really indepth (/me thinks back to Sara&#8217;s PHP Extension Writing talk, though that was more &#8220;few php developers gets this deep&#8221; than indepth/complicated).</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s2">&quot;Content-type: text/csv&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s2">&quot;Cache-Control: no-store, no-cache&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=&quot;filename.csv&quot;&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>The uncon was nice, which of course I&#8217;d like it given my love for barcamps, refreshes, and generally community driven and adhoc events.</p>
 
-<p>The Yahoo party started out awkward given that one expects an open bar after paying $500+ for tickets to a conference, however from what I gathered it really wasn&#8217;t so much Yahoo&#8217;s fault more the hotel&#8217;s. I won the raffle for the &#8220;Day with Rasmus&#8221; prize and felt bad &#8216;cause when one of the Yahoo girls came to me and to have me verify my information, I told them my email (which was a gmail account) was correct but if they still have trouble to just google my first and last name since I dominate the first page for my name.</p>
+<p>We want to set our applicable Content-Type so that the browsers associate the file properly. Just relying on the extension doesn&#8217;t work, even in Windows. The magic is in the third header setting, &#8220;Content-Disposition,&#8221; which informs the browser to download as a separate file (don&#8217;t open a new window and display a blank page, just display the file download box) and tell the browser the filename is &#8220;filename.csv&#8221;. This way rewrite rules like http://localhost/export/csv/ will result in a download box that declares the file &#8220;filename.csv&#8221; rather than a randomly assigned name or whatever the current url is.</p>
 
-<p>My only problem with ZendCon is that it ended&#8230;</p>
+<p>Into the meat of the CSV export. At the very beginning we need to open up a stream to the PHP output (the same place where echo sends its string content, which is NOT stdout):</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$outstream</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s2">&quot;php://output&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Next we&#8217;re going to assume you already have your data packed nicely into an array (or array of arrays) so long as we have a single array per row/line.</p>
+
+<p>The magic comes into play using the build in PHP function <a href="http://php.net/fgetcsv"><code>fgetcsv()</code></a>. <code>fgetcsv()</code> takes an array for a single row and outputs it, automatically escaping output according to column and enclosure delimiters!</p>
+
+<p><code>fgetcsv()</code> requires a file resource as its first parameter and the magic of PHP streams is they act like a file resource (actually a file resource is just a file stream), so we give it <code>$outstream</code> to make <code>fputcsv()</code> echo its output. We fill in the rest of the parameters according to the php.net documentation and voila we have:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s2">&quot;Content-type: text/csv&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s2">&quot;Cache-Control: no-store, no-cache&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="nx">header</span><span class="p">(</span><span class="s1">&#39;Content-Disposition: attachment; filename=&quot;filename.csv&quot;&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$outstream</span> <span class="o">=</span> <span class="nb">fopen</span><span class="p">(</span><span class="s2">&quot;php://output&quot;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$test_data</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+</span><span class='line'>  <span class="k">array</span><span class="p">(</span> <span class="s1">&#39;Cell 1,A&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell 1,B&#39;</span> <span class="p">),</span>
+</span><span class='line'>  <span class="k">array</span><span class="p">(</span> <span class="s1">&#39;Cell 2,A&#39;</span><span class="p">,</span> <span class="s1">&#39;Cell 2,B&#39;</span> <span class="p">)</span>
+</span><span class='line'><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">foreach</span><span class="p">(</span> <span class="nv">$test_data</span> <span class="k">as</span> <span class="nv">$row</span> <span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nb">fputcsv</span><span class="p">(</span><span class="nv">$outstream</span><span class="p">,</span> <span class="nv">$row</span><span class="p">,</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nb">fclose</span><span class="p">(</span><span class="nv">$outstream</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>For more output stream craziness, <a href="http://zaemis.blogspot.com/">Timothy Boronczyk</a> from the #phpc IRC channel on freenode shared a code snipped that outputs CSV either to the output buffer OR will return it as a string using some clever streams hackery:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="k">function</span> <span class="nf">exportCSV</span><span class="p">(</span><span class="nv">$data</span><span class="p">,</span> <span class="nv">$col_headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(),</span> <span class="nv">$return_string</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>    <span class="nv">$stream</span> <span class="o">=</span> <span class="p">(</span><span class="nv">$return_string</span><span class="p">)</span> <span class="o">?</span> <span class="nb">fopen</span> <span class="p">(</span><span class="s1">&#39;php://temp/maxmemory&#39;</span><span class="p">,</span> <span class="s1">&#39;w+&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nb">fopen</span> <span class="p">(</span><span class="s1">&#39;php://output&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">);</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">empty</span><span class="p">(</span><span class="nv">$col_headers</span><span class="p">))</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nb">fputcsv</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$col_headers</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$data</span> <span class="k">as</span> <span class="nv">$record</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nb">fputcsv</span><span class="p">(</span><span class="nv">$stream</span><span class="p">,</span> <span class="nv">$record</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="k">if</span> <span class="p">(</span><span class="nv">$return_string</span><span class="p">)</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nb">rewind</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>        <span class="nv">$retVal</span> <span class="o">=</span> <span class="nb">stream_get_contents</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>        <span class="nb">fclose</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>        <span class="k">return</span> <span class="nv">$retVal</span><span class="p">;</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>    <span class="p">{</span>
+</span><span class='line'>        <span class="nb">fclose</span><span class="p">(</span><span class="nv">$stream</span><span class="p">);</span>
+</span><span class='line'>    <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+
 </div>
   
   
@@ -130,6 +242,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -143,10 +259,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

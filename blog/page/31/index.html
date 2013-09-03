@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="One of the guiding principles I have lived by the came from my middle school swimming coach. He told us: Don&#8217;t do more work than you have to. &hellip;">
+  <meta name="description" content="I&#8217;m fairly excited because as of only a week or so ago I found the closures rfc, and not only did I find that the rfc has a working patch, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/06/08/laziness-makes-a-great-developer/">Laziness Makes a Great Developer</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/07/21/php-53-and-closures/">PHP 5.3 and Closures</a></h1>
     
     
       <p class="meta">
@@ -88,46 +88,136 @@
   
 
 
-<time datetime="2008-06-08T19:26:54-05:00" pubdate data-updated="true">Jun 8<span>th</span>, 2008</time>
+<time datetime="2008-07-21T08:28:06-05:00" pubdate data-updated="true">Jul 21<span>st</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>One of the guiding principles I have lived by the came from my middle school swimming coach. He told us:</p>
+  <div class="entry-content"><p>I&#8217;m fairly excited because as of only a week or so ago I found the <a href="http://wiki.php.net/rfc/closures">closures rfc</a>, and not only did I find that the rfc has a working patch, apparently it&#8217;s already in PHP 5.3.</p>
 
-<blockquote><p>Don&#8217;t do more work than you have to.</p></blockquote>
+<p>You see, apparently it&#8217;s not good enough that we get name spaces and late static binding, oh no, we get closures too!</p>
 
-<p>On first glance, it doesn&#8217;t seem to be very good advice. However when you realize that what he was getting at was we shouldn&#8217;t waste energy on a poor stroke, the quote takes on a much deeper and more profound meaning. It is this principle that takes a good developer and makes him great.</p>
+<p>I downloaded the Win32 snapshot from <a href="http://snaps.php.net/">PHP snapshots page</a> and indeed, closure support was included.</p>
 
-<h3>Profile of a Good Developer</h3>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$closure</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$args</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$global</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/*Body*/</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>Good developers are almost a dime a dozen. Walk in to any computer science course or <a href="http://www.net-perspective.com/">web development</a> shop and you&#8217;ll find that the majority, if not all, are good developers.</p>
 
-<p>These &#8220;good&#8221; developers can sit down and work through an object oriented architecture, they can construct their SQL queries, and can write an application that just works.</p>
+<p>According to the rfc, one must manually define external variables used within a function, however in my own tests you can still use the <code>global</code> keyword. The difference between the two is the <code>use</code> statement preserves the value of <code>$global</code> at creation and the <code>global</code> keyword would work as you would expect it to with a normal function. For example:</p>
 
-<p>A &#8220;good&#8221; developer checks in his source code at the proper times, he comments his code as well as could be expected, and you can usually be guaranteed his code will compile and execute with very little fuss.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="nv">$global</span> <span class="o">=</span> <span class="s2">&quot;Global Variable&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$closureUse</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$arg</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$global</span><span class="p">)</span> <span class="p">{</span> <span class="k">echo</span> <span class="nv">$global</span> <span class="o">.</span> <span class="s2">&quot; - &quot;</span> <span class="o">.</span> <span class="nv">$arg</span><span class="p">;</span> <span class="p">};</span>
+</span><span class='line'><span class="nv">$closureGlobal</span> <span class="o">=</span> <span class="k">function</span> <span class="p">(</span><span class="nv">$arg</span><span class="p">)</span> <span class="p">{</span> <span class="k">global</span> <span class="nv">$global</span><span class="p">;</span> <span class="k">echo</span> <span class="nv">$global</span> <span class="o">.</span> <span class="s2">&quot; - &quot;</span> <span class="o">.</span> <span class="nv">$arg</span><span class="p">;</span> <span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;Basic Closure Testsn&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;-------------------nn&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;</span><span class="si">$closureUse</span><span class="s2">(&#39;test&#39;): &quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$closureUse</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;n&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;</span><span class="si">$closureGlobal</span><span class="s2">(&#39;test&#39;): &quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$closureGlobal</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;n&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;n&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;Global Closure Testsn&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;--------------------nn&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$global</span> <span class="o">=</span> <span class="s2">&quot;Global Variable (Changed)&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;</span><span class="si">$closureUse</span><span class="s2">(&#39;test&#39;) (changed </span><span class="si">$global</span><span class="s2">): &quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$closureUse</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;n&quot;</span><span class="p">;</span>
+</span><span class='line'>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;</span><span class="si">$closureGlobal</span><span class="s2">(&#39;test&#39;) (changed </span><span class="si">$global</span><span class="s2">): &quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nv">$closureGlobal</span><span class="p">(</span><span class="s1">&#39;test&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="k">echo</span> <span class="s2">&quot;n&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<h3>Profile of a GREAT Developer</h3>
 
-<p>What separates the great developers from the good developers is LAZINESS! You will find that the good developers, while producing clean, working code, operate much slower than great developers, and for the reason that separates the good from the great.</p>
+<p>Would output:</p>
 
-<p>Good developers are set in their ways of just manually working with everything. A good developer handles deployment with FTP, and updates database structure by hand. In the end, the good developer ends up wasting time doing menial tasks. FTP alone can kill up to 30 minutes of your day. Good developers are very set in their ways and do not like new things introduced.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>Basic Closure Tests
+</span><span class='line'>-------------------
+</span><span class='line'>
+</span><span class='line'>$closureUse(&#39;test&#39;): Global Variable - test
+</span><span class='line'>$closureGlobal(&#39;test&#39;): Global Variable - test
+</span><span class='line'>
+</span><span class='line'>Global Closure Tests
+</span><span class='line'>--------------------
+</span><span class='line'>
+</span><span class='line'>$closureUse(&#39;test&#39;) (changed $global): Global Variable - test
+</span><span class='line'>$closureGlobal(&#39;test&#39;) (changed $global): Global Variable (Changed) - test
+</span></code></pre></td></tr></table></div></figure>
 
-<p>Meanwhile GREAT developers <strong>HATE</strong> menial tasks. They abhor having to drop into the console every time they wish to test or deploy, and loath dropping into the database to manually update structure. So these GREAT developers begin to write scripts and integrate all their tools to reduce their menial overhead as much as possible.</p>
 
-<p>The GREAT developer is lazy because they do not want to do things themselves, so they spend 20 minutes automating their tasks so they&#8217;ll never deal with it again. And when you think about it, when you could spend 20 minutes once writing automated deploy scripts but instead spend 20 minutes every deploy in FTP, you are <em>doing more work than you have to</em>.</p>
+<p>You can, as well, return references with a closure by putting the &amp; between the function keyword and the parenthesis.</p>
 
-<h3>What Does This Mean For Me?</h3>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nv">$closureReturnsReference</span> <span class="o">=</span> <span class="k">function</span> <span class="o">&amp;</span> <span class="err">($</span><span class="nf">args</span><span class="p">)</span> <span class="k">use</span> <span class="p">(</span><span class="nv">$global</span><span class="p">)</span> <span class="p">{</span> <span class="cm">/*Body*/</span> <span class="p">};</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>All of us developers should strive to be as lazy as possible. Do you have a task you have to do more than 3 times total? Write a script or a <a href="http://www.phing.info/">build task</a> for it. Do you spend a lot of time testing features? <a href="http://www.phpunit.de/">Automate your testing</a>. And if possible, <a href="http://www.xinc.eu/">integrate the systems</a> so you never even have to run those scripts manually, reducing user intervention to one step.</p>
 
-<p>I know I try to be as lazy as possible, do you?</p>
+<p>Just one of many shiny fancy things to look forward to in PHP 5.3.</p>
 
-<p><strong>Edit 6/10/2008:</strong></p>
+<h3>Edit 7/23/2008:</h3>
 
-<p>I feel I should make sure everyone knows that I am to an extent being facetious with the word &#8220;laziness&#8221; but I&#8217;m being completely serious on the &#8220;don&#8217;t do more work than you have to.&#8221; While a good developer can handle long, arduous tasks that are prone to human error, a great developer avoids them in the first place.</p>
+<p>I should mention to the people that trashed my examples on reddit, I&#8217;m sorry for assuming you knew  what closures were and the the real world uses of them. I will try to refrain from giving a concise example of how a new language feature interacts with existing features and conventions, especially in PHP where things are a bit disorganized.</p>
 </div>
   
   
@@ -152,6 +242,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -165,10 +259,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

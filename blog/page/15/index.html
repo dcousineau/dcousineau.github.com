@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="Well, it&#8217;s been a while since I&#8217;ve done a PHP update hasn&#8217;t it? Well alls well here in CStat, I have a quickie for you folks. &hellip;">
+  <meta name="description" content="I&#8217;ve been thinking a lot lately about a presentation given by whurley at a refreshBCS meeting a long time ago. He gave his presentation on Open &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2009/01/06/zend-framework-module-init-script-controller-plugin/">Zend Framework Module Init Script (Controller Plugin)</a></h1>
+      <h1 class="entry-title"><a href="/blog/2009/01/16/oss-bugs-are-features/">OSS Bugs Are Features</a></h1>
     
     
       <p class="meta">
@@ -88,111 +88,32 @@
   
 
 
-<time datetime="2009-01-06T11:12:56-06:00" pubdate data-updated="true">Jan 6<span>th</span>, 2009</time>
+<time datetime="2009-01-16T08:47:13-06:00" pubdate data-updated="true">Jan 16<span>th</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Well, it&#8217;s been a while since I&#8217;ve done a PHP update hasn&#8217;t it? Well alls well here in CStat, I have a quickie for you folks.</p>
+  <div class="entry-content"><p>I&#8217;ve been thinking a lot lately about a presentation given by <a href="http://whurley.com/">whurley</a> at a <a href="http://refreshbcs.org/">refreshBCS</a> meeting a long time ago. He gave his presentation on Open Source Software, only SLIGHTLY an era of his expertise (just in case you can&#8217;t tell, that was sarcasm) and raise an interesting point.</p>
 
-<p>Recently at work I had the need to run a script before every single controller (namely to add a plugin folder to Dwoo) for a specific module that I did not desire for any other modules.</p>
+<p>He talked about how when <a href="http://www.bmc.com/BMC/Common/CDA/hou_Page_Detail/0,3464,9926222_10636326_76443375,00.html">BMC Software</a> picked him up to head up their open source efforts, he battled a little bit the developers. They wanted to make sure the code was perfected, polished, and at its best whenever they started dumping it on the public. Of course they&#8217;d want to do this, releasing code as OSS is almost equivalent to deciding to present yourself to the work naked and without makeup. They wanted their friends who could see the code to be in awe, and their code base to be a shining example of a project done right.</p>
 
-<p>I could have subclassed all my controllers to extend a custom action controller that handled this in the <code>init()</code> method, however I&#8217;m lazy so I wrote a quick Zend Controller Plugin to handle this for me.</p>
+<p>Whurley wanted them just to release it. Not because he wanted it now, not because of impatience or deadlines or anything else. He wanted them to just release it because, and I&#8217;m paraphrasing him, releasing open source thats a little buggy will actually help grow and foster the project. Granted, you do not introduce bugs, you just open and display the code and start making releases even though there are still tickets in your bug tracking system.</p>
 
-<p>What it does is grabs the module name from the request object on routeShutdown (the routeShutdown happens after the route has been parsed and the request object has been generated, but before the action controller is instantiated and executed). From there it uses <code>Zend_Font_Controller::getInstance()-&gt;getModuleDirectory(...)</code> to grab the literal path to the module directory, tacks on our init file name (in our case &#8220;init.php&#8221;), and if it exists execute it in its own clean environment.</p>
+<p>He gave the hypothetical example of the stereotypical arrogant OSS developer finding a bug in BMC&#8217;s FooBar software, calling the BMC devs dumbasses, fixing it (because it was a small and easy bug), and now being invested in the software. You don&#8217;t really lose much reputation, but you gain an invested and loyal following.</p>
 
-<p>The init.php file has access to <code>$this</code>, where <code>$this</code> is an instance of the controller plugin (in particular we can do <code>$this-&gt;getRequest()</code> inside the init script).</p>
+<p>While this sounds good and true, and it makes a lot of sense (if there&#8217;s nothing to do, OSS developers will never get involved), it never really clicked for me until I associated another story with whurley&#8217;s principle.</p>
 
-<p>The code is as follows:</p>
+<p>I meet Elizabeth Marie Smith (aka auroraeosrose) at ZendCon08 and had good times talking with her and many of the other #phpc members. At one point in the conference, at an opening for one of her talks (a brief overview of PECL extensions), she told the audience how she got into programming PHP and PHP C extensions. She wasn&#8217;t a computer science major, she only started in the early 2000&#8217;s (prior to that not much computer science experience).</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
-</span><span class='line'><span class="sd">/**</span>
-</span><span class='line'><span class="sd"> * This checks the current request module&#39;s directory for an initFile (defaults</span>
-</span><span class='line'><span class="sd"> * to init.php) and runs it before the controller is loaded.</span>
-</span><span class='line'><span class="sd"> * </span>
-</span><span class='line'><span class="sd"> * @copyright 2009 Daniel Cousineau</span>
-</span><span class='line'><span class="sd"> * @license http://opensource.org/licenses/mit-license.php MIT License</span>
-</span><span class='line'><span class="sd"> * @version 0.1.0</span>
-</span><span class='line'><span class="sd"> */</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">My_Controller_Plugin_ModuleInit</span> <span class="k">extends</span> <span class="nx">Zend_Controller_Plugin_Abstract</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="nv">$initFileName</span> <span class="o">=</span> <span class="s2">&quot;init.php&quot;</span><span class="p">;</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="sd">/**</span>
-</span><span class='line'><span class="sd">  * @param Zend_Controller_Request_Abstract $request</span>
-</span><span class='line'><span class="sd">  * @return null</span>
-</span><span class='line'><span class="sd">  */</span>
-</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">routeShutdown</span><span class="p">(</span><span class="nx">Zend_Controller_Request_Abstract</span> <span class="nv">$request</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="nv">$moduleName</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getModuleName</span><span class="p">();</span>
-</span><span class='line'>      
-</span><span class='line'>      <span class="nv">$moduleDirectory</span> <span class="o">=</span> <span class="nx">Zend_Controller_Front</span><span class="o">::</span><span class="na">getInstance</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getModuleDirectory</span><span class="p">(</span><span class="nv">$moduleName</span><span class="p">);</span>
-</span><span class='line'>      
-</span><span class='line'>      <span class="c1">//Trim the paths and filenames to prevent any problems</span>
-</span><span class='line'>      <span class="nv">$initFile</span> <span class="o">=</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$moduleDirectory</span><span class="p">,</span><span class="s1">&#39;/\&#39;) . &#39;</span><span class="o">/</span><span class="s1">&#39; . ltrim(self::$initFileName,&#39;</span><span class="o">/</span><span class="nx">\</span><span class="err">&#39;</span><span class="p">);</span>
-</span><span class='line'>      
-</span><span class='line'>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runInitFile</span><span class="p">(</span><span class="nv">$initFile</span><span class="p">);</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'>  
-</span><span class='line'>  <span class="sd">/**</span>
-</span><span class='line'><span class="sd">  * Run the file in its own cleaned scope</span>
-</span><span class='line'><span class="sd">  * </span>
-</span><span class='line'><span class="sd">  * @param string $_initFile location of the input file</span>
-</span><span class='line'><span class="sd">  * @return null</span>
-</span><span class='line'><span class="sd">  */</span>
-</span><span class='line'>  <span class="k">protected</span> <span class="k">function</span> <span class="nf">runInitFile</span><span class="p">(</span><span class="nv">$_initFile</span><span class="p">)</span>
-</span><span class='line'>  <span class="p">{</span>
-</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nv">$_initFile</span><span class="p">)</span> <span class="p">)</span>
-</span><span class='line'>          <span class="k">include_once</span> <span class="nv">$_initFile</span><span class="p">;</span>
-</span><span class='line'>  <span class="p">}</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
+<p>What had happened was, to the best of my recollection and <a href="http://elizabethmariesmith.com/2009/01/seven-weird-things/">her seven things post</a>, in the early days of 2001-ish she was really big into Anime and wanted to start a fan site. Her dad helped her install a forum (written in PHP) on a server he was running out of his house on a cable connection.</p>
 
+<p>Well, as with many of the forum projects, there were bugs to be had in the software. Elizabeth was dedicated to the idea of her site and decided to break open the forum and dig around to fix the bugs. Fix them she did but everything kinda snowballed from there. In fact it was bugs in the PHP-GTK extension that caused her to learn C (not an easy feat) and become the maintainer of PHP-GTK as well as the Windows port of PHP maintainer.</p>
 
-<p>As always all code I post on this blog is covered under the MIT license.</p>
+<p>It was bugs and problems in the software that caused her to be where she is now, it was bugs in the OSS world that caused her to latch on to PHP-GTK and the Windows PHP port and get them to where they are today. Though she told this story a long time ago, and whurley&#8217;s presentation was even further back yet, it only just now clicked that I had seen a real life example of whurley&#8217;s principle of &#8220;just publish it, flaws and all.&#8221;</p>
+
+<p>The lesson from all this can even be applied outside of OSS development. It&#8217;s a lesson on perfectionism and can be applied towards my personal development practices. I know that agile teaches to publish early and publish often, fixing bugs and adding features on the way, but perfectionism still plagues me. I have maybe 10 drafts on this blog on small little PHP and Python topics I could publish that I never do because I feel it&#8217;s not good enough, or too simple. I have had code at work that I could have released a week ago but instead I obsess over making sure its &#8220;perfect&#8221; when a simple staging deployment will keep everyone happy, keep my moral up, and show me where the REAL bugs are.</p>
 </div>
   
   
@@ -217,6 +138,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -230,10 +155,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>

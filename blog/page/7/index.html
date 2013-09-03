@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="I felt like I should take a break from finishing up my multi-part javascript series to rehash some points being made recently by Keith Casey and &hellip;">
+  <meta name="description" content="I was talking with someone (I will edit this post when I find her card and remember her name) here at ZendCon and discovered that they were having &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2009/10/15/make-the-most-of-zendcon/">Make the Most of ZendCon</a></h1>
+      <h1 class="entry-title"><a href="/blog/2009/10/20/doctrine-migrations-proper/">Doctrine Migrations Proper</a></h1>
     
     
       <p class="meta">
@@ -88,43 +88,26 @@
   
 
 
-<time datetime="2009-10-15T19:43:12-05:00" pubdate data-updated="true">Oct 15<span>th</span>, 2009</time>
+<time datetime="2009-10-20T12:32:40-05:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>I felt like I should take a break from finishing up my <a href="/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/">multi-part javascript series</a> to rehash some points being made recently by <a href="http://caseysoftware.com/blog/so-its-your-first-conference">Keith Casey</a> and <a href="http://blog.phpdeveloper.org/?p=221">Chris Cornutt</a> about making the most of your N-th conference (and in particular, ZendCon).</p>
+  <div class="entry-content"><p>I was talking with someone (I will edit this post when I find her card and remember her name) here at ZendCon and discovered that they were having trouble with migrations in Doctrine. Having gone through the same issues of Doctrine seemingly not being able to figure out your changes and generate migration classes, I thought I&#8217;d post the solution here for future reference.</p>
 
-<p>My first ever professional conference (ignoring BarCamps) was last year&#8217;s ZendCon. I showed up in Santa Clara not knowing anyone except for a few brief appearances on #phpc (freenode).</p>
-
-<p>What made ZendCon absolutely enjoyable was indeed what everyone is suggesting to you: the hallway track.</p>
-
-<p>I could have easily attended sessions then hid in my room until the next day, yet I chose to go out to the social events and thanks to that decision, ZendCon &#8216;08 remains currently one of my fondest memories.</p>
-
-<p>It&#8217;s one thing to sit down and listen to talks from famous PHP developers, those that I read about all the time (or read their books in many cases). It&#8217;s a whole other beast to find yourself sharing a beer with them in some random &#8220;English Pub&#8221; while getting your ass kicked at trivia (I still have the beer glasses that were given to me by the real winners).</p>
-
-<p>And these events didn&#8217;t happen because I&#8217;m some modest uber-genius (I am by no means modest), I&#8217;m famous, or even particularly well respected (&#8220;He&#8217;s not stupid&#8221; is as gracious as a comment as I could want in a programming community).</p>
-
-<p>They happened because someone yelled &#8220;Pub Crawl!&#8221; and, dammit, I was there.</p>
-
-<p>They happened because I struck up conversations with random people.</p>
-
-<p>They happened because I got in religious flame wars with random people. (Ask me about the time, thought not at ZendCon, where I launched into a tirade against CakePHP with who I later found out was the founder of CakePHP)</p>
-
-<p>As it has been reiterated time and time again, this conference is not really about the sessions (it&#8217;s a success if there&#8217;s just 1 talk that you go to). It&#8217;s about the people you meet and the friendships you foster.</p>
-
-<p>In summation, I have a list of goals for you, my loyal readers that are attending ZendCon:</p>
+<p>Assuming you have access to the Doctrine CLI tool, the sequence you need is:</p>
 
 <ol>
-<li>Start a conversation with a random person in a hallway</li>
-<li>Find and say hi to an author of one your PHP books. Tell them how awesome the book has been</li>
-<li>Attend at least 1 UnCon session</li>
-<li>Attend at least 1 post-session social (keep track on Twitter and ask your fellow attendees for info)</li>
-<li>Find me and introduce yourself</li>
+<li>Make the changes to your YAML schema files</li>
+<li>Run <code>$ doctrine generate-migrations-diff</code> to generate the migration deltas</li>
+<li>Run <code>$ doctrine migrate</code> to determine if your migration deltas are working (a concern if you&#8217;re using SQL Server)</li>
+<li>Run <code>$ doctrine generate-models-yaml</code> to update your models to reflect the status of your database</li>
 </ol>
 
+
+<p>The reasoning behind this, and if I&#8217;m wrong someone can correct me, is the &#8220;generate-migrations-diff&#8221; task compares the differences between your YAML schema files and your current <strong>models</strong>. If you have updated your models before generating the diff, obviously Doctrine will find no difference and generate no migration delta.</p>
 </div>
   
   
@@ -149,6 +132,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/03/28/using-symfony-console-from-scratch/">Using Symfony Console From Scratch</a>
       </li>
     
@@ -162,10 +149,6 @@
     
       <li class="post">
         <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and your Zend_View</a>
       </li>
     
   </ul>
