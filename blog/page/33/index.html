@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="I recently had fun with an all-to-common issue with SQL driven websites: hierarchical data. For those who don&#8217;t like big words, think trees. &hellip;">
+  <meta name="description" content="One of the guiding principles I have lived by the came from my middle school swimming coach. He told us: Don&#8217;t do more work than you have to. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/06/01/hierarchical-data-with-php-and-mysql/">Hierarchical Data With PHP and MySQL</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/06/08/laziness-makes-a-great-developer/">Laziness Makes a Great Developer</a></h1>
     
     
       <p class="meta">
@@ -88,25 +88,48 @@
   
 
 
-<time datetime="2008-06-01T20:28:38-05:00" pubdate data-updated="true">Jun 1<span>st</span>, 2008</time>
+<time datetime="2008-06-08T20:26:54-04:00" pubdate data-updated="true">Jun 8<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>I recently had fun with an all-to-common issue with SQL driven websites: hierarchical data. For those who don&#8217;t like big words, think trees. <a href="http://dev.mysql.com/tech-resources/articles/hierarchical-data.html">Other people</a> have already discussed storage methods, and I would actually highly suggest you read the writeup if you haven&#8217;t already.</p>
+  <div class="entry-content"><p>One of the guiding principles I have lived by the came from my middle school swimming coach. He told us:</p>
 
-<p>While it is fairly straightforward to deal with, in our case we use <a href="http://pear.php.net/package/HTML_QuickForm">HTML_QuickForm</a> to handle our forms and are using QuickForm&#8217;s <a href="http://pear.php.net/manual/en/package.html.html-quickform.html-quickform-hierselect.setoptions.php">hierselect</a> to select a category.</p>
+<blockquote><p>Don&#8217;t do more work than you have to.</p></blockquote>
 
-<p>The issue starts showing its face in 2 distinct areas: (1) the client is not yet sure how deep they need their categories to go, and (2) the hierselect requires a very specific format of data to be passed in.</p>
+<p>On first glance, it doesn&#8217;t seem to be very good advice. However when you realize that what he was getting at was we shouldn&#8217;t waste energy on a poor stroke, the quote takes on a much deeper and more profound meaning. It is this principle that takes a good developer and makes him great.</p>
 
+<h3>Profile of a Good Developer</h3>
+
+<p>Good developers are almost a dime a dozen. Walk in to any computer science course or <a href="http://www.net-perspective.com/">web development</a> shop and you&#8217;ll find that the majority, if not all, are good developers.</p>
+
+<p>These &#8220;good&#8221; developers can sit down and work through an object oriented architecture, they can construct their SQL queries, and can write an application that just works.</p>
+
+<p>A &#8220;good&#8221; developer checks in his source code at the proper times, he comments his code as well as could be expected, and you can usually be guaranteed his code will compile and execute with very little fuss.</p>
+
+<h3>Profile of a GREAT Developer</h3>
+
+<p>What separates the great developers from the good developers is LAZINESS! You will find that the good developers, while producing clean, working code, operate much slower than great developers, and for the reason that separates the good from the great.</p>
+
+<p>Good developers are set in their ways of just manually working with everything. A good developer handles deployment with FTP, and updates database structure by hand. In the end, the good developer ends up wasting time doing menial tasks. FTP alone can kill up to 30 minutes of your day. Good developers are very set in their ways and do not like new things introduced.</p>
+
+<p>Meanwhile GREAT developers <strong>HATE</strong> menial tasks. They abhor having to drop into the console every time they wish to test or deploy, and loath dropping into the database to manually update structure. So these GREAT developers begin to write scripts and integrate all their tools to reduce their menial overhead as much as possible.</p>
+
+<p>The GREAT developer is lazy because they do not want to do things themselves, so they spend 20 minutes automating their tasks so they&#8217;ll never deal with it again. And when you think about it, when you could spend 20 minutes once writing automated deploy scripts but instead spend 20 minutes every deploy in FTP, you are <em>doing more work than you have to</em>.</p>
+
+<h3>What Does This Mean For Me?</h3>
+
+<p>All of us developers should strive to be as lazy as possible. Do you have a task you have to do more than 3 times total? Write a script or a <a href="http://www.phing.info/">build task</a> for it. Do you spend a lot of time testing features? <a href="http://www.phpunit.de/">Automate your testing</a>. And if possible, <a href="http://www.xinc.eu/">integrate the systems</a> so you never even have to run those scripts manually, reducing user intervention to one step.</p>
+
+<p>I know I try to be as lazy as possible, do you?</p>
+
+<p><strong>Edit 6/10/2008:</strong></p>
+
+<p>I feel I should make sure everyone knows that I am to an extent being facetious with the word &#8220;laziness&#8221; but I&#8217;m being completely serious on the &#8220;don&#8217;t do more work than you have to.&#8221; While a good developer can handle long, arduous tasks that are prone to human error, a great developer avoids them in the first place.</p>
 </div>
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2008/06/01/hierarchical-data-with-php-and-mysql/">Read on &rarr;</a>
-    </footer>
   
 
 
@@ -129,6 +152,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -142,10 +169,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -174,7 +197,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="I was talking with someone (I will edit this post when I find her card and remember her name) here at ZendCon and discovered that they were having &hellip;">
+  <meta name="description" content="Oh, look at me, blogging again! I definitely have a lot to blog about as I get the time, I&#8217;m coming off of a really involved project and &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2009/10/20/doctrine-migrations-proper/">Doctrine Migrations Proper</a></h1>
+      <h1 class="entry-title"><a href="/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/">Netbeans Code Completion and Your Zend_View</a></h1>
     
     
       <p class="meta">
@@ -88,26 +88,29 @@
   
 
 
-<time datetime="2009-10-20T12:32:40-05:00" pubdate data-updated="true">Oct 20<span>th</span>, 2009</time>
+<time datetime="2010-05-11T06:18:38-04:00" pubdate data-updated="true">May 11<span>th</span>, 2010</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>I was talking with someone (I will edit this post when I find her card and remember her name) here at ZendCon and discovered that they were having trouble with migrations in Doctrine. Having gone through the same issues of Doctrine seemingly not being able to figure out your changes and generate migration classes, I thought I&#8217;d post the solution here for future reference.</p>
+  <div class="entry-content"><p>Oh, look at me, blogging again! I definitely have a lot to blog about as I get the time, I&#8217;m coming off of a really involved project and learned a lot of tips I&#8217;d like to share about the Zend Framework. In the mean time I thought I&#8217;d share something I had a helluva time figuring out.</p>
 
-<p>Assuming you have access to the Doctrine CLI tool, the sequence you need is:</p>
+<p>If you&#8217;re using Zend Framework and NetBeans, you may be like me and bemoaning the lack of code completion in your Zend Views. As you may know, essentially what Zend_View does is includes your view within a method that belongs to a Zend_View object. This gives your view some nice variable encapsulation as well as access to the <code>$this</code> object (which is how Zend_View provides access to all the ViewHelpers and other functions).</p>
 
-<ol>
-<li>Make the changes to your YAML schema files</li>
-<li>Run <code>$ doctrine generate-migrations-diff</code> to generate the migration deltas</li>
-<li>Run <code>$ doctrine migrate</code> to determine if your migration deltas are working (a concern if you&#8217;re using SQL Server)</li>
-<li>Run <code>$ doctrine generate-models-yaml</code> to update your models to reflect the status of your database</li>
-</ol>
+<p>Unfortunately NetBeans can&#8217;t figures this out (such is the problem with static analysis on a dynamic language) without help. If you&#8217;ve been using NetBeans and its code completion you&#8217;ll have already noticed that the PHPDocumentor syntax for <code>@var</code> or <code>@return</code> is how NetBeans figures out much of its code completion information, but that syntax doesn&#8217;t work in a view script.</p>
+
+<p>Thanks to <a href="http://www.tiplite.com/useful-netbeans-6-8-php-tips/">Mystic at tiplite.com</a> I now know that to have code completion in your Zend_View scripts in NetBeans, add the following to the top of your view script:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="cm">/* @var $this Zend_View */</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>The reasoning behind this, and if I&#8217;m wrong someone can correct me, is the &#8220;generate-migrations-diff&#8221; task compares the differences between your YAML schema files and your current <strong>models</strong>. If you have updated your models before generating the diff, obviously Doctrine will find no difference and generate no migration delta.</p>
+<p>Obviously if you&#8217;re using custom Zend_View objects you can pass in their class name instead.</p>
 </div>
   
   
@@ -132,6 +135,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -145,10 +152,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -177,7 +180,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

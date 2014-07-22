@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="I&#8217;ve started to amass a large amount of feeds in my reader and I thought I&#8217;d share a few with you: PHPDeveloper.org (feed) Great &hellip;">
+  <meta name="description" content="I was helping a coworker the other day with some object oriented design issues in PHP and thought it would be great to share with the general PHP &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/02/14/php-feeds-or-get-your-read-on/">PHP Feeds, or, Get Your Read On!</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/03/13/oo-design-and-php/">OO Design and PHP</a></h1>
     
     
       <p class="meta">
@@ -88,48 +88,25 @@
   
 
 
-<time datetime="2008-02-14T19:29:36-06:00" pubdate data-updated="true">Feb 14<span>th</span>, 2008</time>
+<time datetime="2008-03-13T20:34:59-04:00" pubdate data-updated="true">Mar 13<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>I&#8217;ve started to amass a large amount of feeds in my reader and I thought I&#8217;d share a few with you:</p>
+  <div class="entry-content"><p>I was helping a coworker the other day with some object oriented design issues in PHP and thought it would be great to share with the general PHP community as the general PHP community seems to lack in good OOP skills.</p>
 
-<blockquote><p><strong><a href="http://www.phpdeveloper.org/">PHPDeveloper.org</a></strong> (<a href="http://www.phpdeveloper.org/phpdev.rdf">feed</a>)</p></blockquote>
+<p>The task, which will be detailed later when we release it, boiled down to having a collection of files we needed to perform an operation on. Sometimes the entire collection, sometimes just a subgroup. Currently the system will only support 1 kind of file however in the very near future a new file will be added. My coworker tackled it well but a few problems that I helped him out with. Namely he made a few common mistakes in the design that most PHP developers make, namely being inconsistent with naming/etc. and not utilizing Interfaces and argument type-hinting to enforce good design, as well as putting logic in the wrong classes.</p>
 
-<p>Great aggregation of blog posts and updates in the PHP world.</p>
+<p>One of the few pitfalls that did happened was placing the <code>render()</code> function in the collection class. While this would not be a problem for a single type, when extending the system to handle <strong>n</strong> node types we come across unnecessary complexity issues in adding to the <code>render()</code> function, as well as making it nigh-impossible to keep the original includes intact (so as to make upgrades work without the hassle of merging code).</p>
 
-<blockquote><p><strong><a href="http://devzone.zend.com/public/view">Zend Developer Zone</a></strong> (<a href="http://feeds.feedburner.com/ZendDeveloperZone">feed</a>)</p></blockquote>
-
-<p>Zend&#8217;s place for all things PHP related</p>
-
-<blockquote><p><strong><a href="http://www.sitepoint.com/">SitePoint.com</a></strong> (<a href="http://www.sitepoint.com/blogs/feed/">blogs</a>) (<a href="http://www.sitepoint.com/recent.rdf">articles</a>)</p></blockquote>
-
-<p>The infamous SitePoint. Not entirely PHP, but excellent web related articles and a good way to keep loose tabs on the other web spheres (ASP.NET and RoR in particular)</p>
-
-<blockquote><p><strong><a href="http://particletree.com/">Particletree</a></strong> (<a href="http://feeds.feedburner.com/particletree">feed</a>)</p></blockquote>
-
-<p>Doesn&#8217;t update very often, but each article is a gem (in terms of solving a programming problem).</p>
-
-<blockquote><p><strong><a href="http://shiflett.org/">Chris Shiflett</a></strong> (<a href="http://feeds.feedburner.com/shiflett">feed</a>)</p></blockquote>
-
-<p>THE PHP and Web Application Security guy.</p>
-
-<blockquote><p><strong><a href="http://www.joelonsoftware.com/">Joel on Software</a></strong> (<a href="http://www.joelonsoftware.com/rss.xml">feed</a>)</p></blockquote>
-
-<p>A classic, not really PHP oriented.</p>
-
-<p>And finally, definitely not PHP focused, but a very good blog to read if you do any MySQL work (if you are a PHP person, chances are this includes you)</p>
-
-<blockquote><p><strong><a href="http://www.mysqlperformanceblog.com/">MySQL Performance Blog</a></strong> (<a href="http://www.mysqlperformanceblog.com/feed/">feed</a>)</p></blockquote>
-
-<p>Great collection of articles and talks on optimizing MySQL, either at the server or query level, and more&#8230;</p>
-
-<p>While this isn&#8217;t all of the feeds I have on programming related topics, some of them are new adds and I want to give it some time before I share the links.</p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2008/03/13/oo-design-and-php/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -152,6 +129,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -165,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -197,7 +174,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

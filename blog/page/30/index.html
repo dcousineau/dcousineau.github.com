@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="(Originally posted on my company&#8217;s blog) I&#8217;ve been talking a lot about automation as of late which led to my posting a generic, overload &hellip;">
+  <meta name="description" content="So I see a link on reddit today to an article entitled No, your code is not so great that it doesn’t need comments. The article site was down so I &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/07/23/net-perspective-cross-post-time-is-money-save-time-with-automation-and-phing/">[Net Perspective Cross Post] Time Is Money: Save Time With Automation and Phing</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/07/28/are-we-still-arguing-the-merits-of-code-comments/">Are We Still Arguing the Merits of Code Comments?</a></h1>
     
     
       <p class="meta">
@@ -88,23 +88,51 @@
   
 
 
-<time datetime="2008-07-23T05:59:36-05:00" pubdate data-updated="true">Jul 23<span>rd</span>, 2008</time>
+<time datetime="2008-07-28T05:52:18-04:00" pubdate data-updated="true">Jul 28<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><strong>(Originally posted on <a href="http://blog.net-perspective.com/2008/07/23/time-is-money-save-time-with-automation/">my company&#8217;s blog</a>)</strong></p>
+  <div class="entry-content"><p>So I see a link on reddit today to an article entitled <a href="http://www.reddit.com/comments/6tqre/no_your_code_is_not_so_great_that_it_doesnt_need/">No, your code is not so great that it doesn’t need comments</a>. The article site was down so I started reading the comments and was very disheartened to see an actual debate over whether pro developers put comments in or left them out.</p>
 
-<p>I&#8217;ve been talking a lot about automation as of late which led to my <a href="http://www.toosweettobesour.com/2008/05/15/automating-the-development-workflow/">posting</a> a generic, overload broad view of the tools and utilities I use here at Net Perspective. However, I wanted to go into detail about my real world uses of a particular tool, <a href="http://phing.info/">Phing</a>.</p>
+<p>For example, we have this from &#8220;ckwop&#8221;:</p>
 
+<blockquote><p>I find that the number of comments a developer puts in to their code is inversely proportional to the amount of experience they have.</p></blockquote>
+
+<p>I believe the reason for this is two fold.</p>
+
+<p>Firstly, as you become more experienced you become fluent in reading code. You&#8217;re not expending mental energy trying to grok the syntax and the flow of the program. It just comes naturally.</p>
+
+<p>Secondly, as you become more experienced, you learn how to layout you code in a more readable way. You name classes and variables such that the code is, for the most part, self-documenting.</p>
+
+<p>I don&#8217;t quite know how to describe the absolute FAIL in this particular statement. While he does go on to say:</p>
+
+<blockquote><p>The only comments left in programs written by experienced programmers are comments which document decisions. Why one approach was taken over another, for example.</p></blockquote>
+
+<p>It still doesn&#8217;t redeem himself. Comments like his betray a staggering amount of arrogance that poisons the mind of developers and turn otherwise good programmers into spaghetti-spewing monsters that take on government jobs so it&#8217;ll take longer for them to get fired.</p>
+
+<p>This person (and sadly many others) assert that well written code is intuitive. These people are the same people that try and tell me Python is perfect for everything and I shouldn&#8217;t work in any other language unless I&#8217;m working in the embedded space, in which case I should write myself a Python-To-Assembly script prefixed with the cute little &#8220;py&#8221;.</p>
+
+<p>Comments are meant to provide a quick overview of code flow and reasoning behind particular decisions. Comments should be clear and concise and allow a developer to spend 5 minutes figuring out where in the code base they need to be to fix the rounding issue rather than spending 40 minutes tracing program flow.</p>
+
+<p>Comments are meant to help developers who either have limited experience in a language, who are new to a language, or who haven&#8217;t used a particular language in quite some time. Your Haskell code may be clear and simple to you, but I can&#8217;t read a single damned line of it: comment it!</p>
+
+<p>Comments are meant for the developer who puts down a project to focus on something else for a few months only to pick the original code back up. The sign of a mature developer is one who accepts the fact that when he puts down code for a few days, he forgets the &#8220;why&#8221;. No developer is immune to this, and anyone that tries to tell you they are different is not worth the time you wasted listening to them.</p>
+
+<p>So, to &#8220;ckwop&#8221; and all the other developers out there that think code should speak for itself I have a few things to say:</p>
+
+<ul>
+<li>If code could speak for itself, it wouldn&#8217;t be called code</li>
+<li>You will not remember your design decisions, and in some cases even code flow, after a month</li>
+<li>Comments make it much easier for me to debug when your company hires me to fix your failures both as a programmer and as a human being.</li>
+</ul>
+
+
+<p>In closing: The debate has long been over, comment your fucking code.</p>
 </div>
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2008/07/23/net-perspective-cross-post-time-is-money-save-time-with-automation-and-phing/">Read on &rarr;</a>
-    </footer>
   
 
 
@@ -127,6 +155,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -140,10 +172,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -172,7 +200,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

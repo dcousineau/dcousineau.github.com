@@ -4,7 +4,7 @@
   <title><![CDATA[Tower of Power]]></title>
   <link href="http://dcousineau.github.com/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-09-03T11:14:42-05:00</updated>
+  <updated>2014-07-22T11:44:27-04:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -14,9 +14,36 @@
 
   
   <entry>
+    <title type="html"><![CDATA[PHPRFC: Internals Logo]]></title>
+    <link href="http://dcousineau.github.com/blog/2014/07/22/phprfc-internals-logo/"/>
+    <updated>2014-07-22T11:42:00-04:00</updated>
+    <id>http://dcousineau.github.com/blog/2014/07/22/phprfc-internals-logo</id>
+    <content type="html"><![CDATA[<h2>Introduction</h2>
+
+<p>Branding and PR is an increasingly important factor in programming language viability and adoption. Visible instability in the core team is off-putting to large organizations who depend on long term reliability and support and only encourages them to look to languages and tools with more stable and professional core teams.</p>
+
+<p>This RFC proposes that the PHP core team get ahead of the issue and introduce a logo, separate from the public facing project, to provide a sense of professionalism that is lacking. I  humbly submit the DramaLlama as the superior candidate.</p>
+
+<h2>The Case For The DramaLlama</h2>
+
+<p>The Llama is a proud, capable animal that represent the best qualities of the core team. They are herbivorous pack animals that dutifully carry goods across the Andes, much like how PHP powers much of the internet. They can eat almost any vegetation, need little water, and even their excrement can be dried and burned as fuel!</p>
+
+<p>Beyond the comparisons to the actual animal, a side profile of a Llama (of which I propose the logo use, rather than a front profile) with it’s solid body and long neck, represent PHP peaking and achieving new heights.</p>
+
+<h2>Risks</h2>
+
+<p>By not adopting a logo, the PHP core team risks losing the respect and trust of the end user community. However it could be argued that the core team has survived without this and could do so indefinitely.</p>
+
+<h2>Voting</h2>
+
+<p>An RFC of this magnitude requires unanimous agreement so as to send a strong signal to the wider community of it’s willingness to buckle down and tackle the real problems PHP faces, rather than executing proxy wars.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[High Performance JS Tip: Dimensions are not your friend]]></title>
     <link href="http://dcousineau.github.com/blog/2013/09/03/high-performance-js-tip/"/>
-    <updated>2013-09-03T10:24:00-05:00</updated>
+    <updated>2013-09-03T10:24:00-04:00</updated>
     <id>http://dcousineau.github.com/blog/2013/09/03/high-performance-js-tip</id>
     <content type="html"><![CDATA[<p>Several months back I was tasked with building an <a href="https://twitter.com/NikeNYC/status/322955662013374464/photo/1">interactive instagram scroller</a>
 that was to be slotted into large display via a Safari 5.1 &#8220;widget&#8221;.</p>
@@ -62,7 +89,7 @@ and BOOM, performance issues gone. So, lesson learned?</p>
   <entry>
     <title type="html"><![CDATA[Using Symfony Console From Scratch]]></title>
     <link href="http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch/"/>
-    <updated>2013-03-28T22:20:00-05:00</updated>
+    <updated>2013-03-28T22:20:00-04:00</updated>
     <id>http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch</id>
     <content type="html"><![CDATA[<p>CLI applications are extremely useful for many, if not most web projects. The <a href="http://symfony.com/">Symfony framework</a> even goes so
 far as to include an extensible CLI console used for everything from running cache cleanup/warmup tasks, to user account management.</p>
@@ -683,7 +710,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Flex Box: Prevent Children From Stretching]]></title>
     <link href="http://dcousineau.github.com/blog/2011/07/14/flex-box-prevent-children-from-stretching/"/>
-    <updated>2011-07-14T10:47:57-05:00</updated>
+    <updated>2011-07-14T11:47:57-04:00</updated>
     <id>http://dcousineau.github.com/blog/2011/07/14/flex-box-prevent-children-from-stretching</id>
     <content type="html"><![CDATA[<p>So, <a href="http://www.the-haystack.com/2010/01/23/css3-flexbox-part-1/">flex boxes</a> are a glorious addition to CSS3 to make advanced layouts rapidly. No more crazy floats and nested divs and weird percentage values for columns! Just setup your orientation to horizontal and toss a <code>box-flex: 1</code> in for kicks.</p>
 
@@ -792,7 +819,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[A Lesson In Good Architecture]]></title>
     <link href="http://dcousineau.github.com/blog/2011/01/29/a-lesson-in-good-architecture/"/>
-    <updated>2011-01-29T07:58:56-06:00</updated>
+    <updated>2011-01-29T08:58:56-05:00</updated>
     <id>http://dcousineau.github.com/blog/2011/01/29/a-lesson-in-good-architecture</id>
     <content type="html"><![CDATA[<p>We recently began working on our biggest event for our biggest client. In the process of getting everything up and running before the event started, we noticed a show-stopper bug appear out of nowhere.</p>
 
@@ -817,7 +844,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Doctrine 1.2 MSSQL Alternative LIMIT/Paging]]></title>
     <link href="http://dcousineau.github.com/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/"/>
-    <updated>2010-09-16T11:11:47-05:00</updated>
+    <updated>2010-09-16T12:11:47-04:00</updated>
     <id>http://dcousineau.github.com/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging</id>
     <content type="html"><![CDATA[<p>At work I had been having all sorts of issues with <code>Doctrine_Connection_Mssql</code>&#8217;s <code>LIMIT</code> alteration, based on <code>Zend_Db</code>&#8217;s code.</p>
 
@@ -1458,7 +1485,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Netbeans Code Completion and your Zend_View]]></title>
     <link href="http://dcousineau.github.com/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/"/>
-    <updated>2010-05-11T05:18:38-05:00</updated>
+    <updated>2010-05-11T06:18:38-04:00</updated>
     <id>http://dcousineau.github.com/blog/2010/05/11/netbeans-code-completion-and-your-zend_view</id>
     <content type="html"><![CDATA[<p>Oh, look at me, blogging again! I definitely have a lot to blog about as I get the time, I&#8217;m coming off of a really involved project and learned a lot of tips I&#8217;d like to share about the Zend Framework. In the mean time I thought I&#8217;d share something I had a helluva time figuring out.</p>
 
@@ -1482,7 +1509,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Doctrine Migrations Proper]]></title>
     <link href="http://dcousineau.github.com/blog/2009/10/20/doctrine-migrations-proper/"/>
-    <updated>2009-10-20T12:32:40-05:00</updated>
+    <updated>2009-10-20T13:32:40-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/10/20/doctrine-migrations-proper</id>
     <content type="html"><![CDATA[<p>I was talking with someone (I will edit this post when I find her card and remember her name) here at ZendCon and discovered that they were having trouble with migrations in Doctrine. Having gone through the same issues of Doctrine seemingly not being able to figure out your changes and generate migration classes, I thought I&#8217;d post the solution here for future reference.</p>
 
@@ -1503,7 +1530,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Make The Most Of ZendCon]]></title>
     <link href="http://dcousineau.github.com/blog/2009/10/15/make-the-most-of-zendcon/"/>
-    <updated>2009-10-15T19:43:12-05:00</updated>
+    <updated>2009-10-15T20:43:12-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/10/15/make-the-most-of-zendcon</id>
     <content type="html"><![CDATA[<p>I felt like I should take a break from finishing up my <a href="http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/">multi-part javascript series</a> to rehash some points being made recently by <a href="http://caseysoftware.com/blog/so-its-your-first-conference">Keith Casey</a> and <a href="http://blog.phpdeveloper.org/?p=221">Chris Cornutt</a> about making the most of your N-th conference (and in particular, ZendCon).</p>
 
@@ -1541,7 +1568,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Solve A Sliding Puzzle With JavaScript And Your AI Course: Part 1]]></title>
     <link href="http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/"/>
-    <updated>2009-10-13T11:06:27-05:00</updated>
+    <updated>2009-10-13T12:06:27-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1</id>
     <content type="html"><![CDATA[<p>In all my years of web development and formal computer science training, you know I never really got around to truly sitting down and learning JavaScript.</p>
 
@@ -1588,7 +1615,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Development Environment Help! Setting Up PHP mail() On Windows, Or: Where Is My Windows sendmail.exe?]]></title>
     <link href="http://dcousineau.github.com/blog/2009/08/21/development-environment-help-setting-up-php-mail-on-windows-or-where-is-my-windows-sendmail-exe/"/>
-    <updated>2009-08-21T05:39:00-05:00</updated>
+    <updated>2009-08-21T06:39:00-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/08/21/development-environment-help-setting-up-php-mail-on-windows-or-where-is-my-windows-sendmail-exe</id>
     <content type="html"><![CDATA[<p>Lately at work I&#8217;ve been having the worst of trouble getting PHP on my workstation to send mail. Previously it was a simple trek to a website to download a Windows build of sendmail.exe, but for some reason I cannot get access to it, so I have to go another route.</p>
 
@@ -1642,7 +1669,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Good News Everyone!]]></title>
     <link href="http://dcousineau.github.com/blog/2009/07/01/good-news-everyone/"/>
-    <updated>2009-07-01T08:14:54-05:00</updated>
+    <updated>2009-07-01T09:14:54-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/07/01/good-news-everyone</id>
     <content type="html"><![CDATA[<p>Naturally it&#8217;s been over a month since I&#8217;ve updated and rather than posting something techincal I feel I should be a little selfish and announce that:</p>
 
@@ -1659,7 +1686,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[Calculating Daylight Savings Time Boundary In PHP]]></title>
     <link href="http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php/"/>
-    <updated>2009-03-10T03:30:23-05:00</updated>
+    <updated>2009-03-10T04:30:23-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/03/10/calculating-daylight-savings-time-boundary-in-php</id>
     <content type="html"><![CDATA[<p>I had an issue recently where I needed to calculate the Unix timestamp for the daylight savings time boundaries. According to the <a href="http://aa.usno.navy.mil/faq/docs/daylight_time.php">United States Naval Observatory</a>, daylight savings time begins the <strong>Second Sunday of March</strong> and ends on the <strong>First Sunday of November</strong>.</p>
 
@@ -1713,7 +1740,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[PHP File Uploads And Background Conversion: Oopsie]]></title>
     <link href="http://dcousineau.github.com/blog/2009/02/26/php-file-uploads-and-background-conversion-oopsie/"/>
-    <updated>2009-02-26T09:53:19-06:00</updated>
+    <updated>2009-02-26T10:53:19-05:00</updated>
     <id>http://dcousineau.github.com/blog/2009/02/26/php-file-uploads-and-background-conversion-oopsie</id>
     <content type="html"><![CDATA[<p>So I spent an inordinate amount of time tracking down a bug recently for a former employer in a system that accepts media file uploads and converts them on the fly.</p>
 
@@ -1736,7 +1763,7 @@ of this to extend in the ability to do overwrites in the console (the technique 
   <entry>
     <title type="html"><![CDATA[PHP, Mumbles (Growl), and DBus: Sweeet]]></title>
     <link href="http://dcousineau.github.com/blog/2009/02/12/php-mumbles-growl-and-dbus-sweeet/"/>
-    <updated>2009-02-12T19:58:30-06:00</updated>
+    <updated>2009-02-12T20:58:30-05:00</updated>
     <id>http://dcousineau.github.com/blog/2009/02/12/php-mumbles-growl-and-dbus-sweeet</id>
     <content type="html"><![CDATA[<p>So, after reading <a href="http://www.markshuttleworth.com/archives/253">Mark Shuttlework&#8217;s blog on ideas for notifications in Ubuntu</a> (basically mimicking <a href="http://growl.info/">Growl</a> notifications for the Mac), I decided I wanted that kind of functionality, but&#8230; you know, NOW!</p>
 
@@ -1852,7 +1879,7 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
   <entry>
     <title type="html"><![CDATA[OSS Bugs Are Features]]></title>
     <link href="http://dcousineau.github.com/blog/2009/01/16/oss-bugs-are-features/"/>
-    <updated>2009-01-16T08:47:13-06:00</updated>
+    <updated>2009-01-16T09:47:13-05:00</updated>
     <id>http://dcousineau.github.com/blog/2009/01/16/oss-bugs-are-features</id>
     <content type="html"><![CDATA[<p>I&#8217;ve been thinking a lot lately about a presentation given by <a href="http://whurley.com/">whurley</a> at a <a href="http://refreshbcs.org/">refreshBCS</a> meeting a long time ago. He gave his presentation on Open Source Software, only SLIGHTLY an era of his expertise (just in case you can&#8217;t tell, that was sarcasm) and raise an interesting point.</p>
 
@@ -1879,7 +1906,7 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
   <entry>
     <title type="html"><![CDATA[Zend Framework Module Init Script (Controller Plugin)]]></title>
     <link href="http://dcousineau.github.com/blog/2009/01/06/zend-framework-module-init-script-controller-plugin/"/>
-    <updated>2009-01-06T11:12:56-06:00</updated>
+    <updated>2009-01-06T12:12:56-05:00</updated>
     <id>http://dcousineau.github.com/blog/2009/01/06/zend-framework-module-init-script-controller-plugin</id>
     <content type="html"><![CDATA[<p>Well, it&#8217;s been a while since I&#8217;ve done a PHP update hasn&#8217;t it? Well alls well here in CStat, I have a quickie for you folks.</p>
 
@@ -1985,7 +2012,7 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
   <entry>
     <title type="html"><![CDATA[Serialize Python Variables To PHP]]></title>
     <link href="http://dcousineau.github.com/blog/2008/10/21/serialize-python-variables-to-php/"/>
-    <updated>2008-10-21T21:34:47-05:00</updated>
+    <updated>2008-10-21T22:34:47-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/10/21/serialize-python-variables-to-php</id>
     <content type="html"><![CDATA[<p>So I&#8217;m in the planning stages of a project where I&#8217;ll probably be doing some heavy lifting in Python and serving up the output through PHP. Obviously this will entail transmitting data between Python and PHP and while I haven&#8217;t had a chance to do performance testing to see if it&#8217;s worth it to save to a database, the only other option was to serialize the data to a file that PHP could parse quickly. Obviously, the output from <code>serialize()</code> is going to be the fastest way to recieved the data.</p>
 
@@ -2862,7 +2889,7 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
   <entry>
     <title type="html"><![CDATA[Outputting CSV as a Downloadable File in PHP]]></title>
     <link href="http://dcousineau.github.com/blog/2008/10/10/outputting-csv-as-a-downloadable-file-in-php/"/>
-    <updated>2008-10-10T05:42:13-05:00</updated>
+    <updated>2008-10-10T06:42:13-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/10/10/outputting-csv-as-a-downloadable-file-in-php</id>
     <content type="html"><![CDATA[<p>Nearly every application you could write in for the business sphere in PHP probably requires some sort of data export, most likely in the CSV format.</p>
 
@@ -2993,7 +3020,7 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
   <entry>
     <title type="html"><![CDATA[ZendCon08 Wrapup]]></title>
     <link href="http://dcousineau.github.com/blog/2008/09/22/zendcon08-wrapup/"/>
-    <updated>2008-09-22T11:49:42-05:00</updated>
+    <updated>2008-09-22T12:49:42-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/09/22/zendcon08-wrapup</id>
     <content type="html"><![CDATA[<p>So I kinda had a thing going about blogging during ZendCon but lost it, so I might as well just do a single day wrap up.</p>
 
@@ -3006,21 +3033,6 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
 <p>The Yahoo party started out awkward given that one expects an open bar after paying $500+ for tickets to a conference, however from what I gathered it really wasn&#8217;t so much Yahoo&#8217;s fault more the hotel&#8217;s. I won the raffle for the &#8220;Day with Rasmus&#8221; prize and felt bad &#8216;cause when one of the Yahoo girls came to me and to have me verify my information, I told them my email (which was a gmail account) was correct but if they still have trouble to just google my first and last name since I dominate the first page for my name.</p>
 
 <p>My only problem with ZendCon is that it ended&#8230;</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[ZendCon08 Day 1 Wrap Up]]></title>
-    <link href="http://dcousineau.github.com/blog/2008/09/17/zendcon08-day-1-wrap-up/"/>
-    <updated>2008-09-17T12:52:40-05:00</updated>
-    <id>http://dcousineau.github.com/blog/2008/09/17/zendcon08-day-1-wrap-up</id>
-    <content type="html"><![CDATA[<p>Turned out to be a fairly exciting day. I woke up late wondering why my alarms didn&#8217;t go off, just barely got to lunch and regretted missing <a href="http://www.jpipes.com/index.php">Jay Pipes</a>&#8217; talk.</p>
-
-<p><a href="http://blog.libssh2.org/">Sara Golemon</a> gave an interesting introduction to PHP extension writing. I bow to her vastly superior C-fu.</p>
-
-<p>I <a href="http://dcousineau.github.com/blog/2008/09/16/zendcon-day-1-pecl-picks/">already</a> <a href="http://dcousineau.github.com/blog/2008/09/16/zendcon08-day-1-the-knight-rider-methodology-to-software-development/">discussed</a> a few talks that I went to yesterday as well.</p>
-
-<p>Ended the night doing a pub crawl with some people (hung out with Jay Pipes at the end which is what caused me to regret missing his talk).</p>
 ]]></content>
   </entry>
   

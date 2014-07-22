@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Software | Tower of Power]]></title>
   <link href="http://dcousineau.github.com/blog/categories/software/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-09-03T11:14:42-05:00</updated>
+  <updated>2014-07-22T11:44:27-04:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[A Lesson In Good Architecture]]></title>
     <link href="http://dcousineau.github.com/blog/2011/01/29/a-lesson-in-good-architecture/"/>
-    <updated>2011-01-29T07:58:56-06:00</updated>
+    <updated>2011-01-29T08:58:56-05:00</updated>
     <id>http://dcousineau.github.com/blog/2011/01/29/a-lesson-in-good-architecture</id>
     <content type="html"><![CDATA[<p>We recently began working on our biggest event for our biggest client. In the process of getting everything up and running before the event started, we noticed a show-stopper bug appear out of nowhere.</p>
 
@@ -41,7 +41,7 @@
   <entry>
     <title type="html"><![CDATA[Plesk open_basedir Workaround]]></title>
     <link href="http://dcousineau.github.com/blog/2008/02/01/plesk-open_basedir-workaround/"/>
-    <updated>2008-02-01T19:47:41-06:00</updated>
+    <updated>2008-02-01T20:47:41-05:00</updated>
     <id>http://dcousineau.github.com/blog/2008/02/01/plesk-open_basedir-workaround</id>
     <content type="html"><![CDATA[<p>Unfortunately, Plesk does (and according to atomicturtle will continue to) hate on developers by enabling open_basedir by default and not give any way to change such behavior.</p>
 

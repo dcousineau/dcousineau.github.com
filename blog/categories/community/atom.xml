@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Community | Tower of Power]]></title>
   <link href="http://dcousineau.github.com/blog/categories/community/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-09-03T11:14:42-05:00</updated>
+  <updated>2014-07-22T11:44:27-04:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Make The Most Of ZendCon]]></title>
     <link href="http://dcousineau.github.com/blog/2009/10/15/make-the-most-of-zendcon/"/>
-    <updated>2009-10-15T19:43:12-05:00</updated>
+    <updated>2009-10-15T20:43:12-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/10/15/make-the-most-of-zendcon</id>
     <content type="html"><![CDATA[<p>I felt like I should take a break from finishing up my <a href="/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/">multi-part javascript series</a> to rehash some points being made recently by <a href="http://caseysoftware.com/blog/so-its-your-first-conference">Keith Casey</a> and <a href="http://blog.phpdeveloper.org/?p=221">Chris Cornutt</a> about making the most of your N-th conference (and in particular, ZendCon).</p>
 
@@ -54,7 +54,7 @@
   <entry>
     <title type="html"><![CDATA[ZendCon08 Wrapup]]></title>
     <link href="http://dcousineau.github.com/blog/2008/09/22/zendcon08-wrapup/"/>
-    <updated>2008-09-22T11:49:42-05:00</updated>
+    <updated>2008-09-22T12:49:42-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/09/22/zendcon08-wrapup</id>
     <content type="html"><![CDATA[<p>So I kinda had a thing going about blogging during ZendCon but lost it, so I might as well just do a single day wrap up.</p>
 
@@ -73,7 +73,7 @@
   <entry>
     <title type="html"><![CDATA[ZendCon08 Day 1 Wrap Up]]></title>
     <link href="http://dcousineau.github.com/blog/2008/09/17/zendcon08-day-1-wrap-up/"/>
-    <updated>2008-09-17T12:52:40-05:00</updated>
+    <updated>2008-09-17T13:52:40-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/09/17/zendcon08-day-1-wrap-up</id>
     <content type="html"><![CDATA[<p>Turned out to be a fairly exciting day. I woke up late wondering why my alarms didn't go off, just barely got to lunch and regretted missing <a href="http://www.jpipes.com/index.php">Jay Pipes</a>' talk.</p>
 
@@ -88,7 +88,7 @@
   <entry>
     <title type="html"><![CDATA[ZendCon08 Day 1 - The Knight Rider Methodology to Software Development]]></title>
     <link href="http://dcousineau.github.com/blog/2008/09/16/zendcon08-day-1-the-knight-rider-methodology-to-software-development/"/>
-    <updated>2008-09-16T11:24:08-05:00</updated>
+    <updated>2008-09-16T12:24:08-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/09/16/zendcon08-day-1-the-knight-rider-methodology-to-software-development</id>
     <content type="html"><![CDATA[<p><a href="http://eliw.com/">Eli White</a> gave a talk called <a href="http://eliw.com/conference/zendcon-2008-KnightRider.pdf">"The Knight Rider Methodology to Software Development"</a>.</p>
 
@@ -105,7 +105,7 @@
   <entry>
     <title type="html"><![CDATA[ZendCon08 Day 1 - PECL Picks]]></title>
     <link href="http://dcousineau.github.com/blog/2008/09/16/zendcon-day-1-pecl-picks/"/>
-    <updated>2008-09-16T10:03:44-05:00</updated>
+    <updated>2008-09-16T11:03:44-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/09/16/zendcon-day-1-pecl-picks</id>
     <content type="html"><![CDATA[<p><a href="http://elizabethmariesmith.com/">Elizabeth Smith</a> discussed to a really interesting PECL extension, <a href="http://pecl.php.net/package/pecl_http">pecl_http</a>. I can do request pooling!</p>
 

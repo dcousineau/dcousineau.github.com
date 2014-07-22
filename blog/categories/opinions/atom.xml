@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Opinions | Tower of Power]]></title>
   <link href="http://dcousineau.github.com/blog/categories/opinions/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-09-03T11:14:42-05:00</updated>
+  <updated>2014-07-22T11:44:27-04:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[OSS Bugs Are Features]]></title>
     <link href="http://dcousineau.github.com/blog/2009/01/16/oss-bugs-are-features/"/>
-    <updated>2009-01-16T08:47:13-06:00</updated>
+    <updated>2009-01-16T09:47:13-05:00</updated>
     <id>http://dcousineau.github.com/blog/2009/01/16/oss-bugs-are-features</id>
     <content type="html"><![CDATA[<p>I've been thinking a lot lately about a presentation given by <a href="http://whurley.com/">whurley</a> at a <a href="http://refreshbcs.org/">refreshBCS</a> meeting a long time ago. He gave his presentation on Open Source Software, only SLIGHTLY an era of his expertise (just in case you can't tell, that was sarcasm) and raise an interesting point.</p>
 
@@ -43,7 +43,7 @@
   <entry>
     <title type="html"><![CDATA[Are we still arguing the merits of code comments?]]></title>
     <link href="http://dcousineau.github.com/blog/2008/07/28/are-we-still-arguing-the-merits-of-code-comments/"/>
-    <updated>2008-07-28T04:52:18-05:00</updated>
+    <updated>2008-07-28T05:52:18-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/07/28/are-we-still-arguing-the-merits-of-code-comments</id>
     <content type="html"><![CDATA[<p>So I see a link on reddit today to an article entitled <a href="http://www.reddit.com/comments/6tqre/no_your_code_is_not_so_great_that_it_doesnt_need/">No, your code is not so great that it doesn’t need comments</a>. The article site was down so I started reading the comments and was very disheartened to see an actual debate over whether pro developers put comments in or left them out.</p>
 
@@ -87,7 +87,7 @@
   <entry>
     <title type="html"><![CDATA[Laziness Makes A Great Developer]]></title>
     <link href="http://dcousineau.github.com/blog/2008/06/08/laziness-makes-a-great-developer/"/>
-    <updated>2008-06-08T19:26:54-05:00</updated>
+    <updated>2008-06-08T20:26:54-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/06/08/laziness-makes-a-great-developer</id>
     <content type="html"><![CDATA[<p>One of the guiding principles I have lived by the came from my middle school swimming coach. He told us:</p>
 

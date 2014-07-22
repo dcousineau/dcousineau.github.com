@@ -9,8 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="Several months back I was tasked with building an interactive instagram scroller
-that was to be slotted into large display via a Safari 5.1 &#8220; &hellip;">
+  <meta name="description" content="Introduction Branding and PR is an increasingly important factor in programming language viability and adoption. Visible instability in the core team &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -73,7 +72,7 @@ that was to be slotted into large display via a Safari 5.1 &#8220; &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions Are Not Your Friend</a></h1>
+      <h1 class="entry-title"><a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a></h1>
     
     
       <p class="meta">
@@ -89,51 +88,32 @@ that was to be slotted into large display via a Safari 5.1 &#8220; &hellip;">
   
 
 
-<time datetime="2013-09-03T10:24:00-05:00" pubdate data-updated="true">Sep 3<span>rd</span>, 2013</time>
+<time datetime="2014-07-22T11:42:00-04:00" pubdate data-updated="true">Jul 22<span>nd</span>, 2014</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Several months back I was tasked with building an <a href="https://twitter.com/NikeNYC/status/322955662013374464/photo/1">interactive instagram scroller</a>
-that was to be slotted into large display via a Safari 5.1 &#8220;widget&#8221;.</p>
+  <div class="entry-content"><h2>Introduction</h2>
 
-<p>The project was generally fairly simple, 3 columns scrolling infinitely in alternate directions.
-The individual pictures, or &#8220;chips&#8221; as I called them were to do a 3D rotate transition to keep
-the visual appeal up.</p>
+<p>Branding and PR is an increasingly important factor in programming language viability and adoption. Visible instability in the core team is off-putting to large organizations who depend on long term reliability and support and only encourages them to look to languages and tools with more stable and professional core teams.</p>
 
-<p>I covered all the usual suspects to maximize performance, I used as many CSS transitions as possible
-to harness the GPU, keept everything asynchronous as possible, kept the DOM cleaned up, use <code>requestAnimationFrame</code>.
-However the biggest problem I encountered was getting the scroll smooth.</p>
+<p>This RFC proposes that the PHP core team get ahead of the issue and introduce a logo, separate from the public facing project, to provide a sense of professionalism that is lacking. I  humbly submit the DramaLlama as the superior candidate.</p>
 
-<p>Initially the page was fully dynamic and my anmiation code used the <code>scrollTop</code> property (while
-inserting new chips as needed to prevent stoppage). That proved problematic and terrible performance-wise.</p>
+<h2>The Case For The DramaLlama</h2>
 
-<p>Next I tried inserting chips in the top of their column container with a negative margin and slowly
-animating the first chip to a margin of 0 (effecitvely constantly pushing all other chips down). This
-also posed problems and I couldn&#8217;t approach what looked like a fluid animation. It would always do a slight,
-maybe 2-3ms stutter when a new chip was introduced and there was nothing I could do to eliminate it. I tried
-optimizing my DOM interaction to use DOM DocumentFragment, dropping all jQuery code and going full-native.</p>
+<p>The Llama is a proud, capable animal that represent the best qualities of the core team. They are herbivorous pack animals that dutifully carry goods across the Andes, much like how PHP powers much of the internet. They can eat almost any vegetation, need little water, and even their excrement can be dried and burned as fuel!</p>
 
-<p>Finally I moved to using absolutely positioned chips that I tracked one by one in my animation loop. However,
-<em>even this</em> was insufficient and I was still getting a stutter.</p>
+<p>Beyond the comparisons to the actual animal, a side profile of a Llama (of which I propose the logo use, rather than a front profile) with it’s solid body and long neck, represent PHP peaking and achieving new heights.</p>
 
-<p>After much forehead-meets-desk time, I remembered a conversation I had with <a href="https://twitter.com/creationix">Tim Caswell</a>
-a long while back (revolving around the HP TouchPad) where he told me about an interesting quirk of WebKit that
-turned out to be the cause of my problems:</p>
+<h2>Risks</h2>
 
-<p>To make my display flexible I was using the <code>getBoundingClientRect</code> method to calculate when a chip rolls off-screen
-so I can either remove it from the DOM and insert a new chip at the beginning (as well as to calculate initial position).</p>
+<p>By not adopting a logo, the PHP core team risks losing the respect and trust of the end user community. However it could be argued that the core team has survived without this and could do so indefinitely.</p>
 
-<p>The <strong>problem</strong> is WebKit likes to recalculate the layout of the dom pretty much every single time you use something
-similar to <code>getBoundingClientRect</code>. (Even getting the window&#8217;s <code>innerHeight</code>/<code>innerWidth</code> will force a recalculation).
-The stutter was coming from WebKit constantly recalculating the layout!</p>
+<h2>Voting</h2>
 
-<p>So, a quick refactor to use static, precalculated dimensions for the chips (calculated once on window resize/document load)
-and BOOM, performance issues gone. So, lesson learned?</p>
-
-<blockquote><p>All calls to get any calculated dimension from the DOM should be cached or avoided.</p></blockquote>
+<p>An RFC of this magnitude requires unanimous agreement so as to send a strong signal to the wider community of it’s willingness to buckle down and tackle the real problems PHP faces, rather than executing proxy wars.</p>
 </div>
   
   
@@ -156,6 +136,10 @@ and BOOM, performance issues gone. So, lesson learned?</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -169,10 +153,6 @@ and BOOM, performance issues gone. So, lesson learned?</p>
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -201,7 +181,7 @@ and BOOM, performance issues gone. So, lesson learned?</p>
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

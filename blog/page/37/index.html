@@ -9,7 +9,18 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="My copy of Pro PHP: Patterns, Frameworks, Testing and More by Kevin McArthur has already been worth the money I spent on it. In our, albeit slow, &hellip;">
+  <meta name="description" content="1
+2
+3
+4
+5
+6
+7
+8
+from indiana import jones
+import whip
+import ruins cave = new Ruins() trap = indiana.steal( cave.treasure )
+indiana.escape( trap ) 1 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +83,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/04/15/pro-php/">Pro PHP</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/05/10/indy/">Indy!!</a></h1>
     
     
       <p class="meta">
@@ -88,24 +99,40 @@
   
 
 
-<time datetime="2008-04-15T19:51:03-05:00" pubdate data-updated="true">Apr 15<span>th</span>, 2008</time>
+<time datetime="2008-05-10T15:47:35-04:00" pubdate data-updated="true">May 10<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>My copy of <a href="http://www.amazon.com/gp/product/1590598199">Pro PHP: Patterns, Frameworks, Testing and More</a> by <a href="http://www.linkedin.com/in/stormtide">Kevin McArthur</a> has already been worth the money I spent on it.</p>
+  <div class="entry-content"><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">indiana</span> <span class="kn">import</span> <span class="n">jones</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">whip</span>
+</span><span class='line'><span class="kn">import</span> <span class="nn">ruins</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">cave</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Ruins</span><span class="p">()</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">trap</span> <span class="o">=</span> <span class="n">indiana</span><span class="o">.</span><span class="n">steal</span><span class="p">(</span> <span class="n">cave</span><span class="o">.</span><span class="n">treasure</span> <span class="p">)</span>
+</span><span class='line'><span class="n">indiana</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span> <span class="n">trap</span> <span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>In our, albeit slow, upgrade to more modern development practices (code version and unit testing being the last elements on my list), I was particularly fearful of code versioning namely concerning issues of automating a build process to export a copy of the repository to our shared development server, or just have a local server installed for everyone one.</p>
 
-<p>However Chapter 8 has pointed me to two programs that I sincerely regret not having heard of until now: <a href="http://phing.info/trac/">Phing</a> and <a href="http://code.google.com/p/xinc/">Xinc</a>.</p>
 
-<p>Phing is a build system written in PHP that works extremely well with PHP and <a href="http://www.phpunit.de/">PHPUnit</a>. You can configure your own build targets, for example like &#8220;get&#8221; (SVN update essentially), &#8220;test&#8221; (run PHPUnit or any other unit testing), &#8220;try&#8221; (copy to a development server), and &#8220;deploy&#8221; (copy to your live server).</p>
 
-<p>Xinc is a continuous integration server. Essentially, it monitors an SVN repo and performs a user defined action (usually running a phing buildscript) on any changes to the repo. Which is awesome because its solves the issue of updating the dev server. Having Xinc run a <code>&gt; phing try</code> on SVN updates is exactly what we need! I&#8217;m even having delusions of grandeur of having it monitor tags for doing live deployments as well.</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='text'><span class='line'>ImportError: Snakes? I hate snakes!
+</span></code></pre></td></tr></table></div></figure>
 
-<p>Don&#8217;t take my word as gospel, I haven&#8217;t actually installed and tested these systems out, but when I do you can rest assured I will be writing about it.</p>
+
+
 </div>
   
   
@@ -130,6 +157,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -143,10 +174,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -175,7 +202,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Updates | Tower of Power]]></title>
   <link href="http://dcousineau.github.com/blog/categories/updates/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-09-03T11:14:42-05:00</updated>
+  <updated>2014-07-22T11:44:27-04:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Good News Everyone!]]></title>
     <link href="http://dcousineau.github.com/blog/2009/07/01/good-news-everyone/"/>
-    <updated>2009-07-01T08:14:54-05:00</updated>
+    <updated>2009-07-01T09:14:54-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/07/01/good-news-everyone</id>
     <content type="html"><![CDATA[<p>Naturally it's been over a month since I've updated and rather than posting something techincal I feel I should be a little selfish and announce that:</p>
 
@@ -33,7 +33,7 @@
   <entry>
     <title type="html"><![CDATA[End Of An Era (Goodbye to PHP 4)]]></title>
     <link href="http://dcousineau.github.com/blog/2008/08/08/end-of-an-era-goodbye-to-php-4/"/>
-    <updated>2008-08-08T10:28:27-05:00</updated>
+    <updated>2008-08-08T11:28:27-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/08/08/end-of-an-era-goodbye-to-php-4</id>
     <content type="html"><![CDATA[<p>PHP 4's end-of-life is <a href="http://shiflett.org/blog/2008/aug/end-of-life-for-php-4">today</a>.</p>
 
@@ -48,7 +48,7 @@
   <entry>
     <title type="html"><![CDATA[Updates and ::'s]]></title>
     <link href="http://dcousineau.github.com/blog/2008/03/28/updates-and-s/"/>
-    <updated>2008-03-28T08:46:34-05:00</updated>
+    <updated>2008-03-28T09:46:34-04:00</updated>
     <id>http://dcousineau.github.com/blog/2008/03/28/updates-and-s</id>
     <content type="html"><![CDATA[<p>In my previous article (<a href="http://www.toosweettobesour.com/2008/03/24/microsoft-access-and-php/">Microsoft Access and PHP</a>), I discussed getting mdbtools setup and dynamically interacting with a instance of mdb-sql. Well it turns out somewhere in the pipeline (probably mdb-tools), we're either not getting an EOF or reading an EOF right and as such I can read lines from the program's STDOUT stream, but as soon as I hit the end of the output my script hangs indefinitely waiting for something and all my attempts at detecting an EOF failed. Sorry to disappoint.</p>
 

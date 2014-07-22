@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Development | Tower of Power]]></title>
   <link href="http://dcousineau.github.com/blog/categories/development/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-09-03T11:14:42-05:00</updated>
+  <updated>2014-07-22T11:44:27-04:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Flex Box: Prevent Children From Stretching]]></title>
     <link href="http://dcousineau.github.com/blog/2011/07/14/flex-box-prevent-children-from-stretching/"/>
-    <updated>2011-07-14T10:47:57-05:00</updated>
+    <updated>2011-07-14T11:47:57-04:00</updated>
     <id>http://dcousineau.github.com/blog/2011/07/14/flex-box-prevent-children-from-stretching</id>
     <content type="html"><![CDATA[<p>So, <a href="http://www.the-haystack.com/2010/01/23/css3-flexbox-part-1/">flex boxes</a> are a glorious addition to CSS3 to make advanced layouts rapidly. No more crazy floats and nested divs and weird percentage values for columns! Just setup your orientation to horizontal and toss a <code>box-flex: 1</code> in for kicks.</p>
 
@@ -90,7 +90,7 @@ border-right: 1px solid #333;
   <entry>
     <title type="html"><![CDATA[Doctrine 1.2 MSSQL Alternative LIMIT/Paging]]></title>
     <link href="http://dcousineau.github.com/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/"/>
-    <updated>2010-09-16T11:11:47-05:00</updated>
+    <updated>2010-09-16T12:11:47-04:00</updated>
     <id>http://dcousineau.github.com/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging</id>
     <content type="html"><![CDATA[<p>At work I had been having all sorts of issues with <code>Doctrine_Connection_Mssql</code>'s <code>LIMIT</code> alteration, based on <code>Zend_Db</code>'s code.</p>
 
@@ -442,7 +442,7 @@ public function getServerVersion($native = false)
   <entry>
     <title type="html"><![CDATA[Netbeans Code Completion and your Zend_View]]></title>
     <link href="http://dcousineau.github.com/blog/2010/05/11/netbeans-code-completion-and-your-zend_view/"/>
-    <updated>2010-05-11T05:18:38-05:00</updated>
+    <updated>2010-05-11T06:18:38-04:00</updated>
     <id>http://dcousineau.github.com/blog/2010/05/11/netbeans-code-completion-and-your-zend_view</id>
     <content type="html"><![CDATA[<p>Oh, look at me, blogging again! I definitely have a lot to blog about as I get the time, I'm coming off of a really involved project and learned a lot of tips I'd like to share about the Zend Framework. In the mean time I thought I'd share something I had a helluva time figuring out.</p>
 
@@ -465,7 +465,7 @@ public function getServerVersion($native = false)
   <entry>
     <title type="html"><![CDATA[Doctrine Migrations Proper]]></title>
     <link href="http://dcousineau.github.com/blog/2009/10/20/doctrine-migrations-proper/"/>
-    <updated>2009-10-20T12:32:40-05:00</updated>
+    <updated>2009-10-20T13:32:40-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/10/20/doctrine-migrations-proper</id>
     <content type="html"><![CDATA[<p>I was talking with someone (I will edit this post when I find her card and remember her name) here at ZendCon and discovered that they were having trouble with migrations in Doctrine. Having gone through the same issues of Doctrine seemingly not being able to figure out your changes and generate migration classes, I thought I'd post the solution here for future reference.</p>
 
@@ -486,7 +486,7 @@ public function getServerVersion($native = false)
   <entry>
     <title type="html"><![CDATA[Solve A Sliding Puzzle With JavaScript And Your AI Course: Part 1]]></title>
     <link href="http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1/"/>
-    <updated>2009-10-13T11:06:27-05:00</updated>
+    <updated>2009-10-13T12:06:27-04:00</updated>
     <id>http://dcousineau.github.com/blog/2009/10/13/solve-a-sliding-puzzle-with-javascript-and-your-ai-course-part-1</id>
     <content type="html"><![CDATA[<p>In all my years of web development and formal computer science training, you know I never really got around to truly sitting down and learning JavaScript.</p>
 

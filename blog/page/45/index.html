@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="We recently began working on our biggest event for our biggest client. In the process of getting everything up and running before the event started, &hellip;">
+  <meta name="description" content="Unfortunately, Plesk does (and according to atomicturtle will continue to) hate on developers by enabling open_basedir by default and not give any &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://dcousineau.github.com/blog/page/5/">
+  <link rel="canonical" href="http://dcousineau.github.com/blog/page/45/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson in Good Architecture</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/02/01/plesk-open_basedir-workaround/">Plesk Open_basedir Workaround</a></h1>
     
     
       <p class="meta">
@@ -88,30 +88,47 @@
   
 
 
-<time datetime="2011-01-29T08:58:56-05:00" pubdate data-updated="true">Jan 29<span>th</span>, 2011</time>
+<time datetime="2008-02-01T20:47:41-05:00" pubdate data-updated="true">Feb 1<span>st</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>We recently began working on our biggest event for our biggest client. In the process of getting everything up and running before the event started, we noticed a show-stopper bug appear out of nowhere.</p>
+  <div class="entry-content"><p>Unfortunately, Plesk does (and according to atomicturtle will continue to) hate on developers by enabling open_basedir by default and not give any way to change such behavior.</p>
 
-<p>Our media processor when finished converting videos and creating thumbnails of images publishes said files to our CDN. Only a few hours before our event and our CDN was failing probably 80% of the SSL handshakes for our requests to publish files. There is no need to name names as it was a difficult and obscure bug to diagnose in an extremely short amount of time. We needed to get it working, our CDN provider wasn&#8217;t going to be able to resolve the problem in the extremely short timeframe we required, so the decision was clear: we needed to switch providers for the new content.</p>
+<p>A work around is possible, overriding the setting in a vhost.conf file (httpd.include files are not so good because Plesk rewrites them every time a change is made to a domain&#8217;s settings, or whenever Plesk feels like it). However, adding the line <code>php_admin_value open_basedir none</code> is completely ineffective (as I would assume the vhost.conf is being included before offending open_basedir changes are made?).</p>
 
-<p>Normally this is a 2 week job, switching API calls, testing, finding all the occurrences (we process both videos and photos in different styles of batches), etc. We were able to complete it and have it live in under 1.5 hours. Why? We (and really I mean my coworker as this decision was made before I came on) made som really damned good architecture decisions. Primarly:</p>
+<p>However I found that doing this (those familiar with Plesk&#8217;s httpd.include will recognize this block):</p>
 
-<ol>
-<li><p>We used OSS, primarily <a href="">Zend Framework</a> which had well written API libraries for our new CDN</p></li>
-<li><p>All file system operations were abstracted to adapters that all inherited a &#8220;FileStore&#8221; base class</p></li>
-</ol>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='apache'><span class='line'><span class="nt">&lt;Directory</span> <span class="s">/path/to/domain/httpdocs</span><span class="nt">&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;IfModule</span> <span class="s">sapi_apache2.c</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nb">php_admin_value</span> open_basedir <span class="k">none</span>
+</span><span class='line'>    <span class="nt">&lt;/IfModule&gt;</span>
+</span><span class='line'>    <span class="nt">&lt;IfModule</span> <span class="s">mod_php5.c</span><span class="nt">&gt;</span>
+</span><span class='line'>        <span class="nb">php_admin_value</span> open_basedir <span class="k">none</span>
+</span><span class='line'>    <span class="nt">&lt;/IfModule&gt;</span>
+</span><span class='line'><span class="nt">&lt;/Directory&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
 
 
-<p>So, create a file store for our new CDN using the well written, off the shelf API. Change 4 lines of XML configuration, deploy, and we were in business.</p>
+<p>Guarantees that open_basedir will plague you no more.</p>
 
-<p>Had my coworker succumbed to laziness or listen to some people who claim &#8220;oh you&#8217;re just making it too complicated&#8221; or &#8220;just get it up quickly, damn the design decisions&#8221; we would have been sunk. Instead he took the time to utilize the adapter pattern (even though it probably added an extra 2 days to his total coding time) despite all signs pointing to us never needing to switch CDN&#8217;s (and certainly not within a 2 hour timeframe).</p>
+<p>Some may ask why I want open_basedir enabled, it&#8217;s leaving me open to vulnerabilities! Some applications have a control panel on a separate sub domain and require the ability to write files to it&#8217;s parent domain, something Plesk beats down with an ugly stick, as well as some applications requiring access to the system wide PEAR libraries, something open_basedir ironicaly beats down as well (despite the system wide PEAR libraries being included in the include_path directive).</p>
 
-<p>So let this be a lesson to us all. Abstraction and design patterns sometimes feel like an &#8220;enterprisey overcomplication&#8221; but they aren&#8217;t there for everyday needs. They exist for those days when a service provider gets hit by an obscure bug and you have to swap out a component under extreme time schedules. So suck it up, use them, and thank yourself when you find yourself in such a situation.</p>
+<p>Later I&#8217;ll be digging through Plesk&#8217;s ability to trigger commands on updates and domain creations to automate this vhost.conf setting (namely grabbing that path to the httpdocs folder that is so critical and time consuming).</p>
+
+<p><strong>EDIT:</strong> To apply the changes, follow markus&#8217; example:</p>
+
+<blockquote><p>I just have my setting in the vhost.conf, and it works just fine. Just remember to update Plesks settings manually afterwards, with <code>/usr/local/psa/admin/sbin/websrvmng -u –vhost-name=example.com</code> (it doesn’t read directly from the vhost.conf).</p></blockquote>
 </div>
   
   
@@ -121,11 +138,9 @@
   
   <div class="pagination">
     
-      <a class="prev" href="/blog/page/6/">&larr; Older</a>
-    
     <a href="/blog/archives">Blog Archives</a>
     
-    <a class="next" href="/blog/page/4/">Newer &rarr;</a>
+    <a class="next" href="/blog/page/44/">Newer &rarr;</a>
     
   </div>
 </div>

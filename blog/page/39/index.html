@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="I am by no means a database expert, such titles are best left to people like Peter Zaitsev and Vadim Tkachenko, however one of my co workers has been &hellip;">
+  <meta name="description" content="(This is the sequal to my previous post, Database Normalization And Design: A Primer) ">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/04/01/database-normalization-and-design-a-primer/">Database Normalization and Design: A Primer</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/04/03/database-normalization-and-design-part-ii/">Database Normalization and Design: Part II</a></h1>
     
     
       <p class="meta">
@@ -88,28 +88,20 @@
   
 
 
-<time datetime="2008-04-01T08:34:36-05:00" pubdate data-updated="true">Apr 1<span>st</span>, 2008</time>
+<time datetime="2008-04-03T10:07:56-04:00" pubdate data-updated="true">Apr 3<span>rd</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>I am by no means a database expert, such titles are best left to people like <a href="http://www.mysqlperformanceblog.com/">Peter Zaitsev and Vadim Tkachenko</a>, however one of my co workers has been asking me for some help on how I come about my database designs, particularly issues concerning <a href="http://en.wikipedia.org/wiki/Database_normalization">normal form</a>.</p>
-
-<p>Whlie I could spend several posts going over the intricacies of 1st, 2nd, 3rd, and 4th normal form as well as &#8220;The key, the whole key, and nothing but the key so help me Codd&#8221; Boyce-Codd normal form, however reality dictates that time spent strictly to these academic levels is either time wasted (projects with due dates unfortunately cannot spend forever on the database design) or pointless as being reasonably intelligent will bring you very close, if not within 3rd normal form.</p>
-
-<p>If you&#8217;re really interested, Wikipedia provides a great resource to get started learning the more academic aspects.</p>
-
-<p>I&#8217;m going to assume that you have done a bit of database work and at least understand the concept of a <a href="http://en.wikipedia.org/wiki/Join_(sql">join</a>).</p>
-
-<p>The one of the goals of database normalization is to reduce the repetition of information and thereby reduce the complexity of an update of said information. If the same string is in the database N times, we should abstract it so that if we need to update said string due to a typo or anything else, we need to only change but one location.</p>
+  <div class="entry-content"><p>(This is the sequal to my previous post, <a href="/blog/2008/04/01/database-normalization-and-design-a-primer/">Database Normalization And Design: A Primer</a>)</p>
 
 </div>
   
   
     <footer>
-      <a rel="full-article" href="/blog/2008/04/01/database-normalization-and-design-a-primer/">Read on &rarr;</a>
+      <a rel="full-article" href="/blog/2008/04/03/database-normalization-and-design-part-ii/">Read on &rarr;</a>
     </footer>
   
 
@@ -133,6 +125,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -146,10 +142,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -178,7 +170,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

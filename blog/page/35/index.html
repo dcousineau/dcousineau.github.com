@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="I just rolled out some new automation tools for a few projects here at work and so far I&#8217;ve been extremely happy. Much to my embarrassment, &hellip;">
+  <meta name="description" content="Peter Zaitsev posted a very interesting test on how PHP and Apache handle runaway PHP scripts. I&#8217;m sure all of us have had a long executing SQL &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/05/15/automating-the-development-workflow/">Automating the Development Workflow</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/05/20/amp-and-runaway-scripts/">*AMP and Runaway Scripts</a></h1>
     
     
       <p class="meta">
@@ -88,29 +88,45 @@
   
 
 
-<time datetime="2008-05-15T09:08:21-05:00" pubdate data-updated="true">May 15<span>th</span>, 2008</time>
+<time datetime="2008-05-20T20:56:07-04:00" pubdate data-updated="true">May 20<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>I just rolled out some new automation tools for a few projects here at work and so far I&#8217;ve been extremely happy.</p>
+  <div class="entry-content"><p>Peter Zaitsev <a href="http://www.mysqlperformanceblog.com/2008/05/20/apache-php-mysql-and-runaway-scripts/">posted</a> a very interesting test on how PHP and Apache handle runaway PHP scripts.</p>
 
-<p>Much to my embarrassment, development has previously been outside of source control due to the fact that we develop sites, we don&#8217;t deploy packaged applications, and we don&#8217;t have a cohesive IT setup (everyone sets up their desktop to their liking so maintaining consistent development environments across all computers is difficult).</p>
+<p>I&#8217;m sure all of us have had a long executing SQL script or at least a runaway script, and he points out even with <a href="http://www.php.net/manual/en/features.connection-handling.php"><code>ignore_user_abort</code></a> set to FALSE and max execution times set both in PHP and Apache, a runaway SQL query can execute beyond the timeouts, even when aborted by the user (stop button on the browser).</p>
 
-<p>However, thanks to SVN, <a href="http://code.google.com/p/xinc/">Xinc</a> and <a href="http://phing.info/">Phing</a> (and <a href="http://dbdeploy.com/">DBDeploy</a>), this has changed! Now everything is in source control and automatically deployed to our dev server upon commit. I am currently talking with Arno about perfecting svn tag monitoring to automate staging and (possibly) live deployments, so I&#8217;ll post about what I did when that&#8217;s finished.</p>
+<p>Even using the function <a href="http://www.php.net/connection_aborted"><code>connection_aborted()</code></a> to check for a user abort fails.</p>
 
-<p>The great thing about this setup is all pieces are technically interchangeable. If you don&#8217;t like Xinc you can use <a href="http://cruisecontrol.sourceforge.net/">CruiseControl</a>. If you don&#8217;t like Phing you can use <a href="http://www.pake-project.com/">Pake</a>, or a shell script even. If you don&#8217;t like DBDeploy you can roll your own setup or swap it out for your database versioning system of your choice!</p>
+<p>However, the script will cease on a user abort if it performs regular <code>ob_flush(); flush();</code>  commands. For example:</p>
 
-<p>However this post will cover Xinc, Phing, and DBDeploy as (a) I have experience with them and none of the others, and (b) they integrate extremely well (Xinc and Phing&#8217;s primary distribution method of choice are <a href="http://pear.php.net/">PEAR</a> channels).</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">echo</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="nb">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+</span><span class='line'>  <span class="k">echo</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
+</span><span class='line'>  <span class="nb">ob_flush</span><span class="p">();</span>
+</span><span class='line'>  <span class="nb">flush</span><span class="p">();</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
 
+
+<p>Just one more reason why I love the <a href="http://www.mysqlperformanceblog.com/">MySql Performance Blog</a>.</p>
 </div>
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2008/05/15/automating-the-development-workflow/">Read on &rarr;</a>
-    </footer>
   
 
 
@@ -133,6 +149,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -146,10 +166,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -178,7 +194,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="Microsoft products can really be a big wrench in the finely oiled machine that is your development environment. While Microsoft does offer some &hellip;">
+  <meta name="description" content="In my previous article (Microsoft Access and PHP), I discussed getting mdbtools setup and dynamically interacting with a instance of mdb-sql. Well it &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/03/24/microsoft-access-and-php/">Microsoft Access and PHP</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/03/28/updates-and-s/">Updates and ::&#8217;s</a></h1>
     
     
       <p class="meta">
@@ -88,22 +88,22 @@
   
 
 
-<time datetime="2008-03-24T18:32:11-05:00" pubdate data-updated="true">Mar 24<span>th</span>, 2008</time>
+<time datetime="2008-03-28T09:46:34-04:00" pubdate data-updated="true">Mar 28<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Microsoft products can really be a big wrench in the finely oiled machine that is your development environment. While Microsoft does offer some excellent products and development tools, when you work from an open source context, these great tools become great hazards and headaches.</p>
+  <div class="entry-content"><p>In my previous article (<a href="http://www.toosweettobesour.com/2008/03/24/microsoft-access-and-php/">Microsoft Access and PHP</a>), I discussed getting mdbtools setup and dynamically interacting with a instance of mdb-sql. Well it turns out somewhere in the pipeline (probably mdb-tools), we&#8217;re either not getting an EOF or reading an EOF right and as such I can read lines from the program&#8217;s STDOUT stream, but as soon as I hit the end of the output my script hangs indefinitely waiting for something and all my attempts at detecting an EOF failed. Sorry to disappoint.</p>
 
-<p>Case in point, access databases. Take as a recent example, a client that gets its data from a third party. That data comes in a Access (.mdb) format, probably convenient for the producing company as well as the assumption that chances are very likely that the person receiving the data will be able to read it (due to the widespread availability of Microsoft Office).</p>
+<p>On lighter news, my coworker got the greatest error ever:</p>
 
-<p>Importing said .mdb in PHP is not so nice or convenient, that is if you aren&#8217;t running your server on Windows (which chances are you aren&#8217;t). In Windows you merely need to either create an ADO object (or use <a href="http://adodb.sourceforge.net/">ADODB</a>), or use COM to communicate with a local install of Microsoft Office to trigger an export. In Linux, neither of those choices are even available. However we thankfully have some good command line utilities, for example: <a href="http://mdbtools.sourceforge.net/">MDB Tools</a>. (Tip: Check out a copy from CVS if 0.5 is segfaulting on your database)</p>
+<blockquote><p>Parse error: syntax error, unexpected T_PAAMAYIM_NEKUDOTAYIM</p></blockquote>
 
-<p>In addition to some unixODBC drivers, it provides some very nice command line utilities like mdb-tables (which prints the tables in a .mdb file), mdb-schema (which prints the schema for all or a specific table), mdb-export (which produces a CSV output of a specific table in the .mdb), and mdb-sql (which provides a subset of SQL interface to the .mdb file). All of these tools come together to form a very nice tool set to import a .mdb file.</p>
+<p>Turns out according to <a href="http://www.webmasterworld.com/forum88/5127.htm">these guys</a> it&#8217;s Hebrew and refers to the double colon (::) operator.</p>
 
-<p>Fun things however, as I was working on my import script (I was just using simple exec() commands and getting full output and parsing from there), I decided to play around with stream programming and provide an interface to mdb-sql using proc_open() to make the import less memory intensive. I ran into some snags using fgets() on the STDIN stream and when I solve those I&#8217;ll post my code and a tutorial.</p>
+<p>Right&#8230;</p>
 </div>
   
   
@@ -128,6 +128,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -141,10 +145,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -173,7 +173,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="PHP 4&#8217;s end-of-life is today. With that I bid adieu to the half-assed OOP support and general primitive nature of the platform. However I &hellip;">
+  <meta name="description" content="In my quest to do some alterations on ZF error handling (in particular, render the view if the action or controller is not found, makes it real easy &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/08/08/end-of-an-era-goodbye-to-php-4/">End of an Era (Goodbye to PHP 4)</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/08/11/quickie-module-specific-error-controllers-in-zend-framework-15/">Quickie: Module-specific Error Controllers in Zend Framework (1.5)</a></h1>
     
     
       <p class="meta">
@@ -88,20 +88,83 @@
   
 
 
-<time datetime="2008-08-08T10:28:27-05:00" pubdate data-updated="true">Aug 8<span>th</span>, 2008</time>
+<time datetime="2008-08-11T07:12:44-04:00" pubdate data-updated="true">Aug 11<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>PHP 4&#8217;s end-of-life is <a href="http://shiflett.org/blog/2008/aug/end-of-life-for-php-4">today</a>.</p>
+  <div class="entry-content"><p>In my quest to do some alterations on ZF error handling (in particular, render the view if the action or controller is not found, makes it real easy for my designer to prototype) I had the desire to be able to allow modules to have their own ErrorControllers. Unfortunately, the Zend_Controller_Plugin_ErrorHandler() default does not allow for this and I didn&#8217;t really want to extend that class (I planned on handling the rendering in the ErrorControllers) so I wrote up a quick plugin. Doing random stuff like this has really helped me get to know the Zend Framework (I was developing my own internal framework architectured somewhat similarly that I have abandoned due to time constraints and the large community behind ZF).</p>
 
-<p>With that I bid adieu to the half-assed OOP support and general primitive nature of the platform.</p>
+<p>The plugin hooks into the routeShutdown as this is the first place I have access to the ZF-determined module name. I need the current module name to make sure I override the ErrorHandler&#8217;s module, and while I could determine that for myself, problems would arise if I decided to start overriding the routers and URL structure.</p>
 
-<p>However I cannot be so callous as my first forays into PHP were with 4.0 releases&#8230;</p>
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">MyApp_ControllerPlugin_ErrorControllerSelector</span> <span class="k">extends</span> <span class="nx">Zend_Controller_Plugin_Abstract</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">routeShutdown</span><span class="p">(</span><span class="nx">Zend_Controller_Request_Abstract</span> <span class="nv">$request</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$front</span> <span class="o">=</span> <span class="nx">Zend_Controller_Front</span><span class="o">::</span><span class="na">getInstance</span><span class="p">();</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c1">//If the ErrorHandler plugin is not registered, bail out</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="o">!</span><span class="p">(</span><span class="nv">$front</span><span class="o">-&gt;</span><span class="na">getPlugin</span><span class="p">(</span><span class="s1">&#39;Zend_Controller_Plugin_ErrorHandler&#39;</span><span class="p">)</span> <span class="nx">instanceOf</span> <span class="nx">Zend_Controller_Plugin_ErrorHandler</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>          <span class="k">return</span><span class="p">;</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nv">$error</span> <span class="o">=</span> <span class="nv">$front</span><span class="o">-&gt;</span><span class="na">getPlugin</span><span class="p">(</span><span class="s1">&#39;Zend_Controller_Plugin_ErrorHandler&#39;</span><span class="p">);</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c1">//Generate a test request to use to determine if the error controller in our module exists</span>
+</span><span class='line'>      <span class="nv">$testRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Zend_Controller_Request_HTTP</span><span class="p">();</span>
+</span><span class='line'>      <span class="nv">$testRequest</span><span class="o">-&gt;</span><span class="na">setModuleName</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getModuleName</span><span class="p">())</span>
+</span><span class='line'>                  <span class="o">-&gt;</span><span class="na">setControllerName</span><span class="p">(</span><span class="nv">$error</span><span class="o">-&gt;</span><span class="na">getErrorHandlerController</span><span class="p">())</span>
+</span><span class='line'>                  <span class="o">-&gt;</span><span class="na">setActionName</span><span class="p">(</span><span class="nv">$error</span><span class="o">-&gt;</span><span class="na">getErrorHandlerAction</span><span class="p">());</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c1">//Does the controller even exist?</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nv">$front</span><span class="o">-&gt;</span><span class="na">getDispatcher</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">isDispatchable</span><span class="p">(</span><span class="nv">$testRequest</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>      <span class="p">{</span>
+</span><span class='line'>          <span class="nv">$error</span><span class="o">-&gt;</span><span class="na">setErrorHandlerModule</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getModuleName</span><span class="p">());</span>
+</span><span class='line'>      <span class="p">}</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nv">$front</span> <span class="o">=</span> <span class="nx">Zend_Controller_Front</span><span class="o">::</span><span class="na">getInstance</span><span class="p">();</span>
+</span><span class='line'><span class="nv">$front</span><span class="o">-&gt;</span><span class="na">registerPlugin</span><span class="p">(</span> <span class="k">new</span> <span class="nx">MyApp_ControllerPlugin_ErrorControllerSelector</span><span class="p">()</span> <span class="p">);</span>
+</span><span class='line'><span class="cp">?&gt;</span><span class="x"></span>
+</span></code></pre></td></tr></table></div></figure>
 
-<p>Now the question is how much faster will the dumping of PHP 4 (and 5.0/5.1) be and the adoption of PHP 5.2? Granted most major services are already at the latest/later versions of PHP 5.2 (5.2.5 seems to be most common, but quite a few have 5.2.6 installed), I hope the prevalence extends even further as I&#8217;m writing an app that requires 5.2.3+ (damn you Doctrine and your shiny ways!)&#8230;</p>
+
+<p>You&#8217;ll notice I generated a Zend_Controller_Request_HTTP() object and filled it with the ErrorController&#8217;s set controller name and action name (again if I decided to change how the error controllers are named, this plug in will still work) then use the dispatcher to check if this controller exists (basically, can we dispatch this controller&#8217;s action from this module). If so, go ahead and set the ErrorHandler&#8217;s module name to the current module name.</p>
+
+<p>I&#8217;ll bring more later once I finish making the Zend Framework my bitch.</p>
 </div>
   
   
@@ -126,6 +189,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -139,10 +206,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -171,7 +234,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

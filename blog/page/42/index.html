@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="I was helping a coworker the other day with some object oriented design issues in PHP and thought it would be great to share with the general PHP &hellip;">
+  <meta name="description" content="Microsoft products can really be a big wrench in the finely oiled machine that is your development environment. While Microsoft does offer some &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/03/13/oo-design-and-php/">OO Design and PHP</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/03/24/microsoft-access-and-php/">Microsoft Access and PHP</a></h1>
     
     
       <p class="meta">
@@ -88,25 +88,24 @@
   
 
 
-<time datetime="2008-03-13T19:34:59-05:00" pubdate data-updated="true">Mar 13<span>th</span>, 2008</time>
+<time datetime="2008-03-24T19:32:11-04:00" pubdate data-updated="true">Mar 24<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>I was helping a coworker the other day with some object oriented design issues in PHP and thought it would be great to share with the general PHP community as the general PHP community seems to lack in good OOP skills.</p>
+  <div class="entry-content"><p>Microsoft products can really be a big wrench in the finely oiled machine that is your development environment. While Microsoft does offer some excellent products and development tools, when you work from an open source context, these great tools become great hazards and headaches.</p>
 
-<p>The task, which will be detailed later when we release it, boiled down to having a collection of files we needed to perform an operation on. Sometimes the entire collection, sometimes just a subgroup. Currently the system will only support 1 kind of file however in the very near future a new file will be added. My coworker tackled it well but a few problems that I helped him out with. Namely he made a few common mistakes in the design that most PHP developers make, namely being inconsistent with naming/etc. and not utilizing Interfaces and argument type-hinting to enforce good design, as well as putting logic in the wrong classes.</p>
+<p>Case in point, access databases. Take as a recent example, a client that gets its data from a third party. That data comes in a Access (.mdb) format, probably convenient for the producing company as well as the assumption that chances are very likely that the person receiving the data will be able to read it (due to the widespread availability of Microsoft Office).</p>
 
-<p>One of the few pitfalls that did happened was placing the <code>render()</code> function in the collection class. While this would not be a problem for a single type, when extending the system to handle <strong>n</strong> node types we come across unnecessary complexity issues in adding to the <code>render()</code> function, as well as making it nigh-impossible to keep the original includes intact (so as to make upgrades work without the hassle of merging code).</p>
+<p>Importing said .mdb in PHP is not so nice or convenient, that is if you aren&#8217;t running your server on Windows (which chances are you aren&#8217;t). In Windows you merely need to either create an ADO object (or use <a href="http://adodb.sourceforge.net/">ADODB</a>), or use COM to communicate with a local install of Microsoft Office to trigger an export. In Linux, neither of those choices are even available. However we thankfully have some good command line utilities, for example: <a href="http://mdbtools.sourceforge.net/">MDB Tools</a>. (Tip: Check out a copy from CVS if 0.5 is segfaulting on your database)</p>
 
+<p>In addition to some unixODBC drivers, it provides some very nice command line utilities like mdb-tables (which prints the tables in a .mdb file), mdb-schema (which prints the schema for all or a specific table), mdb-export (which produces a CSV output of a specific table in the .mdb), and mdb-sql (which provides a subset of SQL interface to the .mdb file). All of these tools come together to form a very nice tool set to import a .mdb file.</p>
+
+<p>Fun things however, as I was working on my import script (I was just using simple exec() commands and getting full output and parsing from there), I decided to play around with stream programming and provide an interface to mdb-sql using proc_open() to make the import less memory intensive. I ran into some snags using fgets() on the STDIN stream and when I solve those I&#8217;ll post my code and a tutorial.</p>
 </div>
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2008/03/13/oo-design-and-php/">Read on &rarr;</a>
-    </footer>
   
 
 
@@ -129,6 +128,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -142,10 +145,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -174,7 +173,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

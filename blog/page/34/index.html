@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="Peter Zaitsev posted a very interesting test on how PHP and Apache handle runaway PHP scripts. I&#8217;m sure all of us have had a long executing SQL &hellip;">
+  <meta name="description" content="I recently had fun with an all-to-common issue with SQL driven websites: hierarchical data. For those who don&#8217;t like big words, think trees. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/05/20/amp-and-runaway-scripts/">*AMP and Runaway Scripts</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/06/01/hierarchical-data-with-php-and-mysql/">Hierarchical Data With PHP and MySQL</a></h1>
     
     
       <p class="meta">
@@ -88,45 +88,25 @@
   
 
 
-<time datetime="2008-05-20T19:56:07-05:00" pubdate data-updated="true">May 20<span>th</span>, 2008</time>
+<time datetime="2008-06-01T21:28:38-04:00" pubdate data-updated="true">Jun 1<span>st</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Peter Zaitsev <a href="http://www.mysqlperformanceblog.com/2008/05/20/apache-php-mysql-and-runaway-scripts/">posted</a> a very interesting test on how PHP and Apache handle runaway PHP scripts.</p>
+  <div class="entry-content"><p>I recently had fun with an all-to-common issue with SQL driven websites: hierarchical data. For those who don&#8217;t like big words, think trees. <a href="http://dev.mysql.com/tech-resources/articles/hierarchical-data.html">Other people</a> have already discussed storage methods, and I would actually highly suggest you read the writeup if you haven&#8217;t already.</p>
 
-<p>I&#8217;m sure all of us have had a long executing SQL script or at least a runaway script, and he points out even with <a href="http://www.php.net/manual/en/features.connection-handling.php"><code>ignore_user_abort</code></a> set to FALSE and max execution times set both in PHP and Apache, a runaway SQL query can execute beyond the timeouts, even when aborted by the user (stop button on the browser).</p>
+<p>While it is fairly straightforward to deal with, in our case we use <a href="http://pear.php.net/package/HTML_QuickForm">HTML_QuickForm</a> to handle our forms and are using QuickForm&#8217;s <a href="http://pear.php.net/manual/en/package.html.html-quickform.html-quickform-hierselect.setoptions.php">hierselect</a> to select a category.</p>
 
-<p>Even using the function <a href="http://www.php.net/connection_aborted"><code>connection_aborted()</code></a> to check for a user abort fails.</p>
+<p>The issue starts showing its face in 2 distinct areas: (1) the client is not yet sure how deep they need their categories to go, and (2) the hierselect requires a very specific format of data to be passed in.</p>
 
-<p>However, the script will cease on a user abort if it performs regular <code>ob_flush(); flush();</code>  commands. For example:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="k">echo</span><span class="p">(</span><span class="s2">&quot;Hello&quot;</span><span class="p">);</span>
-</span><span class='line'><span class="k">for</span><span class="p">(</span><span class="nv">$i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="nv">$i</span><span class="o">&lt;</span><span class="mi">10000</span><span class="p">;</span><span class="nv">$i</span><span class="o">++</span><span class="p">)</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>  <span class="nb">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
-</span><span class='line'>  <span class="k">echo</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">);</span>
-</span><span class='line'>  <span class="nb">ob_flush</span><span class="p">();</span>
-</span><span class='line'>  <span class="nb">flush</span><span class="p">();</span>
-</span><span class='line'><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>Just one more reason why I love the <a href="http://www.mysqlperformanceblog.com/">MySql Performance Blog</a>.</p>
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2008/06/01/hierarchical-data-with-php-and-mysql/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -149,6 +129,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -162,10 +146,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -194,7 +174,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

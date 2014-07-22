@@ -9,18 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="1
-2
-3
-4
-5
-6
-7
-8
-from indiana import jones
-import whip
-import ruins cave = new Ruins() trap = indiana.steal( cave.treasure )
-indiana.escape( trap ) 1 &hellip;">
+  <meta name="description" content="I just rolled out some new automation tools for a few projects here at work and so far I&#8217;ve been extremely happy. Much to my embarrassment, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -83,7 +72,7 @@ indiana.escape( trap ) 1 &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/05/10/indy/">Indy!!</a></h1>
+      <h1 class="entry-title"><a href="/blog/2008/05/15/automating-the-development-workflow/">Automating the Development Workflow</a></h1>
     
     
       <p class="meta">
@@ -99,42 +88,29 @@ indiana.escape( trap ) 1 &hellip;">
   
 
 
-<time datetime="2008-05-10T14:47:35-05:00" pubdate data-updated="true">May 10<span>th</span>, 2008</time>
+<time datetime="2008-05-15T10:08:21-04:00" pubdate data-updated="true">May 15<span>th</span>, 2008</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='python'><span class='line'><span class="kn">from</span> <span class="nn">indiana</span> <span class="kn">import</span> <span class="n">jones</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">whip</span>
-</span><span class='line'><span class="kn">import</span> <span class="nn">ruins</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">cave</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Ruins</span><span class="p">()</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">trap</span> <span class="o">=</span> <span class="n">indiana</span><span class="o">.</span><span class="n">steal</span><span class="p">(</span> <span class="n">cave</span><span class="o">.</span><span class="n">treasure</span> <span class="p">)</span>
-</span><span class='line'><span class="n">indiana</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span> <span class="n">trap</span> <span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure>
+  <div class="entry-content"><p>I just rolled out some new automation tools for a few projects here at work and so far I&#8217;ve been extremely happy.</p>
 
+<p>Much to my embarrassment, development has previously been outside of source control due to the fact that we develop sites, we don&#8217;t deploy packaged applications, and we don&#8217;t have a cohesive IT setup (everyone sets up their desktop to their liking so maintaining consistent development environments across all computers is difficult).</p>
 
+<p>However, thanks to SVN, <a href="http://code.google.com/p/xinc/">Xinc</a> and <a href="http://phing.info/">Phing</a> (and <a href="http://dbdeploy.com/">DBDeploy</a>), this has changed! Now everything is in source control and automatically deployed to our dev server upon commit. I am currently talking with Arno about perfecting svn tag monitoring to automate staging and (possibly) live deployments, so I&#8217;ll post about what I did when that&#8217;s finished.</p>
 
+<p>The great thing about this setup is all pieces are technically interchangeable. If you don&#8217;t like Xinc you can use <a href="http://cruisecontrol.sourceforge.net/">CruiseControl</a>. If you don&#8217;t like Phing you can use <a href="http://www.pake-project.com/">Pake</a>, or a shell script even. If you don&#8217;t like DBDeploy you can roll your own setup or swap it out for your database versioning system of your choice!</p>
 
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='text'><span class='line'>ImportError: Snakes? I hate snakes!
-</span></code></pre></td></tr></table></div></figure>
-
-
+<p>However this post will cover Xinc, Phing, and DBDeploy as (a) I have experience with them and none of the others, and (b) they integrate extremely well (Xinc and Phing&#8217;s primary distribution method of choice are <a href="http://pear.php.net/">PEAR</a> channels).</p>
 
 </div>
   
+  
+    <footer>
+      <a rel="full-article" href="/blog/2008/05/15/automating-the-development-workflow/">Read on &rarr;</a>
+    </footer>
   
 
 
@@ -157,6 +133,10 @@ indiana.escape( trap ) 1 &hellip;">
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -170,10 +150,6 @@ indiana.escape( trap ) 1 &hellip;">
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -202,7 +178,7 @@ indiana.escape( trap ) 1 &hellip;">
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

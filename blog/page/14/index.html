@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="So, after reading Mark Shuttlework&#8217;s blog on ideas for notifications in Ubuntu (basically mimicking Growl notifications for the Mac), I decided &hellip;">
+  <meta name="description" content="So I spent an inordinate amount of time tracking down a bug recently for a former employer in a system that accepts media file uploads and converts &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2009/02/12/php-mumbles-growl-and-dbus-sweeet/">PHP, Mumbles (Growl), and DBus: Sweeet</a></h1>
+      <h1 class="entry-title"><a href="/blog/2009/02/26/php-file-uploads-and-background-conversion-oopsie/">PHP File Uploads and Background Conversion: Oopsie</a></h1>
     
     
       <p class="meta">
@@ -88,121 +88,28 @@
   
 
 
-<time datetime="2009-02-12T19:58:30-06:00" pubdate data-updated="true">Feb 12<span>th</span>, 2009</time>
+<time datetime="2009-02-26T10:53:19-05:00" pubdate data-updated="true">Feb 26<span>th</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>So, after reading <a href="http://www.markshuttleworth.com/archives/253">Mark Shuttlework&#8217;s blog on ideas for notifications in Ubuntu</a> (basically mimicking <a href="http://growl.info/">Growl</a> notifications for the Mac), I decided I wanted that kind of functionality, but&#8230; you know, NOW!</p>
+  <div class="entry-content"><p>So I spent an inordinate amount of time tracking down a bug recently for a former employer in a system that accepts media file uploads and converts them on the fly.</p>
 
-<p>There are a multitude of options available but currently I&#8217;m liking <a href="http://www.mumbles-project.org/">Mumbles</a>. <del>Unlike, say, <a href="http://specto.sourceforge.net/">Specto</a>, which does the monitoring itself, Mumbles provides a DBus interface, a command-line app named <code>mumbles-send</code>, and (I&#8217;m not sure if it&#8217;s implemented in the current stable download) libnotify support.</del> Woutc, from the Specto project, commented below explaining that Specto is not intended to be a Mumbles competitor, but a package to easily monitor system internals (I quote <em>&#8220;&#8230;the purposes from mumbles and specto are different…specto is monitoring what happens outside your desktop, mumbles monitors what happens on your desktop (or in your network)&#8230;&#8221;</em>) Apparently he has plans to build a Mumbles plugin so that one can optionally have Specto send its messages to Mumbles for display.</p>
+<p>The system spawns off a small script that manages mplayer/ffmpeg/lame into the background and holds on to the PID to track the conversion process. HOWEVER, there was a problem in the system where large files were being ignored and no error messages were popping up.</p>
 
-<p>I decided the <del>best</del> easiest route is to access the internal DBus API, however the forums and other resources on the Mumbles site&#8230; well&#8230; just plain suck. And by suck I mean tell you that something exists and&#8230; thaaats about it.</p>
+<p>What ended up happening was I forgot to take into account PHP&#8217;s file upload behavior in the conversion process.</p>
 
-<p><img src="/images/posts/2009/02/d-feet.png"></p>
+<p>When PHP accepts a file upload it creates a temporary file (usually in <code>/tmp/</code>). The caveat is PHP frees (read: deletes) the temporary uploaded file at the end of script execution.</p>
 
-<p>Well in my Google quest I discovered the existence of <a href="https://fedorahosted.org/d-feet/">D-Feet</a>, a DBus debugging tool (on <a href="http://arstechnica.com/open-source/news/2008/01/learning-from-d-feet-a-quick-look-at-a-new-d-bus-debugger.ars">Ars</a> of all places). Thanks to a quick <code>sudo apt-get install d-feet</code> I found the existence of a public interface in <code>info.growl.Growl</code> that allows for a <code>Notify(title, message)</code> signal to be passed.</p>
+<p>So, while the converters could convert a small file in the same encoding as the desired output, a large file (say, a 10mb MPEG) that needed to be converted to a different format (say, a FLV), the converter would begin working in the background but when the PHP script finished executing, PHP would delete the file right out from under the converter&#8217;s feet.</p>
 
-<p>Well, with a place to access all I needed was DBus integration with PHP (because I want to start sending debug notification via Growl/Mumbles like <a href="http://framework.zend.com/wiki/pages/viewpage.action?pageId=8454257">this idea</a> on the Zend Framework incubator).</p>
+<p>So, a tip to anyone doing anything similar, go ahead and at least rename/move the file (I created a unique MD5 hash from the current time plus a few other things and use that as the new file name) and pass that to any background processing functions so PHP won&#8217;t delete the file at the end of processing.</p>
 
-<p>Luckily, GREE Labs provides a <a href="http://labs.gree.jp/Top/OpenSource/DBus-en.html">DBus C extension for PHP</a> that was easily downloaded and installed. Once installed I read <a href="http://labs.gree.jp/Top/OpenSource/DBus/Document-en.html">the documentation</a> to get an idea on how to use the API (which is a 1:1 mapping to the <a href="http://dbus.freedesktop.org/doc/api/html/">DBus API</a>).</p>
+<p>It will save a WHOLE lot of headaches for you in the future.</p>
 
-<p>After a bit of hacking I finally came up with an alpha product:</p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
-</span><span class='line'><span class="k">function</span> <span class="nf">null_callback</span><span class="p">()</span>
-</span><span class='line'><span class="p">{</span>
-</span><span class='line'>        <span class="nb">var_dump</span><span class="p">(</span><span class="nb">func_get_args</span><span class="p">());</span>
-</span><span class='line'><span class="p">}</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$dbus</span> <span class="o">=</span> <span class="nx">dbus_bus_get</span><span class="p">(</span><span class="nx">DBUS_BUS_SESSION</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$m</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DBusMessage</span><span class="p">(</span><span class="nx">DBUS_MESSAGE_TYPE_SIGNAL</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">setPath</span><span class="p">(</span><span class="s1">&#39;/info/growl/Growl&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">setInterface</span><span class="p">(</span><span class="s1">&#39;info.growl.Growl&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">setMember</span><span class="p">(</span><span class="s1">&#39;Notify&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">appendArgs</span><span class="p">(</span><span class="s1">&#39;Hello World!&#39;</span><span class="p">);</span>
-</span><span class='line'><span class="nv">$m</span><span class="o">-&gt;</span><span class="na">appendArgs</span><span class="p">(</span><span class="s1">&#39;Lorem Ipsum Dolor Sit Amet. (&#39;</span> <span class="o">.</span> <span class="nb">time</span><span class="p">()</span> <span class="o">.</span> <span class="s1">&#39;)&#39;</span><span class="p">);</span>
-</span><span class='line'>
-</span><span class='line'><span class="nv">$r</span><span class="o">=</span> <span class="nv">$dbus</span><span class="o">-&gt;</span><span class="na">send</span><span class="p">(</span><span class="nv">$m</span><span class="p">);</span>
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p>After running the script in the console, did I see success?</p>
-
-<p><img src="/images/posts/2009/02/mumbles-php.png"></p>
-
-<p>Damn right I did!</p>
-
-<p><del>
-Though with a caveat:
-</del></p>
-
-<p><del></p>
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-</pre></td><td class='code'><pre><code class='text'><span class='line'>Warning: dbusconnection::sendwithreplyandblock(): dbus_connection_send_with_reply_and_block() failed (Traceback (most recent call last):
-</span><span class='line'>  File &quot;/var/lib/python-support/python2.5/dbus/service.py&quot;, line 643, in _message_cb
-</span><span class='line'>    (candidate_method, parent_method) = _method_lookup(self, method_name, interface_name)
-</span><span class='line'>  File &quot;/var/lib/python-support/python2.5/dbus/service.py&quot;, line 244, in _method_lookup
-</span><span class='line'>    raise UnknownMethodException(&#39;%s is not a valid method of interface %s&#39; % (method_name, dbus_interface))
-</span><span class='line'>UnknownMethodException: org.freedesktop.DBus.Error.UnknownMethod: Unknown method: Notify is not a valid method of interface info.growl.Growl
-</span><span class='line'>) in /home/daniel/test.php on line 21
-</span></code></pre></td></tr></table></div></figure>
-
-
-
-
-<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class='text'><span class='line'>Call Stack:
-</span><span class='line'>    0.0002      64496   1. {main}() /home/daniel/test.php:0
-</span><span class='line'>    0.0024      66372   2. dbusconnection-&gt;sendwithreplyandblock() /home/daniel/test.php:21
-</span></code></pre></td></tr></table></div></figure>
-
-
-<p></del></p>
-
-<p><del>
-Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to to find the Notify signal (though everything works correctly). I guess I could ignore this, use the error suppressor (<code>@</code>), or even yell at GREE Labs to have the objects throw exceptions so I can catch them&#8230; I guess I&#8217;ll hack on it some more and report back. I should probably spend more time learning the DBus specs since this is my first project playing with DBus&#8230;
-</del></p>
-
-<p><strong>Update:</strong> Though it&#8217;s not listed on the API page for PHP DBus&#8217;s API, there is a method <code>send()</code> that takes only a single argument (the message object).</p>
-
-<p><strong>Edit:</strong></p>
-
-<p>I saw a question on Reddit asking what is the use of this technique if it&#8217;s limited to the desktop it was called on and PHP is primarily a server side language. Why not do this in Python or Perl?</p>
-
-<p>Well, Mumbles was written in Python so there&#8217;s no point in me doing this in Python: it&#8217;s already been done.</p>
-
-<p>However, the primary use case of a technique like this is having a web app post notifications and errors for the developer. When I work on a site I have a local copy running on my desktop and/or laptop, so when it posts Growl/Mumbles notifications, I get them on my desktop. It&#8217;s great for situations where, say, I have a page in my PHP app that never displays its contents because it processes data then redirects to another page. If a warning or other non-fatal error that I should really fix occurs, then I would normally have to dig through the system wide PHP error log (if you even have error logging enabled). However, if I wrote a custom error handler that posts errors to Growl/Mumbles as they happen, when I visit a transitory page like I described I get little Growl/Mumbles notifications showing that I screwed up!</p>
+<p>Also, if anyone is interested, I will probably write up a tutorial on how to write a PHP script that will convert your MP3&#8217;s in the background.</p>
 </div>
   
   
@@ -227,6 +134,10 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -240,10 +151,6 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -272,7 +179,7 @@ Apparently Mumbles seems to be throwing an Exception that it&#8217;s failing to 
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

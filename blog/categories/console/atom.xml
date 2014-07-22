@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Console | Tower of Power]]></title>
   <link href="http://dcousineau.github.com/blog/categories/console/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2013-09-03T11:14:42-05:00</updated>
+  <updated>2014-07-22T11:44:27-04:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Using Symfony Console From Scratch]]></title>
     <link href="http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch/"/>
-    <updated>2013-03-28T22:20:00-05:00</updated>
+    <updated>2013-03-28T22:20:00-04:00</updated>
     <id>http://dcousineau.github.com/blog/2013/03/28/using-symfony-console-from-scratch</id>
     <content type="html"><![CDATA[<p>CLI applications are extremely useful for many, if not most web projects. The <a href="http://symfony.com/">Symfony framework</a> even goes so
 far as to include an extensible CLI console used for everything from running cache cleanup/warmup tasks, to user account management.</p>

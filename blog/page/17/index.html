@@ -9,7 +9,7 @@
   <meta name="author" content="Daniel Cousineau">
 
   
-  <meta name="description" content="So I&#8217;m in the planning stages of a project where I&#8217;ll probably be doing some heavy lifting in Python and serving up the output through &hellip;">
+  <meta name="description" content="Well, it&#8217;s been a while since I&#8217;ve done a PHP update hasn&#8217;t it? Well alls well here in CStat, I have a quickie for you folks. &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -72,7 +72,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2008/10/21/serialize-python-variables-to-php/">Serialize Python Variables to PHP</a></h1>
+      <h1 class="entry-title"><a href="/blog/2009/01/06/zend-framework-module-init-script-controller-plugin/">Zend Framework Module Init Script (Controller Plugin)</a></h1>
     
     
       <p class="meta">
@@ -88,31 +88,113 @@
   
 
 
-<time datetime="2008-10-21T21:34:47-05:00" pubdate data-updated="true">Oct 21<span>st</span>, 2008</time>
+<time datetime="2009-01-06T12:12:56-05:00" pubdate data-updated="true">Jan 6<span>th</span>, 2009</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>So I&#8217;m in the planning stages of a project where I&#8217;ll probably be doing some heavy lifting in Python and serving up the output through PHP. Obviously this will entail transmitting data between Python and PHP and while I haven&#8217;t had a chance to do performance testing to see if it&#8217;s worth it to save to a database, the only other option was to serialize the data to a file that PHP could parse quickly. Obviously, the output from <code>serialize()</code> is going to be the fastest way to recieved the data.</p>
+  <div class="entry-content"><p>Well, it&#8217;s been a while since I&#8217;ve done a PHP update hasn&#8217;t it? Well alls well here in CStat, I have a quickie for you folks.</p>
 
-<p>While there already <a href="http://hurring.com/scott/code/python/serialize/">exists</a> a Python set of classes that serializes (and serializes) Python data, it (a) didn&#8217;t handle objects and (b) was licensed under the GPL (rant to follow later), meaning I couldn&#8217;t use it for it&#8217;s intended purpose due to the closed source nature of my project.</p>
+<p>Recently at work I had the need to run a script before every single controller (namely to add a plugin folder to Dwoo) for a specific module that I did not desire for any other modules.</p>
 
-<p>I decided this was a good enough time to play around with git so I created a github repo <a href="http://github.com/dcousineau/phpserialize/tree/master">here</a>.</p>
+<p>I could have subclassed all my controllers to extend a custom action controller that handled this in the <code>init()</code> method, however I&#8217;m lazy so I wrote a quick Zend Controller Plugin to handle this for me.</p>
 
-<p>It could probably still use some more TLC in the object area, maybe a few more supported types, and unserialization functions would be nice.</p>
+<p>What it does is grabs the module name from the request object on routeShutdown (the routeShutdown happens after the route has been parsed and the request object has been generated, but before the action controller is instantiated and executed). From there it uses <code>Zend_Font_Controller::getInstance()-&gt;getModuleDirectory(...)</code> to grab the literal path to the module directory, tacks on our init file name (in our case &#8220;init.php&#8221;), and if it exists execute it in its own clean environment.</p>
 
-<p>I do feel it wasn&#8217;t bad for a few hours of hacking if I do say so myself.</p>
+<p>The init.php file has access to <code>$this</code>, where <code>$this</code> is an instance of the controller plugin (in particular we can do <code>$this-&gt;getRequest()</code> inside the init script).</p>
 
-<p>The code for the module (should be in a phpserialize.py file) is as follows:</p>
+<p>The code is as follows:</p>
 
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="cp">&lt;?php</span>
+</span><span class='line'><span class="sd">/**</span>
+</span><span class='line'><span class="sd"> * This checks the current request module&#39;s directory for an initFile (defaults</span>
+</span><span class='line'><span class="sd"> * to init.php) and runs it before the controller is loaded.</span>
+</span><span class='line'><span class="sd"> * </span>
+</span><span class='line'><span class="sd"> * @copyright 2009 Daniel Cousineau</span>
+</span><span class='line'><span class="sd"> * @license http://opensource.org/licenses/mit-license.php MIT License</span>
+</span><span class='line'><span class="sd"> * @version 0.1.0</span>
+</span><span class='line'><span class="sd"> */</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">My_Controller_Plugin_ModuleInit</span> <span class="k">extends</span> <span class="nx">Zend_Controller_Plugin_Abstract</span>
+</span><span class='line'><span class="p">{</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">static</span> <span class="nv">$initFileName</span> <span class="o">=</span> <span class="s2">&quot;init.php&quot;</span><span class="p">;</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * @param Zend_Controller_Request_Abstract $request</span>
+</span><span class='line'><span class="sd">  * @return null</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">public</span> <span class="k">function</span> <span class="nf">routeShutdown</span><span class="p">(</span><span class="nx">Zend_Controller_Request_Abstract</span> <span class="nv">$request</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="nv">$moduleName</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">getModuleName</span><span class="p">();</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nv">$moduleDirectory</span> <span class="o">=</span> <span class="nx">Zend_Controller_Front</span><span class="o">::</span><span class="na">getInstance</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">getModuleDirectory</span><span class="p">(</span><span class="nv">$moduleName</span><span class="p">);</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="c1">//Trim the paths and filenames to prevent any problems</span>
+</span><span class='line'>      <span class="nv">$initFile</span> <span class="o">=</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nv">$moduleDirectory</span><span class="p">,</span><span class="s1">&#39;/\&#39;) . &#39;</span><span class="o">/</span><span class="s1">&#39; . ltrim(self::$initFileName,&#39;</span><span class="o">/</span><span class="nx">\</span><span class="err">&#39;</span><span class="p">);</span>
+</span><span class='line'>      
+</span><span class='line'>      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">runInitFile</span><span class="p">(</span><span class="nv">$initFile</span><span class="p">);</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  
+</span><span class='line'>  <span class="sd">/**</span>
+</span><span class='line'><span class="sd">  * Run the file in its own cleaned scope</span>
+</span><span class='line'><span class="sd">  * </span>
+</span><span class='line'><span class="sd">  * @param string $_initFile location of the input file</span>
+</span><span class='line'><span class="sd">  * @return null</span>
+</span><span class='line'><span class="sd">  */</span>
+</span><span class='line'>  <span class="k">protected</span> <span class="k">function</span> <span class="nf">runInitFile</span><span class="p">(</span><span class="nv">$_initFile</span><span class="p">)</span>
+</span><span class='line'>  <span class="p">{</span>
+</span><span class='line'>      <span class="k">if</span><span class="p">(</span> <span class="nb">file_exists</span><span class="p">(</span><span class="nv">$_initFile</span><span class="p">)</span> <span class="p">)</span>
+</span><span class='line'>          <span class="k">include_once</span> <span class="nv">$_initFile</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As always all code I post on this blog is covered under the MIT license.</p>
 </div>
   
-  
-    <footer>
-      <a rel="full-article" href="/blog/2008/10/21/serialize-python-variables-to-php/">Read on &rarr;</a>
-    </footer>
   
 
 
@@ -135,6 +217,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/07/22/phprfc-internals-logo/">PHPRFC: Internals Logo</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/09/03/high-performance-js-tip/">High Performance JS Tip: Dimensions are not your friend</a>
       </li>
     
@@ -148,10 +234,6 @@
     
       <li class="post">
         <a href="/blog/2011/01/29/a-lesson-in-good-architecture/">A Lesson In Good Architecture</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2010/09/16/doctrine-1-2-mssql-alternative-limitpaging/">Doctrine 1.2 MSSQL Alternative LIMIT/Paging</a>
       </li>
     
   </ul>
@@ -180,7 +262,7 @@
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2013 - Daniel Cousineau -
+  Copyright &copy; 2014 - Daniel Cousineau -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 
