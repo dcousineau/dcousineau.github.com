@@ -4,7 +4,7 @@
   <title><![CDATA[Tower of Power]]></title>
   <link href="http://dcousineau.github.com/atom.xml" rel="self"/>
   <link href="http://dcousineau.github.com/"/>
-  <updated>2014-07-22T11:44:27-04:00</updated>
+  <updated>2014-07-22T11:49:39-04:00</updated>
   <id>http://dcousineau.github.com/</id>
   <author>
     <name><![CDATA[Daniel Cousineau]]></name>
@@ -25,6 +25,8 @@
 <p>This RFC proposes that the PHP core team get ahead of the issue and introduce a logo, separate from the public facing project, to provide a sense of professionalism that is lacking. I  humbly submit the DramaLlama as the superior candidate.</p>
 
 <h2>The Case For The DramaLlama</h2>
+
+<p><img class="right" src="http://dcousineau.github.com/images/dramallama.png" width="383" height="626" title="'The Proposed DramaLlama Logo'" ></p>
 
 <p>The Llama is a proud, capable animal that represent the best qualities of the core team. They are herbivorous pack animals that dutifully carry goods across the Andes, much like how PHP powers much of the internet. They can eat almost any vegetation, need little water, and even their excrement can be dried and burned as fuel!</p>
 
