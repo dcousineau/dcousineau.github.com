@@ -13,6 +13,8 @@ This RFC proposes that the PHP core team get ahead of the issue and introduce a 
 
 ## The Case For The DramaLlama
 
+{% img right /images/dramallama.png 383 626 'The Proposed DramaLlama Logo' %}
+
 The Llama is a proud, capable animal that represent the best qualities of the core team. They are herbivorous pack animals that dutifully carry goods across the Andes, much like how PHP powers much of the internet. They can eat almost any vegetation, need little water, and even their excrement can be dried and burned as fuel!
 
 Beyond the comparisons to the actual animal, a side profile of a Llama (of which I propose the logo use, rather than a front profile) with it’s solid body and long neck, represent PHP peaking and achieving new heights.
